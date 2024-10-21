@@ -1,103 +1,92 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(LoginScreen());
+  runApp(MyApp());
 }
 
-class LoginScreen extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Stack(
-          children: [
-            Image.asset('assets/b1.jpg'),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
+      home: SignUpScreen(),
+    );
+  }
+}
+
+class SignUpScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/b2.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 30),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Hi, Welcome Back! 👋',
+                    'Create an account',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black, // Text in black
+                      color: Colors.black,
                     ),
                   ),
                   SizedBox(height: 10),
+                  Text(
+                    'Connect with your friends today!',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 30),
                   TextField(
-                    style: TextStyle(color: Colors.black),
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  TextField(
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      labelStyle: TextStyle(color: Colors.black),
-                      hintText: 'example@gmail.com',
-                      hintStyle: TextStyle(color: Colors.black54),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
+                      border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 15),
                   TextField(
-                    style: TextStyle(color: Colors.black),
                     obscureText: true,
                     decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: TextStyle(color: Colors.black),
-                      hintText: 'Enter Your Password',
-                      hintStyle: TextStyle(color: Colors.black54),
-                      suffixIcon: Icon(Icons.visibility,
-                          color: Colors.black), // Black icon
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.black), // Black border
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
+                      labelText: 'Enter Your Password',
+                      border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                            color: const Color.fromARGB(255, 255, 0, 0)),
-                      ),
+                  SizedBox(height: 15),
+                  TextField(
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: 'Confirm Your Password',
+                      border: OutlineInputBorder(),
+                      suffixIcon: Icon(Icons.visibility_off),
                     ),
-                  ),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: true,
-                        onChanged: (value) {},
-                        checkColor: Colors.black,
-                        activeColor: Colors.white,
-                        side: BorderSide(
-                          color: const Color.fromARGB(210, 0, 0, 0),
-                          width: 2,
-                        ),
-                      ),
-                      Text(
-                        'Remember Me',
-                        style: TextStyle(color: Colors.black),
-                      )
-                    ],
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   ElevatedButton(
                     onPressed: () {},
-                    child: Text('Log In'),
+                    child: Text('Sign Up'),
                     style: ElevatedButton.styleFrom(
                       padding:
                           EdgeInsets.symmetric(vertical: 8, horizontal: 120),
@@ -107,7 +96,7 @@ class LoginScreen extends StatelessWidget {
                       backgroundColor: const Color.fromARGB(255, 0, 76, 255),
                     ),
                   ),
-                  SizedBox(height: 120),
+                  SizedBox(height: 80),
                   Row(
                     children: <Widget>[
                       Expanded(
@@ -119,8 +108,11 @@ class LoginScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          "Or With",
-                          style: TextStyle(color: Colors.black), // Text style
+                          " Or ",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20), // Text style
                         ),
                       ),
                       Expanded(
@@ -201,14 +193,14 @@ class LoginScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have an account?     ",
+                        "Already have an account?     ",
                         style: TextStyle(color: Colors.black),
                       ),
                       GestureDetector(
                         onTap: () {},
                         child: SizedBox(
                           child: Text(
-                            'Sign Up',
+                            'Sign in',
                             style: TextStyle(
                               color: const Color.fromARGB(255, 43, 0, 73),
                               fontWeight: FontWeight.bold,
@@ -221,8 +213,8 @@ class LoginScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
