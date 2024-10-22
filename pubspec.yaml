@@ -43,4 +43,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/profiles/
+    - assets/icons/
+  
   
