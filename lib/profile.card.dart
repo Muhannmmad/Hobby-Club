@@ -36,13 +36,13 @@ class ProfileCard extends StatelessWidget {
                 children: [
                   Text(
                     "${user.firstName}, ${user.age}",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                     height: 80,
                   ),
@@ -58,7 +58,7 @@ class ProfileCard extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 user.city.toUpperCase(),
-                style: TextStyle(fontSize: 18, color: Colors.white),
+                style: const TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
           ],

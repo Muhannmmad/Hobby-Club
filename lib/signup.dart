@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hoppy_club/login.dart';
 
 class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +75,6 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {},
-                    child: const Text('Sign Up'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 120),
@@ -82,6 +83,7 @@ class SignUpScreen extends StatelessWidget {
                       foregroundColor: Colors.white,
                       backgroundColor: const Color.fromARGB(255, 0, 76, 255),
                     ),
+                    child: const Text('Sign Up'),
                   ),
                   const SizedBox(height: 80),
                   const Row(

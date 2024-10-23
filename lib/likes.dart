@@ -16,21 +16,28 @@ class ButtonStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: const Color.fromARGB(255, 137, 20, 20),
       appBar: AppBar(
-        title: Text("Glass Effect Button Stack"),
+        title: const Text("Glass Effect Button Stack"),
         backgroundColor: Colors.purple[400],
       ),
       body: Center(
-        child: ClipPath(
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            bottomLeft: Radius.circular(30),
+          ),
           child: Container(
             width: 60,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(30),
-              boxShadow: [
+              color: Colors.grey.withOpacity(0.1),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(30),
+                bottomLeft: Radius.circular(30),
+              ),
+              boxShadow: const [
                 BoxShadow(
-                  color: Colors.black26,
+                  color: Colors.grey,
                   blurRadius: 30,
                   offset: Offset(0, 4),
                 ),
@@ -44,19 +51,19 @@ class ButtonStack extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.favorite),
+                      icon: const Icon(Icons.favorite),
                       color: Colors.white,
                       iconSize: 28,
                       onPressed: () {},
                     ),
                     IconButton(
-                      icon: Icon(Icons.chat_bubble_rounded),
+                      icon: const Icon(Icons.chat_bubble_rounded),
                       color: Colors.white,
                       iconSize: 28,
                       onPressed: () {},
                     ),
                     IconButton(
-                      icon: Icon(Icons.close),
+                      icon: const Icon(Icons.close),
                       color: Colors.white,
                       iconSize: 28,
                       onPressed: () {},

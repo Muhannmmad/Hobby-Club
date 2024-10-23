@@ -19,7 +19,7 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Hi, Welcome Back! 👋',
                     style: TextStyle(
                       fontSize: 24,
@@ -27,8 +27,8 @@ class LoginScreen extends StatelessWidget {
                       color: Colors.black, // Text in black
                     ),
                   ),
-                  SizedBox(height: 10),
-                  TextField(
+                  const SizedBox(height: 10),
+                  const TextField(
                     style: TextStyle(color: Colors.black),
                     decoration: InputDecoration(
                       labelText: 'Email',
@@ -43,8 +43,8 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
-                  TextField(
+                  const SizedBox(height: 10),
+                  const TextField(
                     style: TextStyle(color: Colors.black),
                     obscureText: true,
                     decoration: InputDecoration(
@@ -63,15 +63,14 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {},
-                      child: Text(
+                      child: const Text(
                         'Forgot Password?',
-                        style: TextStyle(
-                            color: const Color.fromARGB(255, 255, 0, 0)),
+                        style: TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
                       ),
                     ),
                   ),
@@ -82,34 +81,34 @@ class LoginScreen extends StatelessWidget {
                         onChanged: (value) {},
                         checkColor: Colors.black,
                         activeColor: Colors.white,
-                        side: BorderSide(
-                          color: const Color.fromARGB(210, 0, 0, 0),
+                        side: const BorderSide(
+                          color: Color.fromARGB(210, 0, 0, 0),
                           width: 2,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Remember Me',
                         style: TextStyle(color: Colors.black),
                       )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   ElevatedButton(
                     onPressed: () {},
-                    child: Text('Log In'),
+                    child: const Text('Log In'),
                     style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 120),
-                      textStyle:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 120),
+                      textStyle: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                       foregroundColor: Colors.white,
                       backgroundColor: const Color.fromARGB(255, 0, 76, 255),
                     ),
                   ),
-                  SizedBox(height: 120),
-                  Row(
+                  const SizedBox(height: 120),
+                  const Row(
                     children: <Widget>[
                       Expanded(
                         child: Divider(
@@ -118,7 +117,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
                           "Or With",
                           style: TextStyle(color: Colors.black), // Text style
@@ -132,15 +131,15 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 40,
                   ),
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 30),
-                      backgroundColor: Color(0xFF1877F2),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 30),
+                      backgroundColor: const Color(0xFF1877F2),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -153,8 +152,8 @@ class LoginScreen extends StatelessWidget {
                           height: 40.0,
                           width: 40.0,
                         ),
-                        SizedBox(width: 10),
-                        Text(
+                        const SizedBox(width: 10),
+                        const Text(
                           'Login with Facebook',
                           style: TextStyle(
                             color: Colors.white,
@@ -165,12 +164,12 @@ class LoginScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 16, horizontal: 48),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 48),
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -185,8 +184,8 @@ class LoginScreen extends StatelessWidget {
                           height: 24.0,
                           width: 24.0,
                         ),
-                        SizedBox(width: 10),
-                        Text(
+                        const SizedBox(width: 10),
+                        const Text(
                           'Login with Google',
                           style: TextStyle(
                             color: Colors.black,
@@ -197,8 +196,8 @@ class LoginScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 30),
-                  Row(
+                  const SizedBox(height: 30),
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
@@ -230,15 +229,15 @@ class SignupButton extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SignUpScreen(),
+            builder: (context) => const SignUpScreen(),
           ),
         );
       },
-      child: SizedBox(
+      child: const SizedBox(
         child: Text(
           'Sign Up',
           style: TextStyle(
-            color: const Color.fromARGB(255, 43, 0, 73),
+            color: Color.fromARGB(255, 43, 0, 73),
             fontWeight: FontWeight.bold,
           ),
         ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
 import 'package:hoppy_club/chatscreen.dart';
-import 'package:hoppy_club/detailed.profile.dart';
 import 'package:hoppy_club/edit.profile.screen.dart';
 import 'package:hoppy_club/profile.card.dart';
+import 'package:hoppy_club/signup.dart';
 import 'user.dart';
 
 void main() {
@@ -60,7 +60,7 @@ class SwipeScreenState extends State<SwipeScreen> {
           Column(
             children: [
               AppBar(
-                title: Text('New Matches'),
+                title: const Text('New Matches'),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
               ),
@@ -94,6 +94,12 @@ class SwipeScreenState extends State<SwipeScreen> {
       selectedIndex = index;
     });
     if (index == 0) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SignUpScreen(),
+        ),
+      );
     } else if (index == 1) {
     } else if (index == 2) {
     } else if (index == 3) {
