@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/bottom.navigation.dart';
+import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
 import 'package:hoppy_club/user.dart';
 
 class DetailedProfile extends StatelessWidget {

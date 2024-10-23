@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/bottom.navigation.dart';
+import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
 import 'package:hoppy_club/detailed.profile.dart';
 import 'package:hoppy_club/user.dart';
 

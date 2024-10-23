@@ -205,31 +205,42 @@ class LoginScreen extends StatelessWidget {
                         "Don't have an account?     ",
                         style: TextStyle(color: Colors.black),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignUpScreen(),
-                            ),
-                          );
-                        },
-                        child: SizedBox(
-                          child: Text(
-                            'Sign Up',
-                            style: TextStyle(
-                              color: const Color.fromARGB(255, 43, 0, 73),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      )
+                      SignupButton()
                     ],
                   ),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class SignupButton extends StatelessWidget {
+  const SignupButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SignUpScreen(),
+          ),
+        );
+      },
+      child: SizedBox(
+        child: Text(
+          'Sign Up',
+          style: TextStyle(
+            color: const Color.fromARGB(255, 43, 0, 73),
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

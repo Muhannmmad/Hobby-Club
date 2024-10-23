@@ -1,20 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/login.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SignUpScreen(),
-    );
-  }
-}
-
 class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -22,7 +8,7 @@ class SignUpScreen extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/b2.jpg'),
                 fit: BoxFit.cover,
@@ -31,11 +17,11 @@ class SignUpScreen extends StatelessWidget {
           ),
           Center(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 30),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Create an account',
                     style: TextStyle(
                       fontSize: 28,
@@ -43,38 +29,38 @@ class SignUpScreen extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Text(
+                  const SizedBox(height: 10),
+                  const Text(
                     'Connect with your friends today!',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 30),
-                  TextField(
+                  const SizedBox(height: 30),
+                  const TextField(
                     decoration: InputDecoration(
                       labelText: 'Username',
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 15),
-                  TextField(
+                  const SizedBox(height: 15),
+                  const TextField(
                     decoration: InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 15),
-                  TextField(
+                  const SizedBox(height: 15),
+                  const TextField(
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: 'Enter Your Password',
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 15),
-                  TextField(
+                  const SizedBox(height: 15),
+                  const TextField(
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: 'Confirm Your Password',
@@ -82,23 +68,23 @@ class SignUpScreen extends StatelessWidget {
                       suffixIcon: Icon(Icons.visibility_off),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   ElevatedButton(
                     onPressed: () {},
-                    child: Text('Sign Up'),
+                    child: const Text('Sign Up'),
                     style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 120),
-                      textStyle:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 120),
+                      textStyle: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                       foregroundColor: Colors.white,
                       backgroundColor: const Color.fromARGB(255, 0, 76, 255),
                     ),
                   ),
-                  SizedBox(height: 80),
-                  Row(
+                  const SizedBox(height: 80),
+                  const Row(
                     children: <Widget>[
                       Expanded(
                         child: Divider(
@@ -107,7 +93,7 @@ class SignUpScreen extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
                           " Or ",
                           style: TextStyle(
@@ -124,15 +110,15 @@ class SignUpScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 40,
                   ),
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 30),
-                      backgroundColor: Color(0xFF1877F2),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 30),
+                      backgroundColor: const Color(0xFF1877F2),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -145,8 +131,8 @@ class SignUpScreen extends StatelessWidget {
                           height: 40.0,
                           width: 40.0,
                         ),
-                        SizedBox(width: 10),
-                        Text(
+                        const SizedBox(width: 10),
+                        const Text(
                           'Login with Facebook',
                           style: TextStyle(
                             color: Colors.white,
@@ -157,12 +143,12 @@ class SignUpScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 16, horizontal: 48),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 48),
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -177,8 +163,8 @@ class SignUpScreen extends StatelessWidget {
                           height: 24.0,
                           width: 24.0,
                         ),
-                        SizedBox(width: 10),
-                        Text(
+                        const SizedBox(width: 10),
+                        const Text(
                           'Login with Google',
                           style: TextStyle(
                             color: Colors.black,
@@ -189,11 +175,11 @@ class SignUpScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         "Already have an account?     ",
                         style: TextStyle(color: Colors.black),
                       ),
@@ -206,11 +192,11 @@ class SignUpScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        child: SizedBox(
+                        child: const SizedBox(
                           child: Text(
                             'Sign in',
                             style: TextStyle(
-                              color: const Color.fromARGB(255, 43, 0, 73),
+                              color: Color.fromARGB(255, 43, 0, 73),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
