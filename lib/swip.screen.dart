@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/bottom.navigation.dart';
+import 'package:hoppy_club/chatscreen.dart';
+import 'package:hoppy_club/detailed.profile.dart';
+import 'package:hoppy_club/edit.profile.screen.dart';
 import 'package:hoppy_club/profile.card.dart';
 import 'user.dart';
 
@@ -18,16 +22,15 @@ class MyApp extends StatelessWidget {
 
 class SwipeScreen extends StatefulWidget {
   @override
-  _SwipeScreenState createState() => _SwipeScreenState();
+  SwipeScreenState createState() => SwipeScreenState();
 }
 
-class _SwipeScreenState extends State<SwipeScreen> {
+class SwipeScreenState extends State<SwipeScreen> {
   List<User> userList = users;
   int currentIndex = 0;
-  int _selectedIndex = 0; // Track selected BottomNavigationBar item
+  int selectedIndex = 0;
 
-  // Swipe logic
-  void _swipeRight() {
+  void swipeRight() {
     setState(() {
       if (currentIndex < userList.length - 1) {
         currentIndex++;
@@ -35,18 +38,11 @@ class _SwipeScreenState extends State<SwipeScreen> {
     });
   }
 
-  void _swipeLeft() {
+  void swipeLeft() {
     setState(() {
       if (currentIndex > 0) {
         currentIndex--;
       }
-    });
-  }
-
-  // Handle BottomNavigationBar tap
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index; // Update the selected index on tap
     });
   }
 
@@ -72,9 +68,9 @@ class _SwipeScreenState extends State<SwipeScreen> {
                 child: GestureDetector(
                   onHorizontalDragEnd: (DragEndDetails details) {
                     if (details.primaryVelocity! > 0) {
-                      _swipeLeft();
+                      swipeLeft();
                     } else if (details.primaryVelocity! < 0) {
-                      _swipeRight();
+                      swipeRight();
                     }
                   },
                   child: Center(
@@ -86,36 +82,34 @@ class _SwipeScreenState extends State<SwipeScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '',
-          ),
-        ],
-        currentIndex: _selectedIndex, // Bind the selected index
-        selectedItemColor: Colors.purple[400],
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped, // Handle the tap event
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: selectedIndex,
+        onItemTapped: onItemTapped,
       ),
     );
+  }
+
+  void onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+    if (index == 0) {
+    } else if (index == 1) {
+    } else if (index == 2) {
+    } else if (index == 3) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatScreen(),
+        ),
+      );
+    } else if (index == 4) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EditProfileScreen(),
+        ),
+      );
+    }
   }
 }

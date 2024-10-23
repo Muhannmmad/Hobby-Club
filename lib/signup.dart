@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/login.dart';
 
 void main() {
   runApp(MyApp());
@@ -197,7 +198,14 @@ class SignUpScreen extends StatelessWidget {
                         style: TextStyle(color: Colors.black),
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
+                            ),
+                          );
+                        },
                         child: SizedBox(
                           child: Text(
                             'Sign in',

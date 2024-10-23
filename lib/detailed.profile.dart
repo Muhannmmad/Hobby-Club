@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/bottom.navigation.dart';
 import 'package:hoppy_club/user.dart';
 
 class DetailedProfile extends StatelessWidget {
@@ -12,28 +13,67 @@ class DetailedProfile extends StatelessWidget {
       appBar: AppBar(
         title: Text('${user.firstName} ${user.lastName}'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset(user.profileImage,
-              fit: BoxFit.cover, height: 500, width: double.infinity),
-          SizedBox(height: 20),
-          Text(
-            '${user.firstName}, ${user.age}',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            'City: ${user.city}',
-            style: TextStyle(fontSize: 20),
-          ),
-          SizedBox(height: 20),
-          Text('About: ${user.about}', style: TextStyle(fontSize: 16)),
-          SizedBox(height: 20),
-          Text(
-            'Hobbies: ${user.hobbies.join(', ')}',
-            style: TextStyle(fontSize: 16),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.asset(
+                user.profileImage,
+                fit: BoxFit.cover,
+                height: 460,
+                width: double.infinity,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                color: const Color.fromARGB(255, 229, 211, 19),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${user.firstName}, ${user.age}',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'City: ${user.city}',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'About: ${user.about}',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Hobbies: ${user.hobbies.join(', ')}',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: 0,
+        onItemTapped: (index) {},
       ),
     );
   }
