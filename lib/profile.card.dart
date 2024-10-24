@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/detailed.profile.dart';
 import 'package:hoppy_club/user.dart';
+import 'package:hoppy_club/likesRemoveChat.dart';
 
 class ProfileCard extends StatelessWidget {
   final User user;
@@ -29,6 +30,16 @@ class ProfileCard extends StatelessWidget {
               fit: BoxFit.cover,
               height: 800,
               width: double.infinity,
+            ),
+            Positioned(
+              right: 0,
+              top: MediaQuery.of(context).size.height * 0.3,
+              child: ClipRRectButton(
+                onFavoritePressed: () {},
+                onChatPressed: () {},
+                onClosePressed: () {},
+                buttonSize: 60,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),

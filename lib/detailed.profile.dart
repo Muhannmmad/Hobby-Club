@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
+import 'package:hoppy_club/likesRemoveChat.dart';
 import 'package:hoppy_club/user.dart';
 
 class DetailedProfile extends StatelessWidget {
@@ -17,14 +17,28 @@ class DetailedProfile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                user.profileImage,
-                fit: BoxFit.cover,
-                height: 460,
-                width: double.infinity,
-              ),
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    user.profileImage,
+                    fit: BoxFit.cover,
+                    height: 700,
+                    width: double.infinity,
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  top: MediaQuery.of(context).size.height * 0.3,
+                  child: ClipRRectButton(
+                    onFavoritePressed: () {},
+                    onChatPressed: () {},
+                    onClosePressed: () {},
+                    buttonSize: 60,
+                  ),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),

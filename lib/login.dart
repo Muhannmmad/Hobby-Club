@@ -15,7 +15,6 @@ class LoginScreen extends StatelessWidget {
       home: Scaffold(
         body: Stack(
           children: [
-            Image.asset('assets/b1.jpg'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50),
               child: Column(

@@ -15,19 +15,6 @@ class EditProfileScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color.fromARGB(255, 194, 84, 241),
-              Color.fromARGB(255, 218, 169, 237),
-              Color.fromARGB(255, 236, 211, 112),
-              Color.fromARGB(255, 235, 92, 76),
-            ],
-            stops: [0.1, 0.4, 0.7, 1],
-          ),
-        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(

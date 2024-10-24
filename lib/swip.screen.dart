@@ -48,12 +48,6 @@ class SwipeScreenState extends State<SwipeScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/b3.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
           Column(
             children: [
               AppBar(

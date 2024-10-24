@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/edit.profile.screen.dart';
-import 'package:hoppy_club/homeScreen.dart';
 import 'package:hoppy_club/login.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -11,14 +10,6 @@ class SignUpScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/b2.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 30),

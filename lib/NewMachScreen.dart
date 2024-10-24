@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/detailed.profile.dart';
 import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
+import 'package:hoppy_club/likesRemoveChat.dart';
 import 'package:hoppy_club/user.dart';
+import 'dart:ui';
 
 class Favorites extends StatelessWidget {
   @override
@@ -56,16 +58,37 @@ class UserCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(15.0),
-                topRight: Radius.circular(15.0),
-              ),
-              child: Image.asset(
-                user.profileImage,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(15.0),
+                    topRight: Radius.circular(15.0),
+                  ),
+                  child: Image.asset(
+                    user.profileImage,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  top: 15,
+                  bottom: 15,
+                  child: ClipRRectButton(
+                    onFavoritePressed: () {
+                      // Handle favorite action
+                    },
+                    onChatPressed: () {
+                      // Handle chat action
+                    },
+                    onClosePressed: () {
+                      // Handle close action
+                    },
+                    buttonSize: 30, // Smaller button size for Favorites screen
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -103,7 +126,7 @@ class UserCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),

@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => GroupPage(hobby: hobbies[index])),
+                    builder: (context) => GroupsPage(hobby: hobbies[index])),
               );
             },
             child: Card(
@@ -156,10 +156,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class GroupPage extends StatelessWidget {
+class GroupsPage extends StatelessWidget {
   final Hobby hobby;
 
-  GroupPage({required this.hobby});
+  GroupsPage({required this.hobby});
 
   @override
   Widget build(BuildContext context) {
@@ -169,8 +169,6 @@ class GroupPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(hobby.image, width: 150, height: 150),
-            const SizedBox(height: 20),
             Text(hobby.name, style: const TextStyle(fontSize: 24)),
           ],
         ),
