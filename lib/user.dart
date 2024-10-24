@@ -16,7 +16,7 @@ class User {
     required this.about,
     required this.profileImage,
     required this.hobbies,
-    this.isOnline = false,
+    this.isOnline = true,
   });
 }
 
@@ -40,7 +40,7 @@ List<User> users = [
     about: 'Musician and tech enthusiast. Always up for a good conversation.',
     profileImage: 'assets/profiles/7.png',
     hobbies: ['Music', 'Technology', 'Gaming'],
-    isOnline: false,
+    isOnline: true,
   ),
   User(
     firstName: 'Julia',
@@ -71,7 +71,7 @@ List<User> users = [
     about: 'Passionate about photography and art. Looking to meet creatives!',
     profileImage: 'assets/profiles/1.png',
     hobbies: ['Photography', 'Art', 'Design'],
-    isOnline: true,
+    isOnline: false,
   ),
   User(
     firstName: 'Leon',
