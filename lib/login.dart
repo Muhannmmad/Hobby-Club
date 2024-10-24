@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/edit.profile.screen.dart';
+import 'package:hoppy_club/homeScreen.dart';
 import 'package:hoppy_club/signup.dart';
 
 void main() {
@@ -96,7 +98,14 @@ class LoginScreen extends StatelessWidget {
                     height: 10,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditProfileScreen(),
+                        ),
+                      );
+                    },
                     child: const Text('Log In'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(

@@ -36,10 +36,7 @@ class NewMachesScreen extends StatelessWidget {
           },
         ),
       ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: 0,
-        onItemTapped: (index) {},
-      ),
+      bottomNavigationBar: BottomNavBar(selectedIndex: 1),
     );
   }
 }
@@ -114,10 +111,4 @@ class UserCard extends StatelessWidget {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: NewMachesScreen(),
-  ));
 }

@@ -71,10 +71,6 @@ class DetailedProfile extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: 0,
-        onItemTapped: (index) {},
-      ),
     );
   }
 }

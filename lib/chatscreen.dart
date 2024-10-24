@@ -24,10 +24,7 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: 0,
-        onItemTapped: (index) {},
-      ),
+      bottomNavigationBar: BottomNavBar(selectedIndex: 3),
     );
   }
 
@@ -131,10 +128,4 @@ class ChatScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: ChatScreen(),
-  ));
 }

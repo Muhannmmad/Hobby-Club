@@ -1,7 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/NewMachScreen.dart';
+import 'package:hoppy_club/chatscreen.dart';
+import 'package:hoppy_club/edit.profile.screen.dart';
+import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
 import 'package:hoppy_club/hobby.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int selectedIndex = 0;
+
+  void onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+
+    if (index == 0) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => NewMachesScreen()),
+      );
+    } else if (index == 2) {
+      // Add the corresponding screen here.
+    } else if (index == 3) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ChatScreen()),
+      );
+    } else if (index == 4) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => EditProfileScreen()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,8 +79,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          buildHobbyList(
-              indoorHobbies, context), // Uses data from hobby_data.dart
+          buildHobbyList(indoorHobbies, context),
           const SizedBox(height: 20),
           Center(
             child: Container(
@@ -58,10 +98,10 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          buildHobbyList(
-              outdoorHobbies, context), // Uses data from hobby_data.dart
+          buildHobbyList(outdoorHobbies, context),
         ],
       ),
+      bottomNavigationBar: BottomNavBar(selectedIndex: 0),
     );
   }
 

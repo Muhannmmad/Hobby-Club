@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  video_player: ^2.9.2
     
   flutter_launcher_icons: ^0.14.1
   
@@ -46,5 +48,6 @@ flutter:
     - assets/profiles/
     - assets/icons/
     - assets/hobbies/
+    - assets/videos/
   
   

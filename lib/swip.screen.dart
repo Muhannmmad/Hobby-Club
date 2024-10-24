@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/NewMachScreen.dart';
 import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
-import 'package:hoppy_club/chatscreen.dart';
-import 'package:hoppy_club/edit.profile.screen.dart';
-import 'package:hoppy_club/homeScreen.dart';
 import 'package:hoppy_club/profile.card.dart';
 import 'user.dart';
 
@@ -83,46 +79,7 @@ class SwipeScreenState extends State<SwipeScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: selectedIndex,
-        onItemTapped: onItemTapped,
-      ),
+      bottomNavigationBar: BottomNavBar(selectedIndex: 2),
     );
-  }
-
-  void onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-    if (index == 0) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomeScreen(),
-        ),
-      );
-    } else if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NewMachesScreen(),
-        ),
-      );
-    } else if (index == 2) {
-    } else if (index == 3) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatScreen(),
-        ),
-      );
-    } else if (index == 4) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => EditProfileScreen(),
-        ),
-      );
-    }
   }
 }

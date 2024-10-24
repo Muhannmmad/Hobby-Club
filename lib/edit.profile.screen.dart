@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/homeScreen.dart';
 
 class EditProfileScreen extends StatelessWidget {
   @override
@@ -56,7 +57,14 @@ class EditProfileScreen extends StatelessWidget {
               buildTextField(label: 'About me', isMultiLine: true),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeScreen(),
+                    ),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
@@ -79,13 +87,11 @@ class EditProfileScreen extends StatelessWidget {
     );
   }
 
-  // Updated buildTextField to handle multi-line text fields
   Widget buildTextField({required String label, bool isMultiLine = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextField(
-        maxLines:
-            isMultiLine ? 5 : 1, // Makes "About me" double height (5 lines)
+        maxLines: isMultiLine ? 5 : 1,
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(
@@ -97,11 +103,4 @@ class EditProfileScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: EditProfileScreen(),
-  ));
 }

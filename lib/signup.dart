@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/edit.profile.screen.dart';
+import 'package:hoppy_club/homeScreen.dart';
 import 'package:hoppy_club/login.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -74,7 +76,14 @@ class SignUpScreen extends StatelessWidget {
                     height: 10,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditProfileScreen(),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 120),
@@ -101,13 +110,13 @@ class SignUpScreen extends StatelessWidget {
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
-                              fontSize: 20), // Text style
+                              fontSize: 20),
                         ),
                       ),
                       Expanded(
                         child: Divider(
-                          color: Colors.black, // Color of the divider
-                          thickness: 1, // Thickness of the divider
+                          color: Colors.black,
+                          thickness: 1,
                         ),
                       ),
                     ],
@@ -196,7 +205,7 @@ class SignUpScreen extends StatelessWidget {
                         },
                         child: const SizedBox(
                           child: Text(
-                            'Sign in',
+                            'Log in',
                             style: TextStyle(
                               color: Color.fromARGB(255, 43, 0, 73),
                               fontWeight: FontWeight.bold,
