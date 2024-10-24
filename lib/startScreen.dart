@@ -16,7 +16,9 @@ class StartScreenState extends State<StartScreen> {
     controller = VideoPlayerController.asset('assets/videos/hobby.mp4')
       ..initialize().then((_) {
         controller.setLooping(true);
+        controller.setVolume(0.0);
         controller.play();
+
         setState(() {});
       });
   }
