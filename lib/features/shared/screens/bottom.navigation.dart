@@ -46,35 +46,57 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
+    return BottomAppBar(
+      shape: const CircularNotchedRectangle(),
+      notchMargin: 8.0,
+      child: Container(
+        height: 70,
+        decoration: BoxDecoration(
+          color: Colors.purple[100],
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 8,
+              offset: Offset(0, 3), // Position of shadow
+            ),
+          ],
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.favorite),
-          label: 'Favorites',
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            _buildNavItem(Icons.home, 'Home', 0, context),
+            _buildNavItem(Icons.favorite, 'Favorites', 1, context),
+            _buildNavItem(
+                Icons.message, 'Messages', 3, context), // Updated this line
+            _buildNavItem(Icons.search, 'Search', 2, context),
+            _buildNavItem(Icons.person, 'Profile', 4, context),
+          ],
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: 'Search',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.message),
-          label: 'Messages',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
-      ],
-      currentIndex: selectedIndex,
-      selectedItemColor: Colors.purple[400],
-      unselectedItemColor: Colors.grey,
-      onTap: (index) => onItemTapped(context, index),
-      showSelectedLabels: true,
-      showUnselectedLabels: true,
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+      IconData icon, String label, int index, BuildContext context) {
+    return GestureDetector(
+      onTap: () => onItemTapped(context, index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: selectedIndex == index ? Colors.purple[400] : Colors.grey,
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              color: selectedIndex == index ? Colors.purple[400] : Colors.grey,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
