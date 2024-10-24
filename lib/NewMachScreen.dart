@@ -3,12 +3,12 @@ import 'package:hoppy_club/detailed.profile.dart';
 import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
 import 'package:hoppy_club/user.dart';
 
-class NewMachesScreen extends StatelessWidget {
+class Favorites extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Matches'),
+        title: const Text('Favorites'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

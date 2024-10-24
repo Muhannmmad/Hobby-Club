@@ -133,9 +133,3 @@ class StartScreenState extends State<StartScreen> {
     );
   }
 }
-
-void main() {
-  runApp(MaterialApp(
-    home: StartScreen(),
-  ));
-}

@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (index == 1) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => NewMachesScreen()),
+        MaterialPageRoute(builder: (context) => Favorites()),
       );
     } else if (index == 2) {
       // Add the corresponding screen here.
