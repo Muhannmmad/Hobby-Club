@@ -29,7 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
         MaterialPageRoute(builder: (context) => Favorites()),
       );
     } else if (index == 2) {
-      // Add the corresponding screen here.
     } else if (index == 3) {
       Navigator.push(
         context,
@@ -51,7 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const SizedBox(height: 20),
           Center(
-            child: Image.asset('assets/rotat.gif', width: 100, height: 100),
+            child: Image.asset('assets/icons/3dgifmaker57572.gif',
+                width: 100, height: 100),
           ),
           const SizedBox(height: 10),
           const Center(

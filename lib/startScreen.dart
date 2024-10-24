@@ -13,7 +13,7 @@ class StartScreenState extends State<StartScreen> {
   @override
   void initState() {
     super.initState();
-    controller = VideoPlayerController.asset('assets/videos/hobby.mp4')
+    controller = VideoPlayerController.asset('assets/videos/startscreen.mp4')
       ..initialize().then((_) {
         controller.setLooping(true);
         controller.setVolume(0.0);
@@ -59,7 +59,7 @@ class StartScreenState extends State<StartScreen> {
                       width: 100,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.asset('assets/icons/Group 3052.png',
+                        child: Image.asset('assets/icons/3dgifmaker98011.gif',
                             fit: BoxFit.cover),
                       ),
                     ),
@@ -67,7 +67,7 @@ class StartScreenState extends State<StartScreen> {
                   const Text(
                     'Hobby Club',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
@@ -80,7 +80,7 @@ class StartScreenState extends State<StartScreen> {
                         Text(
                           "Let's meet new people around you",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -89,7 +89,7 @@ class StartScreenState extends State<StartScreen> {
                         Text(
                           "Let's chat, let's enjoy",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -121,7 +121,7 @@ class StartScreenState extends State<StartScreen> {
                       "Let's Start",
                       style: TextStyle(
                         fontSize: 20,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                     ),
                   ),
