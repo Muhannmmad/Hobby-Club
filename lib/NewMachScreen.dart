@@ -3,7 +3,6 @@ import 'package:hoppy_club/detailed.profile.dart';
 import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
 import 'package:hoppy_club/likesRemoveChat.dart';
 import 'package:hoppy_club/user.dart';
-import 'dart:ui';
 
 class Favorites extends StatelessWidget {
   @override
@@ -38,7 +37,7 @@ class Favorites extends StatelessWidget {
           },
         ),
       ),
-      bottomNavigationBar: BottomNavBar(selectedIndex: 1),
+      bottomNavigationBar: const BottomNavBar(selectedIndex: 1),
     );
   }
 }

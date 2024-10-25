@@ -45,7 +45,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Hobbies')),
+      appBar: AppBar(
+        title: const Text('Hobbies'),
+      ),
       body: ListView(
         children: [
           const SizedBox(height: 20),

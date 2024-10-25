@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/edit.profile.screen.dart';
 import 'package:hoppy_club/login.dart';
+import 'package:hoppy_club/signlLogos.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
@@ -11,11 +12,13 @@ class SignUpScreen extends StatelessWidget {
       body: Stack(
         children: [
           Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(30, 80, 30, 50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Image.asset('assets/icons/3dgifmaker98011.gif',
+                      width: 150, height: 150),
                   const Text(
                     'Create an account',
                     style: TextStyle(
@@ -85,7 +88,7 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     child: const Text('Sign Up'),
                   ),
-                  const SizedBox(height: 80),
+                  const SizedBox(height: 30),
                   const Row(
                     children: <Widget>[
                       Expanded(
@@ -113,70 +116,9 @@ class SignUpScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(
-                    height: 40,
+                    height: 20,
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 30),
-                      backgroundColor: const Color(0xFF1877F2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/facebook.png',
-                          height: 40.0,
-                          width: 40.0,
-                        ),
-                        const SizedBox(width: 10),
-                        const Text(
-                          'Login with Facebook',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 16, horizontal: 48),
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        side: BorderSide(color: Colors.grey.shade300, width: 1),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/google.png', // Path to your Google logo
-                          height: 24.0,
-                          width: 24.0,
-                        ),
-                        const SizedBox(width: 10),
-                        const Text(
-                          'Login with Google',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  IconScroller(),
                   const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

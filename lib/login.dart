@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/edit.profile.screen.dart';
+import 'package:hoppy_club/signlLogos.dart';
 import 'package:hoppy_club/signup.dart';
-
-void main() {
-  runApp(LoginScreen());
-}
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -15,10 +12,12 @@ class LoginScreen extends StatelessWidget {
         body: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
+              padding: const EdgeInsets.fromLTRB(30, 120, 30, 50),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Image.asset('assets/icons/3dgifmaker98011.gif',
+                      width: 150, height: 150),
                   const Text(
                     'Hi, Welcome Back! 👋',
                     style: TextStyle(
@@ -114,7 +113,7 @@ class LoginScreen extends StatelessWidget {
                       backgroundColor: const Color.fromARGB(255, 0, 76, 255),
                     ),
                   ),
-                  const SizedBox(height: 120),
+                  const SizedBox(height: 60),
                   const Row(
                     children: <Widget>[
                       Expanded(
@@ -127,82 +126,21 @@ class LoginScreen extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
                           "Or With",
-                          style: TextStyle(color: Colors.black), // Text style
+                          style: TextStyle(color: Colors.black),
                         ),
                       ),
                       Expanded(
                         child: Divider(
-                          color: Colors.black, // Color of the divider
-                          thickness: 1, // Thickness of the divider
+                          color: Colors.black,
+                          thickness: 1,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 40,
+                  SizedBox(
+                    height: 20,
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 30),
-                      backgroundColor: const Color(0xFF1877F2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/facebook.png',
-                          height: 40.0,
-                          width: 40.0,
-                        ),
-                        const SizedBox(width: 10),
-                        const Text(
-                          'Login with Facebook',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 16, horizontal: 48),
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        side: BorderSide(color: Colors.grey.shade300, width: 1),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/google.png', // Path to your Google logo
-                          height: 24.0,
-                          width: 24.0,
-                        ),
-                        const SizedBox(width: 10),
-                        const Text(
-                          'Login with Google',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  IconScroller(),
                   const SizedBox(height: 30),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
