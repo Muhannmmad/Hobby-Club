@@ -4,6 +4,8 @@ import 'package:hoppy_club/signup.dart';
 import 'package:video_player/video_player.dart';
 
 class StartScreen extends StatefulWidget {
+  const StartScreen({super.key});
+
   @override
   StartScreenState createState() => StartScreenState();
 }
@@ -55,7 +57,7 @@ class StartScreenState extends State<StartScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Container(
+                    child: SizedBox(
                       height: 100,
                       width: 100,
                       child: ClipRRect(
@@ -100,7 +102,7 @@ class StartScreenState extends State<StartScreen> {
                     ),
                   ),
                   const SizedBox(height: 50),
-                  Spacer(),
+                  const Spacer(),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -114,7 +116,7 @@ class StartScreenState extends State<StartScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SignUpScreen(),
+                          builder: (context) => const SignUpScreen(),
                         ),
                       );
                     },

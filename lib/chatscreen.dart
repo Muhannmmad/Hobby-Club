@@ -4,6 +4,8 @@ import 'package:hoppy_club/detailed.profile.dart';
 import 'package:hoppy_club/user.dart';
 
 class ChatScreen extends StatelessWidget {
+  const ChatScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +26,7 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(selectedIndex: 3),
+      bottomNavigationBar: const BottomNavBar(selectedIndex: 3),
     );
   }
 
@@ -35,7 +37,7 @@ class ChatScreen extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: users.length,
-        separatorBuilder: (context, index) => SizedBox(width: 16),
+        separatorBuilder: (context, index) => const SizedBox(width: 16),
         itemBuilder: (context, index) {
           final user = users[index];
           return GestureDetector(
@@ -57,7 +59,7 @@ class ChatScreen extends StatelessWidget {
                       radius: 40,
                     ),
                     if (user.isOnline)
-                      Positioned(
+                      const Positioned(
                         bottom: 0,
                         right: -8,
                         child: CircleAvatar(
@@ -67,10 +69,10 @@ class ChatScreen extends StatelessWidget {
                       ),
                   ],
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Text(
                   user.firstName,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -99,7 +101,7 @@ class ChatScreen extends StatelessWidget {
               radius: 25,
             ),
             if (user.isOnline)
-              Positioned(
+              const Positioned(
                 bottom: -6,
                 right: -7,
                 child: CircleAvatar(
@@ -111,14 +113,14 @@ class ChatScreen extends StatelessWidget {
         ),
         title: Text(
           user.firstName,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(
+        subtitle: const Text(
           'tomorrow we will meet again I will call you and arrange',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        trailing: Column(
+        trailing: const Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text('7:00 pm'),

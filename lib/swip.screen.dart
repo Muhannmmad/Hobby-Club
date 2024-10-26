@@ -8,6 +8,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,6 +20,8 @@ class MyApp extends StatelessWidget {
 }
 
 class SwipeScreen extends StatefulWidget {
+  const SwipeScreen({super.key});
+
   @override
   SwipeScreenState createState() => SwipeScreenState();
 }
@@ -73,7 +77,7 @@ class SwipeScreenState extends State<SwipeScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(selectedIndex: 2),
+      bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
     );
   }
 }

@@ -6,6 +6,8 @@ import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
 import 'package:hoppy_club/hobby.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -103,12 +105,12 @@ class _HomeScreenState extends State<HomeScreen> {
           buildHobbyList(outdoorHobbies, context),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: const BottomNavBar(selectedIndex: 0),
     );
   }
 
   Widget buildHobbyList(List<Hobby> hobbies, BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 220,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -161,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
 class GroupsPage extends StatelessWidget {
   final Hobby hobby;
 
-  GroupsPage({required this.hobby});
+  const GroupsPage({super.key, required this.hobby});
 
   @override
   Widget build(BuildContext context) {

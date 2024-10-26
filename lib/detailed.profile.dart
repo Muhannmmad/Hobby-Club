@@ -5,7 +5,7 @@ import 'package:hoppy_club/user.dart';
 class DetailedProfile extends StatelessWidget {
   final User user;
 
-  DetailedProfile({required this.user});
+  const DetailedProfile({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -55,27 +55,27 @@ class DetailedProfile extends StatelessWidget {
                     children: [
                       Text(
                         '${user.firstName}, ${user.age}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
                         'City: ${user.city}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Text(
                         'About: ${user.about}',
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Text(
                         'Hobbies: ${user.hobbies.join(', ')}',
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ],
                   ),

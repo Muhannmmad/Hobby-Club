@@ -9,12 +9,12 @@ class ClipRRectButton extends StatelessWidget {
   final double buttonSize;
 
   const ClipRRectButton({
-    Key? key,
+    super.key,
     required this.onFavoritePressed,
     required this.onChatPressed,
     required this.onClosePressed,
     this.buttonSize = 60,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

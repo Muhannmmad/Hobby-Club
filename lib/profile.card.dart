@@ -6,7 +6,7 @@ import 'package:hoppy_club/likesRemoveChat.dart';
 class ProfileCard extends StatelessWidget {
   final User user;
 
-  ProfileCard({required this.user});
+  const ProfileCard({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {

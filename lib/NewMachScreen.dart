@@ -5,6 +5,8 @@ import 'package:hoppy_club/likesRemoveChat.dart';
 import 'package:hoppy_club/user.dart';
 
 class Favorites extends StatelessWidget {
+  const Favorites({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +47,7 @@ class Favorites extends StatelessWidget {
 class UserCard extends StatelessWidget {
   final User user;
 
-  UserCard({required this.user});
+  const UserCard({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {

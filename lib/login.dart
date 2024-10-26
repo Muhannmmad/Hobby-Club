@@ -4,6 +4,8 @@ import 'package:hoppy_club/signlLogos.dart';
 import 'package:hoppy_club/signup.dart';
 
 class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -103,7 +105,6 @@ class LoginScreen extends StatelessWidget {
                         ),
                       );
                     },
-                    child: const Text('Log In'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 120),
@@ -112,6 +113,7 @@ class LoginScreen extends StatelessWidget {
                       foregroundColor: Colors.white,
                       backgroundColor: const Color.fromARGB(255, 0, 76, 255),
                     ),
+                    child: const Text('Log In'),
                   ),
                   const SizedBox(height: 60),
                   const Row(
@@ -137,7 +139,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   IconScroller(),

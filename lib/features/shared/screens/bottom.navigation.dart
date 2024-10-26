@@ -10,9 +10,9 @@ class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
 
   const BottomNavBar({
-    Key? key,
+    super.key,
     required this.selectedIndex,
-  }) : super(key: key);
+  });
 
   void onItemTapped(BuildContext context, int index) {
     if (index == selectedIndex) return;

@@ -13,7 +13,7 @@ class SignUpScreen extends StatelessWidget {
         children: [
           Center(
             child: Container(
-              padding: EdgeInsets.fromLTRB(30, 80, 30, 50),
+              padding: const EdgeInsets.fromLTRB(30, 80, 30, 50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

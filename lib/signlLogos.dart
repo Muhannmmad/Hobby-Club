@@ -8,6 +8,8 @@ class IconScroller extends StatelessWidget {
     'assets/icons/whatsapp-logo-4456.png',
   ];
 
+  IconScroller({super.key});
+
   void handleTap(BuildContext context, int index) {
     switch (index) {
       case 0:
@@ -40,13 +42,13 @@ class IconScroller extends StatelessWidget {
                       color: Colors.black.withOpacity(0.2),
                       spreadRadius: 2,
                       blurRadius: 6,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
                       spreadRadius: 2,
                       blurRadius: 6,
-                      offset: Offset(0, -3),
+                      offset: const Offset(0, -3),
                     ),
                   ],
                 ),
