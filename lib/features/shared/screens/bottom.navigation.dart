@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/NewMachScreen.dart';
 import 'package:hoppy_club/chatscreen.dart';
+import 'package:hoppy_club/config.dart';
 import 'package:hoppy_club/edit.profile.screen.dart';
 import 'package:hoppy_club/homeScreen.dart';
 import 'package:hoppy_club/swip.screen.dart';
@@ -52,11 +53,11 @@ class BottomNavBar extends StatelessWidget {
       child: Container(
         height: 70,
         decoration: BoxDecoration(
-          color: Colors.purple[100],
+          color: darkpurble,
           borderRadius: BorderRadius.circular(30),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
+              color: lightpurble,
               spreadRadius: 2,
               blurRadius: 8,
               offset: Offset(0, 3),
@@ -87,12 +88,12 @@ class BottomNavBar extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: selectedIndex == index ? Colors.purple[400] : Colors.grey,
+            color: selectedIndex == index ? Colors.purple[400] : Colors.white,
           ),
           Text(
             label,
             style: TextStyle(
-              color: selectedIndex == index ? Colors.purple[400] : Colors.grey,
+              color: selectedIndex == index ? Colors.purple[400] : Colors.white,
             ),
           ),
         ],

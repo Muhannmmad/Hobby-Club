@@ -47,7 +47,7 @@ class DetailedProfile extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                color: const Color.fromARGB(255, 229, 211, 19),
+                color: const Color.fromARGB(255, 226, 195, 231),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(

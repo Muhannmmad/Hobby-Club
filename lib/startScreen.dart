@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/config.dart';
 import 'package:hoppy_club/signup.dart';
 import 'package:video_player/video_player.dart';
 
@@ -80,7 +81,7 @@ class StartScreenState extends State<StartScreen> {
                         Text(
                           "Let's meet new people around you",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -89,7 +90,7 @@ class StartScreenState extends State<StartScreen> {
                         Text(
                           "Let's chat, let's enjoy",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -107,7 +108,7 @@ class StartScreenState extends State<StartScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      backgroundColor: Colors.blue,
+                      backgroundColor: darkpurble,
                     ),
                     onPressed: () {
                       Navigator.push(

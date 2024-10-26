@@ -100,11 +100,8 @@ class SignUpScreen extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          " Or ",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
+                          "Or With",
+                          style: TextStyle(color: Colors.black),
                         ),
                       ),
                       Expanded(
