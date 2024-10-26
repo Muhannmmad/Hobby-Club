@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/config.dart';
-import 'package:hoppy_club/signup.dart';
+import 'package:hoppy_club/config/config.dart';
+import 'package:hoppy_club/features/registeration/screens/signup.dart';
 import 'package:video_player/video_player.dart';
 
 class StartScreen extends StatefulWidget {
@@ -81,9 +81,9 @@ class StartScreenState extends State<StartScreen> {
                     child: Column(
                       children: [
                         Text(
-                          "Let's meet new people around you",
+                          "Meet new people around you",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -92,7 +92,7 @@ class StartScreenState extends State<StartScreen> {
                         Text(
                           "Let's chat, let's enjoy",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),

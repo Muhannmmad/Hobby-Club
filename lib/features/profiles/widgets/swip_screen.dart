@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
-import 'package:hoppy_club/profile_card.dart';
-import 'user.dart';
+import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
+import 'package:hoppy_club/features/profiles/widgets/profile_card.dart';
+import '../repository/user.dart';
 
 class SwipeScreen extends StatefulWidget {
   const SwipeScreen({super.key});

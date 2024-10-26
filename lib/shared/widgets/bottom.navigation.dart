@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/new_mach_screen.dart';
-import 'package:hoppy_club/chat_screen.dart';
-import 'package:hoppy_club/config.dart';
-import 'package:hoppy_club/edit_profile_screen.dart';
-import 'package:hoppy_club/home_screen.dart';
-import 'package:hoppy_club/swip_screen.dart';
+import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
+import 'package:hoppy_club/features/chat/screens/chat_screen.dart';
+import 'package:hoppy_club/config/config.dart';
+import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
+import 'package:hoppy_club/features/home/screens/home_screen.dart';
+import 'package:hoppy_club/features/profiles/widgets/swip_screen.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;

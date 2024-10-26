@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/edit_profile_screen.dart';
-import 'package:hoppy_club/signl_login.dart';
-import 'package:hoppy_club/signup.dart';
+import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
+import 'package:hoppy_club/features/registeration/screens/signup_login.dart';
+import 'package:hoppy_club/features/registeration/screens/signup.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

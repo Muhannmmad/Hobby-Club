@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/new_mach_screen.dart';
-import 'package:hoppy_club/chat_screen.dart';
-import 'package:hoppy_club/edit_profile_screen.dart';
-import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
-import 'package:hoppy_club/hobby.dart';
+import 'package:hoppy_club/features/home/screens/groups_page.dart';
+import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
+import 'package:hoppy_club/features/chat/screens/chat_screen.dart';
+import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
+import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
+import 'package:hoppy_club/features/home/repository/hobby.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -155,28 +156,6 @@ class HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class GroupsPage extends StatelessWidget {
-  final Hobby hobby;
-
-  const GroupsPage({super.key, required this.hobby});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(hobby.name)),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('assets/rotat.gif'),
-            Text(hobby.name, style: const TextStyle(fontSize: 24)),
-          ],
-        ),
       ),
     );
   }

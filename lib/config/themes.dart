@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/config.dart';
-import 'package:hoppy_club/sizes.dart';
+import 'package:hoppy_club/config/config.dart';
+import 'package:hoppy_club/config/sizes.dart';
 
 final ThemeData lightTheme = ThemeData(
   textTheme: const TextTheme(
