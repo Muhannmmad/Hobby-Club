@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/homeScreen.dart';
+import 'package:hoppy_club/home_screen.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
@@ -49,7 +49,7 @@ class EditProfileScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => HomeScreen(),
+                    builder: (context) => const HomeScreen(),
                   ),
                 );
               },

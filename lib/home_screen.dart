@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/NewMachScreen.dart';
-import 'package:hoppy_club/chatscreen.dart';
-import 'package:hoppy_club/edit.profile.screen.dart';
+import 'package:hoppy_club/new_mach_screen.dart';
+import 'package:hoppy_club/chat_screen.dart';
+import 'package:hoppy_club/edit_profile_screen.dart';
 import 'package:hoppy_club/features/shared/screens/bottom.navigation.dart';
 import 'package:hoppy_club/hobby.dart';
 

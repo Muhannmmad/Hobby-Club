@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/detailed.profile.dart';
+import 'package:hoppy_club/detailed_profile.dart';
 import 'package:hoppy_club/user.dart';
 import 'package:hoppy_club/likes_remove.dart';
 

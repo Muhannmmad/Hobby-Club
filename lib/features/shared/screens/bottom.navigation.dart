@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/NewMachScreen.dart';
-import 'package:hoppy_club/chatscreen.dart';
+import 'package:hoppy_club/new_mach_screen.dart';
+import 'package:hoppy_club/chat_screen.dart';
 import 'package:hoppy_club/config.dart';
-import 'package:hoppy_club/edit.profile.screen.dart';
-import 'package:hoppy_club/homeScreen.dart';
-import 'package:hoppy_club/swip.screen.dart';
+import 'package:hoppy_club/edit_profile_screen.dart';
+import 'package:hoppy_club/home_screen.dart';
+import 'package:hoppy_club/swip_screen.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -20,27 +20,27 @@ class BottomNavBar extends StatelessWidget {
     if (index == 0) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     } else if (index == 1) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Favorites()),
+        MaterialPageRoute(builder: (context) => const Favorites()),
       );
     } else if (index == 2) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => SwipeScreen()),
+        MaterialPageRoute(builder: (context) => const SwipeScreen()),
       );
     } else if (index == 3) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => ChatScreen()),
+        MaterialPageRoute(builder: (context) => const ChatScreen()),
       );
     } else if (index == 4) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => EditProfileScreen()),
+        MaterialPageRoute(builder: (context) => const EditProfileScreen()),
       );
     }
   }

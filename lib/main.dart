@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/startScreen.dart';
+import 'package:hoppy_club/start_screen.dart';
 
 void main() => runApp(const MyApp());
 
