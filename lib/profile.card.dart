@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/detailed.profile.dart';
 import 'package:hoppy_club/user.dart';
-import 'package:hoppy_club/likesRemoveChat.dart';
+import 'package:hoppy_club/likes_remove.dart';
 
 class ProfileCard extends StatelessWidget {
   final User user;

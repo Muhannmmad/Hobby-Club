@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/edit.profile.screen.dart';
 import 'package:hoppy_club/login.dart';
-import 'package:hoppy_club/signlLogos.dart';
+import 'package:hoppy_club/signl_login.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
@@ -74,7 +74,7 @@ class SignUpScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EditProfileScreen(),
+                          builder: (context) => const EditProfileScreen(),
                         ),
                       );
                     },
@@ -129,7 +129,7 @@ class SignUpScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => LoginScreen(),
+                              builder: (context) => const LoginScreen(),
                             ),
                           );
                         },

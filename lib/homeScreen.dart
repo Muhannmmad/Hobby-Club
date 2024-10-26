@@ -23,23 +23,23 @@ class _HomeScreenState extends State<HomeScreen> {
     if (index == 0) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     } else if (index == 1) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Favorites()),
+        MaterialPageRoute(builder: (context) => const Favorites()),
       );
     } else if (index == 2) {
     } else if (index == 3) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ChatScreen()),
+        MaterialPageRoute(builder: (context) => const ChatScreen()),
       );
     } else if (index == 4) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => EditProfileScreen()),
+        MaterialPageRoute(builder: (context) => const EditProfileScreen()),
       );
     }
   }
@@ -173,6 +173,7 @@ class GroupsPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset('assets/rotat.gif'),
             Text(hobby.name, style: const TextStyle(fontSize: 24)),
           ],
         ),

@@ -16,7 +16,7 @@ class StartScreenState extends State<StartScreen> {
   @override
   void initState() {
     super.initState();
-    controller = VideoPlayerController.asset('assets/videos/startscreen.mp4')
+    controller = VideoPlayerController.asset('assets/videos/video.mp4')
       ..initialize().then((_) {
         controller.setLooping(true);
         controller.setVolume(0.0);
