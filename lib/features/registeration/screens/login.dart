@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
-import 'package:hoppy_club/features/registeration/screens/signup_login.dart';
-import 'package:hoppy_club/features/registeration/screens/signup.dart';
+import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
+import 'package:hoppy_club/features/registeration/widgets/signup_login.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -158,35 +158,6 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class SignupButton extends StatelessWidget {
-  const SignupButton({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const SignUpScreen(),
-          ),
-        );
-      },
-      child: const SizedBox(
-        child: Text(
-          'Sign Up',
-          style: TextStyle(
-            color: Color.fromARGB(255, 43, 0, 73),
-            fontWeight: FontWeight.bold,
-          ),
         ),
       ),
     );

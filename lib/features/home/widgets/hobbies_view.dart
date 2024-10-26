@@ -1,49 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/features/home/widgets/hobbies_card.dart';
-import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
-import 'package:hoppy_club/features/chat/screens/chat_screen.dart';
-import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
-import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 import 'package:hoppy_club/features/home/repository/hobby.dart';
+import 'package:hoppy_club/features/home/widgets/hobbies_card.dart';
+import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HobbiesView extends StatelessWidget {
+  const HobbiesView({
+    super.key,
+    required this.context,
+  });
 
-  @override
-  HomeScreenState createState() => HomeScreenState();
-}
-
-class HomeScreenState extends State<HomeScreen> {
-  int selectedIndex = 0;
-
-  void onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-
-    if (index == 0) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
-    } else if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const Favorites()),
-      );
-    } else if (index == 2) {
-    } else if (index == 3) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ChatScreen()),
-      );
-    } else if (index == 4) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const EditProfileScreen()),
-      );
-    }
-  }
+  final BuildContext context;
 
   @override
   Widget build(BuildContext context) {
