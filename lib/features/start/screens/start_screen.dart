@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hoppy_club/config/config.dart';
 import 'package:hoppy_club/features/registeration/screens/signup.dart';
 import 'package:video_player/video_player.dart';
@@ -67,13 +68,14 @@ class StartScreenState extends State<StartScreen> {
                       ),
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Hobby Club',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: GoogleFonts.spicyRice(
+                        textStyle: Theme.of(context).textTheme.displayLarge,
+                        fontSize: 48,
+                        fontWeight: FontWeight.w700,
+                        fontStyle: FontStyle.italic,
+                        color: const Color.fromARGB(205, 67, 7, 82)),
                     textAlign: TextAlign.center,
                   ),
                   const Padding(

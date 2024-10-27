@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hoppy_club/config/config.dart';
 import 'package:hoppy_club/features/home/widgets/hobbies_card.dart';
 import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
 import 'package:hoppy_club/features/chat/screens/chat_screen.dart';
@@ -59,12 +61,16 @@ class HomeScreenState extends State<HomeScreen> {
                 width: 100, height: 100),
           ),
           const SizedBox(height: 10),
-          const Center(
-            child: Text('Hobby Club',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.purple)),
+          Center(
+            child: Text(
+              'Hobby Club',
+              style: GoogleFonts.spicyRice(
+                  textStyle: Theme.of(context).textTheme.displayLarge,
+                  fontSize: 48,
+                  fontWeight: FontWeight.w700,
+                  fontStyle: FontStyle.italic,
+                  color: const Color.fromARGB(205, 67, 7, 82)),
+            ),
           ),
           const SizedBox(height: 20),
           Center(

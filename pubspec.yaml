@@ -13,6 +13,7 @@ dependencies:
   video_player: ^2.9.2
     
   flutter_launcher_icons: ^0.14.1
+  google_fonts: ^6.2.1
   
   
   
@@ -49,5 +50,6 @@ flutter:
     - assets/icons/
     - assets/hobbies/
     - assets/videos/
+    - assets/fonts/
   
   
