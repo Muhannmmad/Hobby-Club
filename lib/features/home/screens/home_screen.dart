@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoppy_club/config/config.dart';
 import 'package:hoppy_club/features/home/widgets/hobbies_card.dart';
 import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
 import 'package:hoppy_club/features/chat/screens/chat_screen.dart';
