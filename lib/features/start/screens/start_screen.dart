@@ -106,7 +106,7 @@ class StartScreenState extends State<StartScreen> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 50, vertical: 15),
+                          horizontal: 30, vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),

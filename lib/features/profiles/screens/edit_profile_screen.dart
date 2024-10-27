@@ -59,7 +59,7 @@ class EditProfileScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30.0),
                 ),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                    const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
               ),
               child: const Text(
                 'Save changes',
