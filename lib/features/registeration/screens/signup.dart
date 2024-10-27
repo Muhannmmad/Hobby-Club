@@ -35,21 +35,21 @@ class SignUpScreen extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 10),
                   const TextField(
                     decoration: InputDecoration(
                       labelText: 'Username',
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 10),
                   const TextField(
                     decoration: InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 10),
                   const TextField(
                     obscureText: true,
                     decoration: InputDecoration(
@@ -57,7 +57,7 @@ class SignUpScreen extends StatelessWidget {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 10),
                   const TextField(
                     obscureText: true,
                     decoration: InputDecoration(
@@ -67,7 +67,7 @@ class SignUpScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -88,7 +88,7 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     child: const Text('Sign Up'),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 40),
                   const Row(
                     children: <Widget>[
                       Expanded(
