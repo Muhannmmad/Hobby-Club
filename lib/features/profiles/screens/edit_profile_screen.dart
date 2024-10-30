@@ -18,58 +18,60 @@ class EditProfileScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            const SizedBox(height: 100),
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.grey[300],
-              child: Icon(
-                Icons.person,
-                size: 50,
-                color: Colors.grey[700],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 100),
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.grey[300],
+                child: Icon(
+                  Icons.person,
+                  size: 50,
+                  color: Colors.grey[700],
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Add Profile Pic Here',
-              style: TextStyle(color: Colors.black),
-            ),
-            const SizedBox(height: 20),
-            buildTextField(label: 'Name'),
-            buildTextField(label: 'Age'),
-            buildTextField(label: 'Gender'),
-            buildTextField(label: 'Town'),
-            buildTextField(label: 'Hobbies'),
-            const SizedBox(height: 10),
-            buildTextField(label: 'About me', isMultiLine: true),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
+              const SizedBox(height: 10),
+              const Text(
+                'Add Profile Pic Here',
+                style: TextStyle(color: Colors.black),
+              ),
+              const SizedBox(height: 20),
+              buildTextField(label: 'Name'),
+              buildTextField(label: 'Age'),
+              buildTextField(label: 'Gender'),
+              buildTextField(label: 'Town'),
+              buildTextField(label: 'Hobbies'),
+              const SizedBox(height: 10),
+              buildTextField(label: 'About me', isMultiLine: true),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HomeScreen(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
-              ),
-              child: const Text(
-                'Save changes',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
+                child: const Text(
+                  'Save changes',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
