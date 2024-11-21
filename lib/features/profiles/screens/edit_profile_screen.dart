@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
+import 'package:hoppy_club/features/profiles/screens/settings.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
@@ -10,6 +11,35 @@ class EditProfileScreen extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SettingScreen(),
+              ),
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.menu,
+              color: Colors.black,
+            ),
+          ),
+        ),
         title: const Text(
           'Edit Profile',
           style: TextStyle(color: Colors.black),

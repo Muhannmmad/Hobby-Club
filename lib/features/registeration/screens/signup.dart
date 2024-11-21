@@ -7,10 +7,10 @@ class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+  SignUpScreenState createState() => SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -56,8 +56,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     children: [
                       Image.asset(
                         'assets/icons/3dgifmaker98011.gif',
-                        width: 150,
-                        height: 150,
+                        width: 100,
+                        height: 100,
                       ),
                       const Text(
                         'Create an account',

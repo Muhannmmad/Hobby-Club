@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoppy_club/config/config.dart';
 import 'package:hoppy_club/features/registeration/screens/signup.dart';
 import 'package:video_player/video_player.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -13,6 +14,7 @@ class StartScreen extends StatefulWidget {
 
 class StartScreenState extends State<StartScreen> {
   late VideoPlayerController controller;
+  String selectedLanguage = 'English'; // Default language
 
   @override
   void initState() {
@@ -25,6 +27,19 @@ class StartScreenState extends State<StartScreen> {
 
         setState(() {});
       });
+    _loadLanguagePreference();
+  }
+
+  Future<void> _loadLanguagePreference() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedLanguage = prefs.getString('language') ?? 'English';
+    });
+  }
+
+  Future<void> _saveLanguagePreference(String language) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('language', language);
   }
 
   @override
@@ -103,8 +118,30 @@ class StartScreenState extends State<StartScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 50),
-                  const Spacer(),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: DropdownButton<String>(
+                      value: selectedLanguage,
+                      icon: const Icon(Icons.language, color: Colors.white),
+                      dropdownColor: darkpurble,
+                      style: const TextStyle(color: Colors.white),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedLanguage = newValue!;
+                        });
+                        _saveLanguagePreference(newValue!);
+                      },
+                      items: <String>['English', 'German', 'Arabic']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 420),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
