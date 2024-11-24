@@ -19,6 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
   String? successMessage;
   String? errorMessage;
   bool isLoading = false;
+  bool isPasswordVisible = false; // Toggle for password visibility
+  bool rememberMe = false; // State for the Remember Me checkbox
 
   void handleLogin(BuildContext context) async {
     setState(() {
@@ -64,7 +66,6 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 100),
 
-              // Logo or Animated Icon
               Image.asset('assets/icons/3dgifmaker98011.gif',
                   width: 150, height: 150),
 
@@ -101,18 +102,30 @@ class _LoginScreenState extends State<LoginScreen> {
               // Password Input
               TextField(
                 controller: userService.passwordController,
-                obscureText: true,
+                obscureText: !isPasswordVisible, // Control visibility
                 style: const TextStyle(color: Colors.black),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Password',
-                  labelStyle: TextStyle(color: Colors.black),
+                  labelStyle: const TextStyle(color: Colors.black),
                   hintText: 'Enter Your Password',
-                  hintStyle: TextStyle(color: Colors.black54),
-                  suffixIcon: Icon(Icons.visibility, color: Colors.black),
-                  enabledBorder: OutlineInputBorder(
+                  hintStyle: const TextStyle(color: Colors.black54),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isPasswordVisible = !isPasswordVisible;
+                      });
+                    },
+                  ),
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black),
                   ),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black),
                   ),
                 ),
@@ -135,10 +148,14 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 children: [
                   Checkbox(
-                    value: true,
-                    onChanged: (value) {},
-                    checkColor: Colors.black,
-                    activeColor: Colors.white,
+                    value: rememberMe,
+                    onChanged: (value) {
+                      setState(() {
+                        rememberMe = value ?? false;
+                      });
+                    },
+                    checkColor: Colors.white,
+                    activeColor: Colors.black,
                     side: const BorderSide(color: Colors.black, width: 2),
                   ),
                   const Text(
