@@ -1,4 +1,4 @@
-import 'package:hoppy_club/features/profiles/repository/user.dart';
+import 'package:hoppy_club/features/profiles/repository/user_profile.dart';
 
 abstract class DatabaseRepository {
   Future<List<User>> getUsers();

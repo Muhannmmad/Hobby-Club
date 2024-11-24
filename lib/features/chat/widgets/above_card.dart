@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/features/profiles/repository/user.dart';
+import 'package:hoppy_club/features/profiles/repository/user_profile.dart';
 import 'package:hoppy_club/shared/screens/detailed_profile.dart';
 
 class AboveCard extends StatelessWidget {

@@ -1,163 +1,220 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
+import 'package:hoppy_club/features/registeration/repository/server_user_response.dart';
+import 'package:hoppy_club/features/registeration/repository/user.dart';
+import 'package:hoppy_club/features/registeration/repository/user_screen.dart';
+import 'package:hoppy_club/features/registeration/repository/user_service.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_login.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final userService = UserService();
+
+  String? successMessage;
+  String? errorMessage;
+  bool isLoading = false;
+
+  void handleLogin(BuildContext context) async {
+    setState(() {
+      errorMessage = null;
+      successMessage = null;
+      isLoading = true;
+    });
+
+    ServerUserResponse response = await userService.login();
+
+    if (response.success) {
+      setState(() => successMessage =
+          "Willkommen ${response.user!.isAdmin ? "Admin" : "User"}");
+
+      await Future.delayed(const Duration(seconds: 1));
+
+      navigateToUserScreen(response.user!);
+    } else {
+      setState(() => errorMessage = response.errorMessage);
+    }
+
+    setState(() => isLoading = false);
+  }
+
+  void navigateToUserScreen(User user) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => UserScreen(
+                  user: user,
+                )));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: SingleChildScrollView(
-          child: Stack(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(30, 120, 30, 50),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/icons/3dgifmaker98011.gif',
-                        width: 150, height: 150),
-                    const Text(
-                      'Hi, Welcome Back! 👋',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black, // Text in black
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const TextField(
-                      style: TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        labelStyle: TextStyle(color: Colors.black),
-                        hintText: 'example@gmail.com',
-                        hintStyle: TextStyle(color: Colors.black54),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const TextField(
-                      style: TextStyle(color: Colors.black),
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: TextStyle(color: Colors.black),
-                        hintText: 'Enter Your Password',
-                        hintStyle: TextStyle(color: Colors.black54),
-                        suffixIcon: Icon(Icons.visibility,
-                            color: Colors.black), // Black icon
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.black), // Black border
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Forgot Password?',
-                          style:
-                              TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: true,
-                          onChanged: (value) {},
-                          checkColor: Colors.black,
-                          activeColor: Colors.white,
-                          side: const BorderSide(
-                            color: Color.fromARGB(210, 0, 0, 0),
-                            width: 2,
-                          ),
-                        ),
-                        const Text(
-                          'Remember Me',
-                          style: TextStyle(color: Colors.black),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const EditProfileScreen(),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 80),
-                        textStyle: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.purple,
-                      ),
-                      child: const Text('Log In'),
-                    ),
-                    const SizedBox(height: 60),
-                    const Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Divider(
-                            color: Colors.black,
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            "Or With",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: Colors.black,
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    IconScroller(),
-                    const SizedBox(height: 30),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Don't have an account?     ",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        SignupButton()
-                      ],
-                    ),
-                  ],
+              const SizedBox(height: 100),
+
+              // Logo or Animated Icon
+              Image.asset('assets/icons/3dgifmaker98011.gif',
+                  width: 150, height: 150),
+
+              const SizedBox(height: 20),
+              const Text(
+                'Hi, Welcome Back! 👋',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
+              ),
+              const SizedBox(height: 20),
+
+              // Email Input
+              TextField(
+                controller: userService.emailController,
+                style: const TextStyle(color: Colors.black),
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: TextStyle(color: Colors.black),
+                  hintText: 'example@gmail.com',
+                  hintStyle: TextStyle(color: Colors.black54),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Password Input
+              TextField(
+                controller: userService.passwordController,
+                obscureText: true,
+                style: const TextStyle(color: Colors.black),
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  labelStyle: TextStyle(color: Colors.black),
+                  hintText: 'Enter Your Password',
+                  hintStyle: TextStyle(color: Colors.black54),
+                  suffixIcon: Icon(Icons.visibility, color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Forgot Password
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    'Forgot Password?',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
+
+              // Remember Me Checkbox
+              Row(
+                children: [
+                  Checkbox(
+                    value: true,
+                    onChanged: (value) {},
+                    checkColor: Colors.black,
+                    activeColor: Colors.white,
+                    side: const BorderSide(color: Colors.black, width: 2),
+                  ),
+                  const Text(
+                    'Remember Me',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              // Login Button
+              ElevatedButton(
+                onPressed: () => handleLogin(context),
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 80),
+                  textStyle: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.purple,
+                ),
+                child: const Text('Log In'),
+              ),
+
+              const SizedBox(height: 20),
+
+              if (successMessage != null)
+                Text(
+                  successMessage!,
+                  style: const TextStyle(color: Colors.green),
+                ),
+              if (errorMessage != null)
+                Text(
+                  errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              if (isLoading) const CircularProgressIndicator(),
+
+              const SizedBox(height: 40),
+
+              // Social Login Divider
+              const Row(
+                children: [
+                  Expanded(
+                    child: Divider(color: Colors.black, thickness: 1),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      "Or With",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  Expanded(
+                    child: Divider(color: Colors.black, thickness: 1),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // Social Media Buttons Placeholder
+              IconScroller(),
+
+              const SizedBox(height: 30),
+
+              // Sign Up Option
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account? ",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  SignupButton(),
+                ],
               ),
             ],
           ),

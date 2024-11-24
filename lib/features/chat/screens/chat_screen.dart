@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/chat/widgets/down_card.dart';
 import 'package:hoppy_club/features/chat/widgets/above_card.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
-import 'package:hoppy_club/features/profiles/repository/user.dart';
+import 'package:hoppy_club/features/profiles/repository/user_profile.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});

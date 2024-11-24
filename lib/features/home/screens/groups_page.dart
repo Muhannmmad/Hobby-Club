@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/home/repository/events.dart';
 import 'package:hoppy_club/features/home/repository/hobby.dart';
-import 'package:hoppy_club/features/profiles/repository/user.dart';
+import 'package:hoppy_club/features/profiles/repository/user_profile.dart';
 import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
 import 'package:hoppy_club/shared/screens/detailed_profile.dart';
 

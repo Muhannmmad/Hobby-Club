@@ -1,5 +1,5 @@
 import 'package:hoppy_club/features/profiles/repository/datad_base_reprository.dart';
-import 'user.dart';
+import 'user_profile.dart';
 
 class MockDatabase implements DatabaseRepository {
   final List<User> _users = [];
