@@ -19,8 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
   String? successMessage;
   String? errorMessage;
   bool isLoading = false;
-  bool isPasswordVisible = false; // Toggle for password visibility
-  bool rememberMe = false; // State for the Remember Me checkbox
+  bool isPasswordVisible = false;
+  bool rememberMe = false;
 
   void handleLogin(BuildContext context) async {
     setState(() {
@@ -46,8 +46,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void navigateToUserScreen(User user) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const EditProfileScreen()));
   }
 
   @override
