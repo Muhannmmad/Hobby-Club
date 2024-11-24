@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
 import 'package:hoppy_club/features/registeration/repository/server_user_response.dart';
 import 'package:hoppy_club/features/registeration/repository/user.dart';
-import 'package:hoppy_club/features/registeration/repository/user_screen.dart';
 import 'package:hoppy_club/features/registeration/repository/user_service.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_login.dart';
@@ -47,11 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void navigateToUserScreen(User user) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => UserScreen(
-                  user: user,
-                )));
+        context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
   }
 
   @override
