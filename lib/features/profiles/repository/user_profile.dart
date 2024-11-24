@@ -1,4 +1,5 @@
 class User {
+  final String id;
   final String firstName;
   final String lastName;
   final int age;
@@ -9,6 +10,7 @@ class User {
   final List<String> hobbies;
 
   User({
+    required this.id,
     required this.firstName,
     required this.lastName,
     required this.age,
@@ -22,6 +24,7 @@ class User {
 
 List<User> users = [
   User(
+    id: '1',
     firstName: 'Sarah',
     lastName: 'Anderson',
     age: 20,
@@ -33,6 +36,7 @@ List<User> users = [
     isOnline: true,
   ),
   User(
+    id: '2',
     firstName: 'Max',
     lastName: 'Müller',
     age: 25,
@@ -43,6 +47,7 @@ List<User> users = [
     isOnline: true,
   ),
   User(
+    id: '3',
     firstName: 'Julia',
     lastName: 'Schmidt',
     age: 28,
@@ -54,6 +59,7 @@ List<User> users = [
     isOnline: true,
   ),
   User(
+    id: '4',
     firstName: 'Lukas',
     lastName: 'Weber',
     age: 30,
@@ -64,6 +70,7 @@ List<User> users = [
     isOnline: false,
   ),
   User(
+    id: '5',
     firstName: 'Anna',
     lastName: 'Klein',
     age: 22,
@@ -74,6 +81,7 @@ List<User> users = [
     isOnline: false,
   ),
   User(
+    id: '6',
     firstName: 'Leon',
     lastName: 'Fischer',
     age: 27,
@@ -84,6 +92,7 @@ List<User> users = [
     isOnline: false,
   ),
   User(
+    id: '7',
     firstName: 'Sophie',
     lastName: 'Wagner',
     age: 24,
@@ -94,6 +103,7 @@ List<User> users = [
     isOnline: true,
   ),
   User(
+    id: '8',
     firstName: 'Hanna',
     lastName: 'Becker',
     age: 33,
