@@ -1,24 +1,72 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/features/registeration/repository/mock_user_repository.dart';
-import 'package:hoppy_club/features/registeration/repository/server_user_response.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'mock_user_repository.dart';
+import 'server_user_response.dart';
+import 'user.dart';
 
 class UserService {
-  // Wir benötigen den E-Mail-Controller, um die Eingabe der E-Mail zu empfangen.
   final emailController = TextEditingController();
-
-  // Wir benötigen den Passwort-Controller, um die Eingabe des Passworts zu empfangen.
   final passwordController = TextEditingController();
+  final mockUserRepository = MockUserRepository();
 
-  // Unser MockUserRepository, das die Abfrage eines Nutzers simuliert, sobald
-  // wir uns einloggen. Hier könnte man die Abfrage des Nutzers und das Einloggen
-  // in zwei Repositories/Module aufteilen.
-  final _mockUserRepository = MockUserRepository();
+  // Save user data to SharedPreferences
+  Future<void> saveUserToPreferences(String email, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+    await prefs.setString('password', password);
+  }
 
-  // Hier werden die E-Mail und das Passwort abgerufen, und die "login"-Methode
-  // im mockUserRepository ausgeführt.
-  Future<ServerUserResponse> login() {
+  // Register user and save to SharedPreferences
+  Future<ServerUserResponse> registerUser(
+      String email, String password, String text,
+      {required String username}) async {
+    final response = await mockUserRepository.registerUser(email, password);
+
+    if (response.success) {
+      await saveUserToPreferences(email, password);
+    }
+
+    return response;
+  }
+
+  // Login user and check against saved credentials
+  Future<ServerUserResponse> login() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('email');
+    final savedPassword = prefs.getString('password');
+
     final email = emailController.text;
     final password = passwordController.text;
-    return _mockUserRepository.loginAndGetUser(email, password);
+
+    if (savedEmail == email && savedPassword == password) {
+      return ServerUserResponse(
+        success: true,
+        user: User(email: savedEmail!, password: savedPassword!),
+      );
+    } else {
+      return ServerUserResponse(
+          success: false, errorMessage: "Invalid credentials");
+    }
   }
+
+  // Clear saved user data
+  Future<void> clearUserPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('email');
+    await prefs.remove('password');
+  }
+
+  clearSavedCredentials() {}
+}
+
+void clearSavedCredentials() {
+  // Clear saved user credentials
+  // For example:
+  var emailController;
+  emailController.clear();
+  var passwordController;
+  passwordController.clear();
+  // If using shared preferences or local storage, clear saved tokens
+  // SharedPreferences prefs = await SharedPreferences.getInstance();
+  // await prefs.clear(); // Uncomment if shared preferences are used
 }

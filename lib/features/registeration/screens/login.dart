@@ -22,6 +22,26 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isPasswordVisible = false;
   bool rememberMe = false;
 
+  @override
+  void initState() {
+    super.initState();
+    loadSavedCredentials();
+  }
+
+  // Load saved credentials if "Remember Me" is checked
+  Future<void> loadSavedCredentials() async {
+    final savedEmail = await userService.emailController.text;
+    final savedPassword = await userService.passwordController.text;
+
+    if (savedEmail.isNotEmpty && savedPassword.isNotEmpty) {
+      setState(() {
+        userService.emailController.text = savedEmail;
+        userService.passwordController.text = savedPassword;
+        rememberMe = true;
+      });
+    }
+  }
+
   void handleLogin(BuildContext context) async {
     setState(() {
       errorMessage = null;
@@ -29,11 +49,20 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading = true;
     });
 
-    ServerUserResponse response = await userService.login();
+    final response = await userService.login();
 
     if (response.success) {
+      if (rememberMe) {
+        await userService.saveUserToPreferences(
+          userService.emailController.text,
+          userService.passwordController.text,
+        );
+      } else {
+        await userService.clearSavedCredentials();
+      }
+
       setState(() => successMessage =
-          "Willkommen ${response.user!.isAdmin ? "Admin" : "User"}");
+          "Welcome ${response.user!.isAdmin ? "Admin" : "User"}");
 
       await Future.delayed(const Duration(seconds: 1));
 
@@ -98,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Password Input
               TextField(
                 controller: userService.passwordController,
-                obscureText: !isPasswordVisible, // Control visibility
+                obscureText: !isPasswordVisible,
                 style: const TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   labelText: 'Password',

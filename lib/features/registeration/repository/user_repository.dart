@@ -1,6 +1,6 @@
-import 'package:hoppy_club/features/registeration/repository/server_user_response.dart';
+import 'server_user_response.dart';
 
-// Vorlage/Template User Repository
 abstract class UserRepository {
-  Future<ServerUserResponse?> loginAndGetUser(String email, String password);
+  Future<ServerUserResponse> loginAndGetUser(String email, String password);
+  Future<ServerUserResponse> registerUser(String email, String password);
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
 import 'package:hoppy_club/features/registeration/widgets/log_in_button.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_login.dart';
+import 'package:hoppy_club/features/registeration/repository/user_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -17,17 +18,31 @@ class SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final userService = UserService();
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
-  void _signUp() {
+  void _signUp() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const EditProfileScreen(),
-        ),
+      final response = await userService.registerUser(
+        _emailController.text,
+        _passwordController.text,
+        _usernameController.text,
+        username: '',
       );
+
+      if (response.success) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const EditProfileScreen(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.errorMessage ?? "Sign up failed")),
+        );
+      }
     }
   }
 

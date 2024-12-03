@@ -1,9 +1,16 @@
-import 'package:hoppy_club/features/registeration/repository/user.dart';
+import 'user.dart';
 
-// Normaler User in unserer "fiktiven Datenbank"
-final normalUser =
-    User(email: "test@test.de", password: "123", name: "Test", isAdmin: false);
+// Mock Users
+final User normalUser = User(
+  email: "test@test.de",
+  password: "123",
+  name: "Test",
+  isAdmin: false,
+);
 
-// Admin User in unserer "fiktiven Datenbank"
-final adminUser = User(
-    email: "admin@test.de", password: "123", name: "AdminTest", isAdmin: true);
+final User adminUser = User(
+  email: "admin@test.de",
+  password: "123",
+  name: "AdminTest",
+  isAdmin: true,
+);
