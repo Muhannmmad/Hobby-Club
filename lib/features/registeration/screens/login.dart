@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
-import 'package:hoppy_club/features/registeration/repository/server_user_response.dart';
 import 'package:hoppy_club/features/registeration/repository/user.dart';
 import 'package:hoppy_club/features/registeration/repository/user_service.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
@@ -30,16 +30,32 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Load saved credentials if "Remember Me" is checked
   Future<void> loadSavedCredentials() async {
-    final savedEmail = await userService.emailController.text;
-    final savedPassword = await userService.passwordController.text;
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('email') ?? '';
+    final savedPassword = prefs.getString('password') ?? '';
+    final savedRememberMe = prefs.getBool('rememberMe') ?? false;
 
-    if (savedEmail.isNotEmpty && savedPassword.isNotEmpty) {
+    if (savedRememberMe) {
       setState(() {
         userService.emailController.text = savedEmail;
         userService.passwordController.text = savedPassword;
-        rememberMe = true;
+        rememberMe = savedRememberMe;
       });
     }
+  }
+
+  Future<void> saveCredentials(String email, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+    await prefs.setString('password', password);
+    await prefs.setBool('rememberMe', true);
+  }
+
+  Future<void> clearSavedCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('email');
+    await prefs.remove('password');
+    await prefs.setBool('rememberMe', false);
   }
 
   void handleLogin(BuildContext context) async {
@@ -53,12 +69,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (response.success) {
       if (rememberMe) {
-        await userService.saveUserToPreferences(
+        await saveCredentials(
           userService.emailController.text,
           userService.passwordController.text,
         );
       } else {
-        await userService.clearSavedCredentials();
+        await clearSavedCredentials();
       }
 
       setState(() => successMessage =
