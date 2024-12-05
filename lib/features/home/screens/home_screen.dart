@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoppy_club/features/home/screens/event_screen';
 import 'package:hoppy_club/features/home/widgets/hobbies_card.dart';
 import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
 import 'package:hoppy_club/features/chat/screens/chat_screen.dart';
@@ -56,19 +57,15 @@ class HomeScreenState extends State<HomeScreen> {
         children: [
           const SizedBox(height: 20),
           Center(
-            child: Image.asset('assets/icons/3dgifmaker57572.gif',
-                width: 100, height: 100),
-          ),
-          const SizedBox(height: 10),
-          Center(
             child: Text(
               'Hobby Club',
               style: GoogleFonts.spicyRice(
-                  textStyle: Theme.of(context).textTheme.displayLarge,
-                  fontSize: 48,
-                  fontWeight: FontWeight.w700,
-                  fontStyle: FontStyle.italic,
-                  color: const Color.fromARGB(205, 67, 7, 82)),
+                textStyle: Theme.of(context).textTheme.displayLarge,
+                fontSize: 48,
+                fontWeight: FontWeight.w700,
+                fontStyle: FontStyle.italic,
+                color: const Color.fromARGB(205, 67, 7, 82),
+              ),
             ),
           ),
           const SizedBox(height: 20),
@@ -109,6 +106,38 @@ class HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 10),
           HobbiesCard(hobbies: outdoorHobbies, context: context),
+          const SizedBox(height: 30),
+          Center(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                backgroundColor: const Color.fromARGB(205, 67, 7, 82),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                shadowColor: Colors.grey.withOpacity(0.5),
+                elevation: 5,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EventScreen()),
+                );
+              },
+              child: Text(
+                'View and Create Events',
+                style: GoogleFonts.roboto(
+                  textStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
         ],
       ),
       bottomNavigationBar: const BottomNavBar(selectedIndex: 0),
