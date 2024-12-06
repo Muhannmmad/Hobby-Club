@@ -33,12 +33,14 @@ class SignUpScreenState extends State<SignUpScreen> {
 
       if (response.success) {
         Navigator.push(
+          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
             builder: (context) => const EditProfileScreen(),
           ),
         );
       } else {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(response.errorMessage ?? "Sign up failed")),
         );

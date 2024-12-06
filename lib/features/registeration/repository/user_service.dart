@@ -60,13 +60,8 @@ class UserService {
 }
 
 void clearSavedCredentials() {
-  // Clear saved user credentials
-  // For example:
   var emailController;
   emailController.clear();
   var passwordController;
   passwordController.clear();
-  // If using shared preferences or local storage, clear saved tokens
-  // SharedPreferences prefs = await SharedPreferences.getInstance();
-  // await prefs.clear(); // Uncomment if shared preferences are used
 }

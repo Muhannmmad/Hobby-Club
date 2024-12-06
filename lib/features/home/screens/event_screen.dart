@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class EventScreen extends StatefulWidget {
+  const EventScreen({super.key});
+
   @override
-  _EventScreenState createState() => _EventScreenState();
+  EventScreenState createState() => EventScreenState();
 }
 
-class _EventScreenState extends State<EventScreen> {
+class EventScreenState extends State<EventScreen> {
   List<dynamic> events = [];
   bool isLoading = false;
   String selectedCity = "";
@@ -18,7 +20,8 @@ class _EventScreenState extends State<EventScreen> {
       events = [];
     });
 
-    final String apiKey = 'c51638313e87fe63d37dd25ad025c1c9192220bb8422d55cc55df306af042c0a';
+    const String apiKey =
+        'c51638313e87fe63d37dd25ad025c1c9192220bb8422d55cc55df306af042c0a';
     final String query = 'Events in $city';
 
     try {
@@ -55,7 +58,8 @@ class _EventScreenState extends State<EventScreen> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 15),
                       backgroundColor: const Color.fromARGB(205, 67, 7, 82),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
@@ -82,7 +86,8 @@ class _EventScreenState extends State<EventScreen> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 15),
                       backgroundColor: const Color.fromARGB(255, 28, 155, 101),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
@@ -91,7 +96,8 @@ class _EventScreenState extends State<EventScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CreateEventScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => CreateEventScreen()),
                       );
                     },
                     child: const Text(
@@ -116,7 +122,8 @@ class _EventScreenState extends State<EventScreen> {
                         final event = events[index];
                         return ListTile(
                           title: Text(event['title'] ?? 'No Title'),
-                          subtitle: Text(event['date']['start_date'] ?? 'No Date'),
+                          subtitle:
+                              Text(event['date']['start_date'] ?? 'No Date'),
                         );
                       },
                     ),
@@ -170,6 +177,8 @@ class CreateEventScreen extends StatelessWidget {
   final TextEditingController dateController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
+  CreateEventScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -196,8 +205,6 @@ class CreateEventScreen extends StatelessWidget {
                 final title = titleController.text;
                 final date = dateController.text;
                 final description = descriptionController.text;
-
-                
 
                 Navigator.pop(context);
               },
