@@ -122,7 +122,7 @@ class HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EventScreen()),
+                  MaterialPageRoute(builder: (context) => const EventScreen()),
                 );
               },
               child: Text(

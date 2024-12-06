@@ -43,7 +43,6 @@ class EventScreenState extends State<EventScreen> {
       setState(() {
         isLoading = false;
       });
-      print('Error fetching events: $e');
     }
   }
 
@@ -202,8 +201,11 @@ class CreateEventScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                // ignore: unused_local_variable
                 final title = titleController.text;
+                // ignore: unused_local_variable
                 final date = dateController.text;
+                // ignore: unused_local_variable
                 final description = descriptionController.text;
 
                 Navigator.pop(context);
