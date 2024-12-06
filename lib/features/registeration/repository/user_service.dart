@@ -60,8 +60,9 @@ class UserService {
 }
 
 void clearSavedCredentials() {
-  var emailController;
+  TextEditingController emailController = TextEditingController();
+
   emailController.clear();
-  var passwordController;
+  TextEditingController passwordController = TextEditingController();
   passwordController.clear();
 }
