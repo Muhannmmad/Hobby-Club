@@ -70,7 +70,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/icons/3dgifmaker98011.gif',
+                        'assets/icons/Group 3052.png',
                         width: 100,
                         height: 100,
                       ),

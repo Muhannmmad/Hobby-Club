@@ -98,7 +98,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -107,8 +106,8 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 100),
 
-              Image.asset('assets/icons/3dgifmaker98011.gif',
-                  width: 150, height: 150),
+              Image.asset('assets/icons/Group 3052.png',
+                  width: 100, height: 100),
 
               const SizedBox(height: 20),
               const Text(

@@ -78,7 +78,7 @@ class StartScreenState extends State<StartScreen> {
                       width: 100,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.asset('assets/icons/3dgifmaker98011.gif',
+                        child: Image.asset('assets/icons/Group 3052.png',
                             fit: BoxFit.cover),
                       ),
                     ),
