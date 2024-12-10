@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "666549893394",
+    "project_id": "hobby-club-78807",
+    "storage_bucket": "hobby-club-78807.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666549893394:android:c0f75a19514b505a041bcb",
+        "android_client_info": {
+          "package_name": "com.example.hobbyclub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "666549893394-v2kj5t6knpirlqk5il548htiupog26ib.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9WQ-kmYzGrnKcFIa--L4AZRk5e2IXIxw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "666549893394-v2kj5t6knpirlqk5il548htiupog26ib.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "666549893394-o5u26559no3pni8ed5epliqvumep31jc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.hoppyClub"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666549893394:android:7d9a7bba480c96cb041bcb",
+        "android_client_info": {
+          "package_name": "com.hobbyclub.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "666549893394-v2kj5t6knpirlqk5il548htiupog26ib.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9WQ-kmYzGrnKcFIa--L4AZRk5e2IXIxw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "666549893394-v2kj5t6knpirlqk5il548htiupog26ib.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "666549893394-o5u26559no3pni8ed5epliqvumep31jc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.hoppyClub"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
