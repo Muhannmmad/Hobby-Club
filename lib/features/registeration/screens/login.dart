@@ -5,7 +5,6 @@ import 'package:hoppy_club/features/registeration/repository/user.dart';
 import 'package:hoppy_club/features/registeration/repository/user_service.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_login.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

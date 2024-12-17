@@ -15,6 +15,7 @@ void main() async {
 
   const bool useMockAuth = false;
   final AuthRepository authRepository =
+      // ignore: dead_code
       useMockAuth ? MockAuthRepository() : FirebaseAuthRepository();
 
   runApp(MyApp(authRepository: authRepository));
