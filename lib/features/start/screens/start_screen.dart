@@ -53,6 +53,7 @@ class StartScreenState extends State<StartScreen> {
     return Scaffold(
       body: Stack(
         children: [
+          // Background Video
           controller.value.isInitialized
               ? SizedBox.expand(
                   child: FittedBox(
@@ -65,12 +66,14 @@ class StartScreenState extends State<StartScreen> {
                   ),
                 )
               : const Center(child: CircularProgressIndicator()),
+
+          // Foreground Content
           SafeArea(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Logo
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: SizedBox(
@@ -78,21 +81,28 @@ class StartScreenState extends State<StartScreen> {
                       width: 100,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.asset('assets/icons/Group 3052.png',
-                            fit: BoxFit.cover),
+                        child: Image.asset(
+                          'assets/icons/Group 3052.png',
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
+
+                  // Title
                   Text(
                     'Hobby Club',
                     style: GoogleFonts.spicyRice(
-                        textStyle: Theme.of(context).textTheme.displayLarge,
-                        fontSize: 48,
-                        fontWeight: FontWeight.w700,
-                        fontStyle: FontStyle.italic,
-                        color: const Color.fromARGB(205, 67, 7, 82)),
+                      textStyle: Theme.of(context).textTheme.displayLarge,
+                      fontSize: 48,
+                      fontWeight: FontWeight.w700,
+                      fontStyle: FontStyle.italic,
+                      color: const Color.fromARGB(205, 67, 7, 82),
+                    ),
                     textAlign: TextAlign.center,
                   ),
+
+                  // Subtitle
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
@@ -119,6 +129,8 @@ class StartScreenState extends State<StartScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
+
+                  // Language Dropdown
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: DropdownButton<String>(
@@ -126,11 +138,14 @@ class StartScreenState extends State<StartScreen> {
                       icon: const Icon(Icons.language, color: Colors.white),
                       dropdownColor: darkpurble,
                       style: const TextStyle(color: Colors.white),
+                      underline: Container(), // Removes the underline
                       onChanged: (String? newValue) {
-                        setState(() {
-                          selectedLanguage = newValue!;
-                        });
-                        _saveLanguagePreference(newValue!);
+                        if (newValue != null) {
+                          setState(() {
+                            selectedLanguage = newValue;
+                          });
+                          _saveLanguagePreference(newValue);
+                        }
                       },
                       items: <String>['English', 'German', 'Arabic']
                           .map<DropdownMenuItem<String>>((String value) {
@@ -141,7 +156,10 @@ class StartScreenState extends State<StartScreen> {
                       }).toList(),
                     ),
                   ),
-                  const SizedBox(height: 420),
+
+                  const Spacer(),
+
+                  // Start Button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(

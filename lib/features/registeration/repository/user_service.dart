@@ -1,13 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'mock_user_repository.dart';
 import 'server_user_response.dart';
-import 'user.dart';
+import 'user.dart' as custom_user;
 
 class UserService {
+  final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final mockUserRepository = MockUserRepository();
 
   // Save user data to SharedPreferences
   Future<void> saveUserToPreferences(String email, String password) async {
@@ -16,17 +19,32 @@ class UserService {
     await prefs.setString('password', password);
   }
 
-  // Register user and save to SharedPreferences
+  // Register user with Firebase Authentication and save to Firestore
   Future<ServerUserResponse> registerUser(
       String email, String password, String text,
       {required String username}) async {
-    final response = await mockUserRepository.registerUser(email, password);
+    try {
+      // Register user with Firebase Authentication
+      firebase_auth.UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    if (response.success) {
+      // Save user details (username, email) to Firestore
+      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'email': email,
+        'username': username,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      // Optionally, save the user credentials to SharedPreferences
       await saveUserToPreferences(email, password);
-    }
 
-    return response;
+      return ServerUserResponse(success: true);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return ServerUserResponse(success: false, errorMessage: e.message);
+    }
   }
 
   // Login user and check against saved credentials
@@ -41,7 +59,7 @@ class UserService {
     if (savedEmail == email && savedPassword == password) {
       return ServerUserResponse(
         success: true,
-        user: User(email: savedEmail!, password: savedPassword!),
+        user: custom_user.User(email: savedEmail!, password: savedPassword!),
       );
     } else {
       return ServerUserResponse(
@@ -56,13 +74,9 @@ class UserService {
     await prefs.remove('password');
   }
 
-  clearSavedCredentials() {}
-}
-
-void clearSavedCredentials() {
-  TextEditingController emailController = TextEditingController();
-
-  emailController.clear();
-  TextEditingController passwordController = TextEditingController();
-  passwordController.clear();
+  // Clear saved credentials
+  void clearSavedCredentials() {
+    emailController.clear();
+    passwordController.clear();
+  }
 }

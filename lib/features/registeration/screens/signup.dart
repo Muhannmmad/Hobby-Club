@@ -24,11 +24,13 @@ class SignUpScreenState extends State<SignUpScreen> {
 
   void _signUp() async {
     if (_formKey.currentState!.validate()) {
+      // Passing username correctly
       final response = await userService.registerUser(
         _emailController.text,
         _passwordController.text,
-        _usernameController.text,
-        username: '',
+        _usernameController.text, // Pass the username here
+        username:
+            _usernameController.text, // Ensure the correct username is passed
       );
 
       if (response.success) {
@@ -40,7 +42,6 @@ class SignUpScreenState extends State<SignUpScreen> {
           ),
         );
       } else {
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(response.errorMessage ?? "Sign up failed")),
         );

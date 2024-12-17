@@ -5,6 +5,7 @@ import 'package:hoppy_club/features/registeration/repository/user.dart';
 import 'package:hoppy_club/features/registeration/repository/user_service.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_login.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -65,34 +66,43 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading = true;
     });
 
-    final response = await userService.login();
+    try {
+      // Attempt to sign in using Firebase Authentication
+      final response = await userService.login();
 
-    if (response.success) {
-      if (rememberMe) {
-        await saveCredentials(
-          userService.emailController.text,
-          userService.passwordController.text,
-        );
+      if (response.success) {
+        if (rememberMe) {
+          await saveCredentials(
+            userService.emailController.text,
+            userService.passwordController.text,
+          );
+        } else {
+          await clearSavedCredentials();
+        }
+
+        setState(() => successMessage =
+            "Welcome ${response.user!.isAdmin ? "Admin" : "User"}");
+
+        await Future.delayed(const Duration(seconds: 1));
+
+        navigateToUserScreen(response.user!);
       } else {
-        await clearSavedCredentials();
+        setState(() => errorMessage = response.errorMessage);
       }
-
-      setState(() => successMessage =
-          "Welcome ${response.user!.isAdmin ? "Admin" : "User"}");
-
-      await Future.delayed(const Duration(seconds: 1));
-
-      navigateToUserScreen(response.user!);
-    } else {
-      setState(() => errorMessage = response.errorMessage);
+    } catch (e) {
+      setState(() {
+        errorMessage = "An error occurred: ${e.toString()}";
+      });
     }
 
     setState(() => isLoading = false);
   }
 
   void navigateToUserScreen(User user) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const EditProfileScreen()));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+    );
   }
 
   @override
@@ -105,18 +115,15 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 100),
-
               Image.asset('assets/icons/Group 3052.png',
                   width: 100, height: 100),
-
               const SizedBox(height: 20),
               const Text(
                 'Hi, Welcome Back! 👋',
                 style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
               ),
               const SizedBox(height: 20),
 
@@ -130,11 +137,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   hintText: 'example@gmail.com',
                   hintStyle: TextStyle(color: Colors.black54),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
+                      borderSide: BorderSide(color: Colors.black)),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
+                      borderSide: BorderSide(color: Colors.black)),
                 ),
               ),
               const SizedBox(height: 10),
@@ -151,11 +156,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   hintStyle: const TextStyle(color: Colors.black54),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: Colors.black,
-                    ),
+                        isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.black),
                     onPressed: () {
                       setState(() {
                         isPasswordVisible = !isPasswordVisible;
@@ -163,11 +167,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                   enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
+                      borderSide: BorderSide(color: Colors.black)),
                   focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
+                      borderSide: BorderSide(color: Colors.black)),
                 ),
               ),
               const SizedBox(height: 10),
@@ -224,15 +226,10 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
 
               if (successMessage != null)
-                Text(
-                  successMessage!,
-                  style: const TextStyle(color: Colors.green),
-                ),
+                Text(successMessage!,
+                    style: const TextStyle(color: Colors.green)),
               if (errorMessage != null)
-                Text(
-                  errorMessage!,
-                  style: const TextStyle(color: Colors.red),
-                ),
+                Text(errorMessage!, style: const TextStyle(color: Colors.red)),
               if (isLoading) const CircularProgressIndicator(),
 
               const SizedBox(height: 40),
@@ -240,19 +237,13 @@ class _LoginScreenState extends State<LoginScreen> {
               // Social Login Divider
               const Row(
                 children: [
-                  Expanded(
-                    child: Divider(color: Colors.black, thickness: 1),
-                  ),
+                  Expanded(child: Divider(color: Colors.black, thickness: 1)),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      "Or With",
-                      style: TextStyle(color: Colors.black),
-                    ),
+                    child:
+                        Text("Or With", style: TextStyle(color: Colors.black)),
                   ),
-                  Expanded(
-                    child: Divider(color: Colors.black, thickness: 1),
-                  ),
+                  Expanded(child: Divider(color: Colors.black, thickness: 1)),
                 ],
               ),
               const SizedBox(height: 20),
@@ -266,10 +257,8 @@ class _LoginScreenState extends State<LoginScreen> {
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "Don't have an account? ",
-                    style: TextStyle(color: Colors.black),
-                  ),
+                  Text("Don't have an account? ",
+                      style: TextStyle(color: Colors.black)),
                   SignupButton(),
                 ],
               ),
