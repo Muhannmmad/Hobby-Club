@@ -11,9 +11,9 @@ class FirebaseAuthRepository implements AuthRepository {
         email: email,
         password: password,
       );
-      print('Firebase sign-in successful');
+      ('Firebase sign-in successful');
     } catch (e) {
-      print('Firebase sign-in error: $e');
+      ('Firebase sign-in error: $e');
       rethrow;
     }
   }
@@ -22,9 +22,9 @@ class FirebaseAuthRepository implements AuthRepository {
   Future<void> signOut() async {
     try {
       await _firebaseAuth.signOut();
-      print('Firebase sign-out successful');
+      ('Firebase sign-out successful');
     } catch (e) {
-      print('Firebase sign-out error: $e');
+      ('Firebase sign-out error: $e');
       rethrow;
     }
   }
