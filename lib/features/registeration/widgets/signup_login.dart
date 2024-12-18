@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class IconScroller extends StatelessWidget {
@@ -13,20 +14,27 @@ class IconScroller extends StatelessWidget {
 
   void handleTap(BuildContext context, int index) async {
     try {
+      User? user;
       switch (index) {
         case 0: // Google Sign-In
-          await signInWithGoogle();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Signed in with Google')),
-          );
+          user = await signInWithGoogle();
           break;
 
         case 1: // Apple Sign-In
-          await signInWithApple();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Signed in with Apple')),
-          );
+          user = await signInWithApple();
           break;
+      }
+
+      if (user != null) {
+        // Navigate to EditProfileScreen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => EditProfileScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sign-in failed')),
+        );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
