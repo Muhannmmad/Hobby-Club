@@ -25,6 +25,8 @@ dependencies:
   provider: ^6.1.2
   firebase_auth: ^5.3.4
   cloud_firestore: ^5.5.1
+  sign_in_with_apple: ^6.1.4
+  google_sign_in: ^6.2.2
 
 
 dev_dependencies:
