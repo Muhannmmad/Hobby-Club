@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
-import 'package:hoppy_club/features/registeration/repository/user.dart';
-import 'package:hoppy_club/features/registeration/repository/user_service.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_login.dart';
+import 'package:hoppy_club/features/home/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,13 +14,15 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final userService = UserService();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-  String? successMessage;
-  String? errorMessage;
   bool isLoading = false;
   bool isPasswordVisible = false;
   bool rememberMe = false;
+
+  String? successMessage;
+  String? errorMessage;
 
   @override
   void initState() {
@@ -37,8 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (savedRememberMe) {
       setState(() {
-        userService.emailController.text = savedEmail;
-        userService.passwordController.text = savedPassword;
+        emailController.text = savedEmail;
+        passwordController.text = savedPassword;
         rememberMe = savedRememberMe;
       });
     }
@@ -58,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
     await prefs.setBool('rememberMe', false);
   }
 
-  void handleLogin(BuildContext context) async {
+  Future<void> handleLogin() async {
     setState(() {
       errorMessage = null;
       successMessage = null;
@@ -66,41 +68,43 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      // Attempt to sign in using Firebase Authentication
-      final response = await userService.login();
+      final auth = FirebaseAuth.instance;
+      final userCredential = await auth.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-      if (response.success) {
+      final user = userCredential.user;
+
+      if (user != null) {
         if (rememberMe) {
-          await saveCredentials(
-            userService.emailController.text,
-            userService.passwordController.text,
-          );
+          await saveCredentials(emailController.text, passwordController.text);
         } else {
           await clearSavedCredentials();
         }
 
-        setState(() => successMessage =
-            "Welcome ${response.user!.isAdmin ? "Admin" : "User"}");
+        setState(() => successMessage = "Welcome back!");
 
         await Future.delayed(const Duration(seconds: 1));
 
-        navigateToUserScreen(response.user!);
-      } else {
-        setState(() => errorMessage = response.errorMessage);
+        navigateToNextScreen(user);
       }
     } catch (e) {
       setState(() {
-        errorMessage = "An error occurred: ${e.toString()}";
+        errorMessage = "Login failed: ${e.toString()}";
       });
     }
 
     setState(() => isLoading = false);
   }
 
-  void navigateToUserScreen(User user) {
-    Navigator.push(
+  void navigateToNextScreen(User user) {
+    // Navigate to different screens based on profile completion
+    Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
     );
   }
 
@@ -120,15 +124,16 @@ class _LoginScreenState extends State<LoginScreen> {
               const Text(
                 'Hi, Welcome Back! 👋',
                 style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
               const SizedBox(height: 20),
 
               // Email Input
               TextField(
-                controller: userService.emailController,
+                controller: emailController,
                 style: const TextStyle(color: Colors.black),
                 decoration: const InputDecoration(
                   labelText: 'Email',
@@ -145,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Password Input
               TextField(
-                controller: userService.passwordController,
+                controller: passwordController,
                 obscureText: !isPasswordVisible,
                 style: const TextStyle(color: Colors.black),
                 decoration: InputDecoration(
@@ -173,18 +178,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 10),
 
-              // Forgot Password
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
-              ),
-
               // Remember Me Checkbox
               Row(
                 children: [
@@ -210,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Login Button
               ElevatedButton(
-                onPressed: () => handleLogin(context),
+                onPressed: handleLogin,
                 style: ElevatedButton.styleFrom(
                   padding:
                       const EdgeInsets.symmetric(vertical: 15, horizontal: 80),
@@ -219,38 +212,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.purple,
                 ),
-                child: const Text('Log In'),
+                child: isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Log In'),
               ),
 
               const SizedBox(height: 20),
 
+              // Messages
               if (successMessage != null)
                 Text(successMessage!,
                     style: const TextStyle(color: Colors.green)),
               if (errorMessage != null)
                 Text(errorMessage!, style: const TextStyle(color: Colors.red)),
-              if (isLoading) const CircularProgressIndicator(),
 
               const SizedBox(height: 40),
-
-              // Social Login Divider
-              const Row(
-                children: [
-                  Expanded(child: Divider(color: Colors.black, thickness: 1)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child:
-                        Text("Or With", style: TextStyle(color: Colors.black)),
-                  ),
-                  Expanded(child: Divider(color: Colors.black, thickness: 1)),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Social Media Buttons Placeholder
-              IconScroller(),
-
-              const SizedBox(height: 30),
 
               // Sign Up Option
               const Row(

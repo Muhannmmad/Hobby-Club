@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/features/profiles/screens/my_profile_screen.dart';
 import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
 import 'package:hoppy_club/features/chat/screens/chat_screen.dart';
 import 'package:hoppy_club/config/config.dart';
-import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
 import 'package:hoppy_club/features/profiles/widgets/swip_screen.dart';
 
@@ -40,7 +40,7 @@ class BottomNavBar extends StatelessWidget {
     } else if (index == 4) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+        MaterialPageRoute(builder: (context) => const MyProfileScreen()),
       );
     }
   }
@@ -69,8 +69,7 @@ class BottomNavBar extends StatelessWidget {
           children: <Widget>[
             _buildNavItem(Icons.home, 'Home', 0, context),
             _buildNavItem(Icons.favorite, 'Favorites', 1, context),
-            _buildNavItem(
-                Icons.message, 'Messages', 3, context), // Updated this line
+            _buildNavItem(Icons.message, 'Messages', 3, context),
             _buildNavItem(Icons.search, 'Search', 2, context),
             _buildNavItem(Icons.person, 'Profile', 4, context),
           ],

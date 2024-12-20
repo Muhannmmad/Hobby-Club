@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/features/home/screens/home_screen.dart';
 import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
 import 'package:hoppy_club/features/registeration/widgets/log_in_button.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_login.dart';
@@ -38,7 +39,7 @@ class SignUpScreenState extends State<SignUpScreen> {
           // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
-            builder: (context) => const EditProfileScreen(),
+            builder: (context) => const HomeScreen(),
           ),
         );
       } else {

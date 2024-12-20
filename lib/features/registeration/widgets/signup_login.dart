@@ -29,7 +29,10 @@ class IconScroller extends StatelessWidget {
         // Navigate to EditProfileScreen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+          MaterialPageRoute(
+              builder: (context) => const EditProfileScreen(
+                    userId: '',
+                  )),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

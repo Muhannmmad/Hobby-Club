@@ -42,7 +42,10 @@ class HomeScreenState extends State<HomeScreen> {
     } else if (index == 4) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+        MaterialPageRoute(
+            builder: (context) => const EditProfileScreen(
+                  userId: '',
+                )),
       );
     }
   }
