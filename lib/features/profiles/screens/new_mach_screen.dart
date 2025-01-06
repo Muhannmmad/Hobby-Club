@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/features/profiles/widgets/likes_remove.dart';
 import 'package:hoppy_club/shared/screens/detailed_profile.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
-import 'package:hoppy_club/features/profiles/widgets/likes_remove.dart';
 import 'package:hoppy_club/features/profiles/repository/user_profile.dart';
 
 class Favorites extends StatelessWidget {
@@ -12,6 +12,8 @@ class Favorites extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Favorites'),
+        backgroundColor: Colors.purple,
+        elevation: 4.0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -66,25 +68,36 @@ class UserCard extends StatelessWidget {
                     topLeft: Radius.circular(15.0),
                     topRight: Radius.circular(15.0),
                   ),
-                  child: Image.asset(
-                    user.profileImage,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                  ),
+                  child: user.profileImage.isNotEmpty
+                      ? Image.network(
+                          user.profileImage,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.broken_image, size: 100),
+                        )
+                      : const Icon(
+                          Icons.person,
+                          size: 100,
+                          color: Colors.grey,
+                        ),
                 ),
                 Positioned(
-                  right: 0,
-                  top: 15,
-                  bottom: 15,
+                  right: 8,
+                  top: 8,
                   child: ClipRRectButton(
                     onFavoritePressed: () {
                       // Handle favorite action
+                      debugPrint(
+                          "Favorite button pressed for ${user.firstName}");
                     },
                     onChatPressed: () {
                       // Handle chat action
+                      debugPrint("Chat button pressed for ${user.firstName}");
                     },
                     onClosePressed: () {
-                      // Handle close action
+                      // Handle remove from favorites
+                      debugPrint("Remove button pressed for ${user.firstName}");
                     },
                     buttonSize: 30, // Smaller button size for Favorites screen
                   ),

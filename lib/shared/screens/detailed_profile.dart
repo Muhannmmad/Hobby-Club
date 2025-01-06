@@ -9,6 +9,10 @@ class DetailedProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Fetch screen size
+    final screenSize = MediaQuery.of(context).size;
+    final isTablet = screenSize.width > 600;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${user.firstName} ${user.lastName}'),
@@ -21,21 +25,23 @@ class DetailedProfile extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
-                    user.profileImage,
-                    fit: BoxFit.cover,
-                    height: 700,
-                    width: double.infinity,
+                  child: AspectRatio(
+                    aspectRatio: isTablet ? 16 / 9 : 4 / 3,
+                    child: Image.asset(
+                      user.profileImage,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
                   ),
                 ),
                 Positioned(
-                  right: 0,
-                  top: MediaQuery.of(context).size.height * 0.3,
+                  right: 16,
+                  top: screenSize.height * 0.25,
                   child: ClipRRectButton(
                     onFavoritePressed: () {},
                     onChatPressed: () {},
                     onClosePressed: () {},
-                    buttonSize: 60,
+                    buttonSize: isTablet ? 80 : 60,
                   ),
                 ),
               ],
@@ -49,33 +55,33 @@ class DetailedProfile extends StatelessWidget {
                 ),
                 color: const Color.fromARGB(255, 226, 195, 231),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(isTablet ? 24.0 : 16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         '${user.firstName}, ${user.age}',
-                        style: const TextStyle(
-                          fontSize: 24,
+                        style: TextStyle(
+                          fontSize: isTablet ? 28 : 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 10),
                       Text(
                         'City: ${user.city}',
-                        style: const TextStyle(
-                          fontSize: 20,
+                        style: TextStyle(
+                          fontSize: isTablet ? 22 : 20,
                         ),
                       ),
                       const SizedBox(height: 20),
                       Text(
                         'About: ${user.about}',
-                        style: const TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: isTablet ? 18 : 16),
                       ),
                       const SizedBox(height: 20),
                       Text(
                         'Hobbies: ${user.hobbies.join(', ')}',
-                        style: const TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: isTablet ? 18 : 16),
                       ),
                     ],
                   ),

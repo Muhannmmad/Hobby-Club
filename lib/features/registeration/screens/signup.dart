@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
-import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
 import 'package:hoppy_club/features/registeration/widgets/log_in_button.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_login.dart';
 import 'package:hoppy_club/features/registeration/repository/user_service.dart';

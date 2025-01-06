@@ -24,7 +24,6 @@ class StartScreenState extends State<StartScreen> {
         controller.setLooping(true);
         controller.setVolume(0.0);
         controller.play();
-
         setState(() {});
       });
     _loadLanguagePreference();
@@ -50,6 +49,9 @@ class StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final isTablet = screenSize.width > 600;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -75,10 +77,10 @@ class StartScreenState extends State<StartScreen> {
                 children: [
                   // Logo
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(isTablet ? 24.0 : 16.0),
                     child: SizedBox(
-                      height: 100,
-                      width: 100,
+                      height: isTablet ? 150 : 100,
+                      width: isTablet ? 150 : 100,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.asset(
@@ -94,7 +96,7 @@ class StartScreenState extends State<StartScreen> {
                     'Hobby Club',
                     style: GoogleFonts.spicyRice(
                       textStyle: Theme.of(context).textTheme.displayLarge,
-                      fontSize: 48,
+                      fontSize: isTablet ? 64 : 48,
                       fontWeight: FontWeight.w700,
                       fontStyle: FontStyle.italic,
                       color: const Color.fromARGB(205, 67, 7, 82),
@@ -103,15 +105,16 @@ class StartScreenState extends State<StartScreen> {
                   ),
 
                   // Subtitle
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: isTablet ? 32.0 : 16.0),
                     child: Column(
                       children: [
                         Text(
                           "Meet new people around you",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 20,
+                            fontSize: isTablet ? 24 : 20,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,
@@ -120,7 +123,7 @@ class StartScreenState extends State<StartScreen> {
                           "Let's chat, let's enjoy",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 20,
+                            fontSize: isTablet ? 24 : 20,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,
@@ -132,7 +135,8 @@ class StartScreenState extends State<StartScreen> {
 
                   // Language Dropdown
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: isTablet ? 32.0 : 16.0),
                     child: DropdownButton<String>(
                       value: selectedLanguage,
                       icon: const Icon(Icons.language, color: Colors.white),
@@ -162,8 +166,10 @@ class StartScreenState extends State<StartScreen> {
                   // Start Button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 10),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isTablet ? 40 : 30,
+                        vertical: isTablet ? 16 : 10,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -177,10 +183,10 @@ class StartScreenState extends State<StartScreen> {
                         ),
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       "Let's Start",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: isTablet ? 24 : 20,
                         color: Colors.white,
                       ),
                     ),
