@@ -67,90 +67,160 @@ class MyProfileScreenState extends State<MyProfileScreen> {
           : userData == null
               ? const Center(child: Text('No profile data found.'))
               : SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.grey[300],
-                        backgroundImage: userData!['profileImage'] != null
-                            ? NetworkImage(userData!['profileImage'])
-                            : null,
-                        child: userData!['profileImage'] == null
-                            ? const Icon(
-                                Icons.person,
-                                size: 60,
-                                color: Colors.grey,
-                              )
-                            : null,
-                      ),
-                      const SizedBox(height: 20),
-                      buildProfileInfoRow('Name', userData?['name']),
-                      buildProfileInfoRow('Age', userData?['age']),
-                      buildProfileInfoRow('Gender', userData?['gender']),
-                      buildProfileInfoRow('Town', userData?['town']),
-                      buildProfileInfoRow('Hobbies', userData?['hobbies']),
-                      buildProfileInfoRow('About', userData?['about']),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditProfileScreen(
-                                userId: _auth.currentUser!.uid,
-                              ),
-                            ),
-                          ).then((_) {
-                            // Refresh user data when returning from edit screen
-                            fetchUserData();
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purple,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
+                      // Large photo occupying half the screen
+                      Container(
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 60, vertical: 15),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: userData!['profileImage'] != null
+                                ? NetworkImage(userData!['profileImage'])
+                                : const AssetImage('assets/default_profile.png')
+                                    as ImageProvider,
+                          ),
                         ),
-                        child: const Text(
-                          'Edit Profile',
-                          style: TextStyle(
+                      ),
+                      const SizedBox(height: 10),
+                      // Information box with decoration
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
                             color: Colors.white,
-                            fontSize: 18,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Name and age
+                              Text(
+                                '${userData?['name'] ?? 'Not provided'}, ${userData?['age'] ?? 'N/A'}',
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              // Gender
+                              Row(
+                                children: [
+                                  const Icon(Icons.person,
+                                      color: Colors.purple),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    userData?['gender'] ??
+                                        'Gender not provided',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              // Town
+                              Row(
+                                children: [
+                                  const Icon(Icons.location_on,
+                                      color: Colors.purple),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    userData?['town'] ?? 'Town not provided',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              // Hobbies
+                              Row(
+                                children: [
+                                  const Icon(Icons.star, color: Colors.purple),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      userData?['hobbies'] ??
+                                          'Hobbies not provided',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              // About section
+                              const Text(
+                                'About Me',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                userData?['about'] ?? 'No details provided.',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              const SizedBox(height: 20),
+                              // Edit Profile Button
+                              Center(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EditProfileScreen(
+                                          userId: _auth.currentUser!.uid,
+                                        ),
+                                      ),
+                                    ).then((_) {
+                                      // Refresh user data when returning from edit screen
+                                      fetchUserData();
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.purple,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 60, vertical: 15),
+                                  ),
+                                  child: const Text(
+                                    'Edit Profile',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-    );
-  }
-
-  Widget buildProfileInfoRow(String label, String? value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$label: ',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value != null && value.isNotEmpty ? value : 'Not provided',
-              style: const TextStyle(
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
