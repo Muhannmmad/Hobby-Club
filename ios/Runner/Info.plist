@@ -60,5 +60,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Wir benötigen Zugriff auf Ihre Fotos, um sie in der App anzuzeigen.</string>
 </dict>
 </plist>

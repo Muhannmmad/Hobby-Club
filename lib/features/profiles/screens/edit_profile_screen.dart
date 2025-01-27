@@ -57,8 +57,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> pickImage() async {
     try {
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
+      final ImagePicker picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
         setState(() {
           _profileImage = File(pickedFile.path);
@@ -111,7 +111,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         'town': townController.text,
         'hobbies': hobbiesController.text,
         'about': aboutController.text,
-        'profileImage': imageUrl,
+        if (imageUrl != null) 'profileImage': imageUrl,
       }, SetOptions(merge: true));
 
       ScaffoldMessenger.of(context).showSnackBar(
