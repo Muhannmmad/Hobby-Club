@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/features/home/repository/events.dart';
+
 import 'package:hoppy_club/features/home/repository/hobby.dart';
 import 'package:hoppy_club/features/profiles/repository/user_profile.dart';
 import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
@@ -21,7 +21,6 @@ class GroupsPage extends StatelessWidget {
             tabs: [
               Tab(text: 'Members'),
               Tab(text: 'Chat'),
-              Tab(text: 'Events'),
             ],
           ),
         ),
@@ -29,7 +28,6 @@ class GroupsPage extends StatelessWidget {
           children: [
             MembersTab(),
             ChatTab(),
-            EventsTab(),
           ],
         ),
       ),
@@ -108,24 +106,6 @@ class ChatTab extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class EventsTab extends StatelessWidget {
-  const EventsTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: sampleEvents.length,
-      itemBuilder: (context, index) {
-        final event = sampleEvents[index];
-        return ListTile(
-          title: Text(event.title),
-          subtitle: Text('${event.date} - ${event.description}'),
-        );
-      },
     );
   }
 }
