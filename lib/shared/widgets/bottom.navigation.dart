@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/features/profiles/screens/Swipe_profile.dart';
 import 'package:hoppy_club/features/profiles/screens/my_profile_screen.dart';
 import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
 import 'package:hoppy_club/features/chat/screens/chat_screen.dart';
 import 'package:hoppy_club/config/config.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
-import 'package:hoppy_club/features/profiles/widgets/swip_screen.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -30,12 +30,12 @@ class BottomNavBar extends StatelessWidget {
     } else if (index == 2) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const SwipeScreen()),
+        MaterialPageRoute(builder: (context) => SwipeableProfilesScreen()),
       );
     } else if (index == 3) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const ChatScreen()),
+        MaterialPageRoute(builder: (context) => SwipeableProfilesScreen()),
       );
     } else if (index == 4) {
       Navigator.pushReplacement(
