@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 
 class EventScreen extends StatefulWidget {
-  const EventScreen({super.key});
+  const EventScreen({Key? key}) : super(key: key);
 
   @override
   EventScreenState createState() => EventScreenState();
@@ -13,18 +14,67 @@ class EventScreenState extends State<EventScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<void> _updateEventStatus(String eventId, String status) async {
-    await _firestore.collection('events').doc(eventId).update({
-      'status': status,
-    });
+  Future<Map<String, String>> _getUserProfile(String uid) async {
+    final userDoc = await _firestore.collection('users').doc(uid).get();
+    if (userDoc.exists && userDoc.data() != null) {
+      final data = userDoc.data()!;
+      return {
+        'firstName': data['firstName'] ?? 'Unknown',
+        'lastName': data['lastName'] ?? '',
+      };
+    }
+    return {'firstName': 'Unknown', 'lastName': ''};
+  }
+
+  Future<void> _toggleJoinEvent(String eventId) async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    final userProfile = await _getUserProfile(user.uid);
+    final userData = {
+      'uid': user.uid,
+      'firstName': userProfile['firstName']!,
+      'lastName': userProfile['lastName']!,
+    };
+
+    final eventDoc = await _firestore.collection('events').doc(eventId).get();
+    if (!eventDoc.exists) return;
+
+    final joinedUsers = (eventDoc.data()?['joinedUsers'] as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .toList() ??
+        [];
+    final isJoined = joinedUsers.any((u) => u['uid'] == user.uid);
+
+    if (isJoined) {
+      await _firestore.collection('events').doc(eventId).update({
+        'joinedUsers': FieldValue.arrayRemove([userData]),
+      });
+    } else {
+      await _firestore.collection('events').doc(eventId).update({
+        'joinedUsers': FieldValue.arrayUnion([userData]),
+      });
+    }
   }
 
   Future<void> _deleteEvent(String eventId) async {
     await _firestore.collection('events').doc(eventId).delete();
   }
 
+  void _showEventDialog({String? eventId, Map<String, dynamic>? eventData}) {
+    showDialog(
+      context: context,
+      builder: (context) => EventDialog(
+        eventId: eventId,
+        eventData: eventData,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentUser = _auth.currentUser;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Events')),
       body: StreamBuilder<QuerySnapshot>(
@@ -39,7 +89,6 @@ class EventScreenState extends State<EventScreen> {
           }
 
           final events = snapshot.data!.docs;
-          final currentUser = _auth.currentUser;
 
           return ListView.builder(
             itemCount: events.length,
@@ -47,259 +96,218 @@ class EventScreenState extends State<EventScreen> {
               final event = events[index];
               final data = event.data() as Map<String, dynamic>;
               final creatorUid = data['creatorUid'] ?? 'Unknown';
-              final creatorName = data['creatorName'] ?? 'Unknown';
-              final isCreator = currentUser?.uid == creatorUid;
 
-              return Card(
-                margin: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  title: Text(data['name']),
-                  subtitle: Text(
-                      'Place: ${data['place']}\nDate: ${data['date']} at ${data['time']}\nDescription: ${data['description']}\nCreated by: $creatorName'),
-                  isThreeLine: true,
-                  trailing: isCreator
-                      ? PopupMenuButton<String>(
-                          onSelected: (value) {
-                            if (value == 'Edit') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditEventScreen(
-                                    eventId: event.id,
-                                    initialData: data,
-                                  ),
-                                ),
-                              );
-                            } else if (value == 'Delete') {
-                              _deleteEvent(event.id);
-                            }
-                          },
-                          itemBuilder: (context) => [
-                            const PopupMenuItem(
-                              value: 'Edit',
-                              child: Text('Edit'),
+              // Fetch creator details
+              final creatorNameFuture = _getUserProfile(creatorUid);
+
+              final joinedUsers = (data['joinedUsers'] as List?)
+                      ?.whereType<Map<String, dynamic>>()
+                      .toList() ??
+                  [];
+              final currentUserId = currentUser?.uid;
+              final isJoined = currentUserId != null &&
+                  joinedUsers.any((user) => user['uid'] == currentUserId);
+
+              final joinedUsersDisplay = joinedUsers.map((user) {
+                return '${user['firstName']} ${user['lastName']}';
+              }).join(', ');
+
+              return FutureBuilder<Map<String, String>>(
+                future: creatorNameFuture,
+                builder: (context, snapshot) {
+                  final creatorProfile = snapshot.data;
+                  final creatorName = creatorProfile != null
+                      ? '${creatorProfile['firstName']} ${creatorProfile['lastName']}'
+                      : 'Fetching...';
+
+                  return Card(
+                    margin: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      title: Text(data['name']),
+                      subtitle: Text(
+                        'Place: ${data['place']}\n'
+                        'Date: ${data['date']} at ${data['time']}\n'
+                        'Description: ${data['description']}\n'
+                        'Created by: $creatorName\n'
+                        'Joined: $joinedUsersDisplay',
+                      ),
+                      isThreeLine: true,
+                      trailing: currentUserId == creatorUid
+                          ? PopupMenuButton<String>(
+                              onSelected: (value) {
+                                if (value == 'Edit') {
+                                  _showEventDialog(
+                                      eventId: event.id, eventData: data);
+                                } else if (value == 'Delete') {
+                                  _deleteEvent(event.id);
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                const PopupMenuItem(
+                                    value: 'Edit', child: Text('Edit')),
+                                const PopupMenuItem(
+                                    value: 'Delete', child: Text('Delete')),
+                              ],
+                            )
+                          : ElevatedButton(
+                              onPressed: () => _toggleJoinEvent(event.id),
+                              child: Text(isJoined ? 'Leave' : 'Join'),
                             ),
-                            const PopupMenuItem(
-                              value: 'Delete',
-                              child: Text('Delete'),
-                            ),
-                          ],
-                        )
-                      : DropdownButton<String>(
-                          value: data['status'] ?? 'Join',
-                          items: const [
-                            DropdownMenuItem(
-                                value: 'Join', child: Text('Join')),
-                            DropdownMenuItem(
-                                value: 'Maybe', child: Text('Maybe')),
-                            DropdownMenuItem(
-                                value: 'Not Interested',
-                                child: Text('Not Interested')),
-                          ],
-                          onChanged: (value) {
-                            if (value != null) {
-                              _updateEventStatus(event.id, value);
-                            }
-                          },
-                        ),
-                ),
+                    ),
+                  );
+                },
               );
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CreateEventScreen()),
-          );
-        },
-        child: const Icon(Icons.add),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 40.0),
+        child: ElevatedButton(
+          onPressed: () => _showEventDialog(),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.purple, // Button color
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+          ),
+          child: const Text(
+            'Create new event',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
+      bottomNavigationBar: const BottomNavBar(selectedIndex: 3),
     );
   }
 }
 
-class EditEventScreen extends StatefulWidget {
-  final String eventId;
-  final Map<String, dynamic> initialData;
+class EventDialog extends StatefulWidget {
+  final String? eventId;
+  final Map<String, dynamic>? eventData;
 
-  const EditEventScreen({
-    required this.eventId,
-    required this.initialData,
-    super.key,
-  });
+  const EventDialog({Key? key, this.eventId, this.eventData}) : super(key: key);
 
   @override
-  EditEventScreenState createState() => EditEventScreenState();
+  _EventDialogState createState() => _EventDialogState();
 }
 
-class EditEventScreenState extends State<EditEventScreen> {
-  late TextEditingController _nameController;
-  late TextEditingController _placeController;
-  late TextEditingController _dateController;
-  late TextEditingController _timeController;
-  late TextEditingController _descriptionController;
-
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+class _EventDialogState extends State<EventDialog> {
+  final _formKey = GlobalKey<FormState>();
+  String _name = '';
+  String _place = '';
+  String _date = '';
+  String _time = '';
+  String _description = '';
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.initialData['name']);
-    _placeController = TextEditingController(text: widget.initialData['place']);
-    _dateController = TextEditingController(text: widget.initialData['date']);
-    _timeController = TextEditingController(text: widget.initialData['time']);
-    _descriptionController =
-        TextEditingController(text: widget.initialData['description']);
-  }
-
-  Future<void> _updateEvent() async {
-    await _firestore.collection('events').doc(widget.eventId).update({
-      'name': _nameController.text,
-      'place': _placeController.text,
-      'date': _dateController.text,
-      'time': _timeController.text,
-      'description': _descriptionController.text,
-    });
-
-    Navigator.pop(context);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Edit Event')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Event Name'),
-            ),
-            TextField(
-              controller: _placeController,
-              decoration: const InputDecoration(labelText: 'Event Place'),
-            ),
-            TextField(
-              controller: _dateController,
-              decoration: const InputDecoration(labelText: 'Event Date'),
-            ),
-            TextField(
-              controller: _timeController,
-              decoration: const InputDecoration(labelText: 'Event Time'),
-            ),
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Event Description'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _updateEvent,
-              child: const Text('Update Event'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class CreateEventScreen extends StatefulWidget {
-  const CreateEventScreen({super.key});
-
-  @override
-  CreateEventScreenState createState() => CreateEventScreenState();
-}
-
-class CreateEventScreenState extends State<CreateEventScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _placeController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  Future<void> _submitEvent() async {
-    final user = _auth.currentUser;
-
-    if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You must be logged in to create events')),
-      );
-      return;
+    if (widget.eventData != null) {
+      _name = widget.eventData!['name'];
+      _place = widget.eventData!['place'];
+      _date = widget.eventData!['date'];
+      _time = widget.eventData!['time'];
+      _description = widget.eventData!['description'];
     }
+  }
 
-    final String name = _nameController.text;
-    final String place = _placeController.text;
-    final String date = _dateController.text;
-    final String time = _timeController.text;
-    final String description = _descriptionController.text;
+  Future<void> _saveEvent() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
-    if (name.isNotEmpty &&
-        place.isNotEmpty &&
-        date.isNotEmpty &&
-        time.isNotEmpty &&
-        description.isNotEmpty) {
-      await _firestore.collection('events').add({
-        'name': name,
-        'place': place,
-        'date': date,
-        'time': time,
-        'description': description,
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      final eventData = {
+        'name': _name,
+        'place': _place,
+        'date': _date,
+        'time': _time,
+        'description': _description,
         'creatorUid': user.uid,
         'creatorName': user.displayName ?? 'Anonymous',
-        'status': 'Join', // Default status
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+        'joinedUsers': [],
+      };
 
-      Navigator.pop(context);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
-      );
+      if (widget.eventId == null) {
+        await FirebaseFirestore.instance.collection('events').add(eventData);
+      } else {
+        await FirebaseFirestore.instance
+            .collection('events')
+            .doc(widget.eventId)
+            .update(eventData);
+      }
+
+      Navigator.of(context).pop();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Create Event')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Event Name'),
-            ),
-            TextField(
-              controller: _placeController,
-              decoration: const InputDecoration(labelText: 'Event Place'),
-            ),
-            TextField(
-              controller: _dateController,
-              decoration: const InputDecoration(labelText: 'Event Date'),
-            ),
-            TextField(
-              controller: _timeController,
-              decoration: const InputDecoration(labelText: 'Event Time'),
-            ),
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Event Description'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _submitEvent,
-              child: const Text('Create Event'),
-            ),
-          ],
+    return AlertDialog(
+      title: Text(widget.eventId == null ? 'Create Event' : 'Edit Event'),
+      content: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                initialValue: _name,
+                decoration: const InputDecoration(labelText: 'Event Name'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter a name' : null,
+                onSaved: (value) => _name = value!,
+              ),
+              TextFormField(
+                initialValue: _place,
+                decoration: const InputDecoration(labelText: 'Place'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter a place' : null,
+                onSaved: (value) => _place = value!,
+              ),
+              TextFormField(
+                initialValue: _date,
+                decoration: const InputDecoration(labelText: 'Date'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter a date' : null,
+                onSaved: (value) => _date = value!,
+              ),
+              TextFormField(
+                initialValue: _time,
+                decoration: const InputDecoration(labelText: 'Time'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter a time' : null,
+                onSaved: (value) => _time = value!,
+              ),
+              TextFormField(
+                initialValue: _description,
+                decoration: const InputDecoration(labelText: 'Description'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter a description' : null,
+                onSaved: (value) => _description = value!,
+              ),
+            ],
+          ),
         ),
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: _saveEvent,
+          child: const Text('Save'),
+        ),
+      ],
     );
   }
 }

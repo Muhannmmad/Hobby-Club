@@ -1,14 +1,12 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
-import 'package:hoppy_club/features/profiles/screens/settings.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  final String userId; // Pass the userId for profile editing
+  final String userId;
 
   const EditProfileScreen({super.key, required this.userId});
 
@@ -17,7 +15,8 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class EditProfileScreenState extends State<EditProfileScreen> {
-  final TextEditingController nameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
   final TextEditingController townController = TextEditingController();
@@ -42,7 +41,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       if (doc.exists) {
         final data = doc.data()!;
         setState(() {
-          nameController.text = data['name'] ?? '';
+          firstNameController.text = data['firstName'] ?? '';
+          lastNameController.text = data['lastName'] ?? '';
           ageController.text = data['age'] ?? '';
           genderController.text = data['gender'] ?? '';
           townController.text = data['town'] ?? '';
@@ -63,33 +63,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         setState(() {
           _profileImage = File(pickedFile.path);
         });
-      } else {
-        debugPrint('No image selected.');
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image: $e')),
-      );
-    }
-  }
-
-  Future<String?> uploadImage(File image) async {
-    try {
-      final ref = _storage.ref().child(
-          'profile_pictures/${widget.userId}/${DateTime.now().millisecondsSinceEpoch}.jpg');
-      final UploadTask uploadTask = ref.putFile(image);
-
-      final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
-      final String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-
-      return downloadUrl;
-    } catch (e) {
-      debugPrint('Image upload failed: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to upload image: $e')),
-      );
-      return null;
     }
   }
 
@@ -101,11 +77,16 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     try {
       String? imageUrl;
       if (_profileImage != null) {
-        imageUrl = await uploadImage(_profileImage!);
+        final ref = _storage.ref().child(
+            'profile_pictures/${widget.userId}/${DateTime.now().millisecondsSinceEpoch}.jpg');
+        final uploadTask = ref.putFile(_profileImage!);
+        final snapshot = await uploadTask.whenComplete(() {});
+        imageUrl = await snapshot.ref.getDownloadURL();
       }
 
       await _firestore.collection('users').doc(widget.userId).set({
-        'name': nameController.text,
+        'firstName': firstNameController.text,
+        'lastName': lastNameController.text,
         'age': ageController.text,
         'gender': genderController.text,
         'town': townController.text,
@@ -120,15 +101,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     } catch (e) {
       debugPrint('Error saving profile: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save profile: $e')),
-      );
     } finally {
       setState(() {
         isLoading = false;
@@ -143,34 +119,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SettingScreen(),
-              ),
-            );
-          },
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 8,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.menu,
-              color: Colors.black,
-            ),
-          ),
-        ),
         title: const Text(
           'Edit Profile',
           style: TextStyle(color: Colors.black),
@@ -191,11 +139,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   backgroundImage:
                       _profileImage != null ? FileImage(_profileImage!) : null,
                   child: _profileImage == null
-                      ? Icon(
-                          Icons.person,
-                          size: 50,
-                          color: Colors.grey[700],
-                        )
+                      ? Icon(Icons.person, size: 50, color: Colors.grey[700])
                       : null,
                 ),
               ),
@@ -205,16 +149,35 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                 style: TextStyle(color: Colors.black),
               ),
               const SizedBox(height: 20),
-              buildTextField(controller: nameController, label: 'Name'),
+
+              // First Name & Last Name in a Row
+              Row(
+                children: [
+                  Expanded(
+                    child: buildTextField(
+                      controller: firstNameController,
+                      label: 'First Name',
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: buildTextField(
+                      controller: lastNameController,
+                      label: 'Last Name',
+                    ),
+                  ),
+                ],
+              ),
               buildTextField(controller: ageController, label: 'Age'),
               buildTextField(controller: genderController, label: 'Gender'),
               buildTextField(controller: townController, label: 'Town'),
               buildTextField(controller: hobbiesController, label: 'Hobbies'),
               const SizedBox(height: 10),
               buildTextField(
-                  controller: aboutController,
-                  label: 'About me',
-                  isMultiLine: true),
+                controller: aboutController,
+                label: 'About me',
+                isMultiLine: true,
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: isLoading ? null : saveProfile,

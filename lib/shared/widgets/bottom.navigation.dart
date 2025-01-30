@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/features/home/screens/event_screen.dart';
 import 'package:hoppy_club/features/profiles/screens/Swipe_profile.dart';
 import 'package:hoppy_club/features/profiles/screens/my_profile_screen.dart';
 import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
-import 'package:hoppy_club/features/chat/screens/chat_screen.dart';
 import 'package:hoppy_club/config/config.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
 
@@ -17,31 +17,38 @@ class BottomNavBar extends StatelessWidget {
   void onItemTapped(BuildContext context, int index) {
     if (index == selectedIndex) return;
 
-    if (index == 0) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
-    } else if (index == 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Favorites()),
-      );
-    } else if (index == 2) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => SwipeableProfilesScreen()),
-      );
-    } else if (index == 3) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => SwipeableProfilesScreen()),
-      );
-    } else if (index == 4) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MyProfileScreen()),
-      );
+    switch (index) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Favorites()),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const SwipeableProfilesScreen()),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const EventScreen()),
+        );
+        break;
+      case 4:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MyProfileScreen()),
+        );
+        break;
     }
   }
 
@@ -69,8 +76,8 @@ class BottomNavBar extends StatelessWidget {
           children: <Widget>[
             _buildNavItem(Icons.home, 'Home', 0, context),
             _buildNavItem(Icons.favorite, 'Favorites', 1, context),
-            _buildNavItem(Icons.message, 'Messages', 3, context),
             _buildNavItem(Icons.search, 'Search', 2, context),
+            _buildNavItem(Icons.note_alt_rounded, 'Events', 3, context),
             _buildNavItem(Icons.person, 'Profile', 4, context),
           ],
         ),

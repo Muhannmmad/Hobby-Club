@@ -110,36 +110,6 @@ class HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 10),
           HobbiesCard(hobbies: outdoorHobbies, context: context),
           const SizedBox(height: 30),
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                backgroundColor: const Color.fromARGB(205, 67, 7, 82),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                shadowColor: Colors.grey.withOpacity(0.5),
-                elevation: 5,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const EventScreen()),
-                );
-              },
-              child: Text(
-                'View and Create Events',
-                style: GoogleFonts.roboto(
-                  textStyle: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
           const SizedBox(height: 20),
         ],
       ),

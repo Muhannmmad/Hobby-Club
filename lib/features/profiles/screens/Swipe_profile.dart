@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 
 class SwipeableProfilesScreen extends StatefulWidget {
   const SwipeableProfilesScreen({super.key});
@@ -33,68 +34,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
       'profileImage': 'assets/profiles/7.png',
       'hobbies': ['Music', 'Technology', 'Gaming'],
     },
-    {
-      'id': 'local_3',
-      'name': 'Julia Schmidt',
-      'age': 28,
-      'town': 'Hamburg',
-      'about':
-          'Travel lover and foodie. I enjoy exploring new cities and cultures.',
-      'profileImage': 'assets/profiles/5.png',
-      'hobbies': ['Traveling', 'Food', 'Photography'],
-      'isOnline': true,
-    },
-    {
-      'id': 'local_4',
-      'name': 'Lukas Weber',
-      'age': 30,
-      'town': 'Munich',
-      'about': 'Sports enthusiast, love football and outdoor activities.',
-      'profileImage': 'assets/profiles/6.png',
-      'hobbies': ['Football', 'Hiking', 'Fitness'],
-      'isOnline': false,
-    },
-    {
-      'id': 'local_5',
-      'name': 'Anna Klein',
-      'age': 22,
-      'town': 'Stuttgart',
-      'about':
-          'Passionate about photography and art. Looking to meet creatives!',
-      'profileImage': 'assets/profiles/1.png',
-      'hobbies': ['Photography', 'Art', 'Design'],
-      'isOnline': false,
-    },
-    {
-      'id': 'local_6',
-      'name': 'Leon Fischer',
-      'age': 27,
-      'town': 'Cologne',
-      'about': 'Avid reader and writer. I enjoy discussing books and ideas.',
-      'profileImage': 'assets/profiles/3.png',
-      'hobbies': ['Reading', 'Writing', 'Philosophy'],
-      'isOnline': false,
-    },
-    {
-      'id': 'local_7',
-      'name': 'Sophie Wagner',
-      'age': 24,
-      'town': 'Düsseldorf',
-      'about': 'Love baking, hiking, and all things nature. Let’s explore!',
-      'profileImage': 'assets/profiles/2.png',
-      'hobbies': ['Baking', 'Hiking', 'Nature'],
-      'isOnline': true,
-    },
-    {
-      'id': 'local_8',
-      'name': 'Hanna Becker',
-      'age': 33,
-      'town': 'Leipzig',
-      'about': 'Music producer and cat lover. Always up for a jam session.',
-      'profileImage': 'assets/profiles/4.png',
-      'hobbies': ['Music', 'Cats', 'Producing'],
-      'isOnline': false,
-    },
+    // Add more predefined users here...
   ];
 
   @override
@@ -139,9 +79,12 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                   itemCount: userProfiles.length,
                   itemBuilder: (context, index) {
                     final userData = userProfiles[index];
-                    return buildProfileCard(userData);
+                    return SingleChildScrollView(
+                      child: buildProfileCard(userData),
+                    );
                   },
                 ),
+      bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
     );
   }
 
