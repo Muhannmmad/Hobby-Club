@@ -18,5 +18,5 @@ final List<Hobby> outdoorHobbies = [
   Hobby(name: 'Hiking', image: 'assets/hobbies/hiking.jpg'),
   Hobby(name: 'Cycling', image: 'assets/hobbies/cycling.jpg'),
   Hobby(name: 'Photography', image: 'assets/hobbies/photography.jpg'),
-  Hobby(name: 'Camping', image: '/Users/muhammadhassan/Desktop/camping.jpg'),
+  Hobby(name: 'Camping', image: 'assets/hobbies/camping.jpg'),
 ];

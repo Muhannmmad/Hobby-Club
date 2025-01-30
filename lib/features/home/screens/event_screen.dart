@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 
 class EventScreen extends StatefulWidget {
-  const EventScreen({Key? key}) : super(key: key);
+  const EventScreen({super.key});
 
   @override
   EventScreenState createState() => EventScreenState();
@@ -192,7 +192,7 @@ class EventDialog extends StatefulWidget {
   final String? eventId;
   final Map<String, dynamic>? eventData;
 
-  const EventDialog({Key? key, this.eventId, this.eventData}) : super(key: key);
+  const EventDialog({super.key, this.eventId, this.eventData});
 
   @override
   _EventDialogState createState() => _EventDialogState();
