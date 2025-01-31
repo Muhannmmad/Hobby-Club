@@ -20,7 +20,7 @@ class HobbiesCard extends StatelessWidget {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              final String? groupId = hobbies[index].groupId;
+              final String groupId = hobbies[index].groupId;
 
               if (groupId != null && groupId.isNotEmpty) {
                 Navigator.push(

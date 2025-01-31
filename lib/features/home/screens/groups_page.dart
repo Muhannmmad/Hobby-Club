@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
 
 class GroupPage extends StatefulWidget {
   final String groupId;
 
-  const GroupPage({Key? key, required this.groupId}) : super(key: key);
+  const GroupPage({super.key, required this.groupId});
 
   @override
   _GroupPageState createState() => _GroupPageState();
@@ -84,19 +85,19 @@ class _GroupPageState extends State<GroupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Group Page")),
+      appBar: AppBar(title: const Text("Group Members")),
       body: Column(
         children: [
           ElevatedButton(
             onPressed: isLoading ? null : _toggleMembership,
             child: isLoading
-                ? CircularProgressIndicator(color: Colors.white)
+                ? const CircularProgressIndicator(color: Colors.white)
                 : Text(isMember ? "Leave Group" : "Join Group"),
           ),
           const SizedBox(height: 20),
           Expanded(
             child: memberIds.isEmpty
-                ? Center(child: Text("No members yet."))
+                ? const Center(child: Text("No members yet."))
                 : GridView.builder(
                     padding: const EdgeInsets.all(10),
                     gridDelegate:
@@ -104,7 +105,8 @@ class _GroupPageState extends State<GroupPage> {
                       crossAxisCount: 2,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
-                      childAspectRatio: 3 / 4, // Adjust for card proportions
+                      childAspectRatio:
+                          1 / 1.4, // Bigger square with data below
                     ),
                     itemCount: memberIds.length,
                     itemBuilder: (context, index) {
@@ -116,24 +118,27 @@ class _GroupPageState extends State<GroupPage> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
+                            return const Center(
+                                child: CircularProgressIndicator());
                           }
 
                           if (!snapshot.hasData || snapshot.data == null) {
-                            return SizedBox.shrink();
+                            return const SizedBox.shrink();
                           }
 
                           var userData =
                               snapshot.data!.data() as Map<String, dynamic>?;
 
                           if (userData == null) {
-                            return SizedBox.shrink();
+                            return const SizedBox.shrink();
                           }
 
-                          String name = userData['name'] ?? 'Unknown';
-                          String city = userData['city'] ?? 'Unknown City';
-                          String profilePic = userData['profilePic'] ??
+                          // Fetch profile data
+                          String profileImage = userData['profileImage'] ??
                               'https://via.placeholder.com/150'; // Fallback image
+                          String firstName = userData['firstName'] ?? 'Unknown';
+
+                          String city = userData['town'] ?? 'Unknown City';
                           String age = userData['age']?.toString() ?? '-';
 
                           return GestureDetector(
@@ -145,25 +150,39 @@ class _GroupPageState extends State<GroupPage> {
                               ),
                               elevation: 5,
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  CircleAvatar(
-                                    radius: 40,
-                                    backgroundImage: NetworkImage(profilePic),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    "$name, $age",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: Image.network(
+                                      profileImage,
+                                      height: 200,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                  Text(
-                                    city.toUpperCase(),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
+                                  const SizedBox(height: 10),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "$firstName , $age",
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Text(
+                                          city.toUpperCase(),
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -176,22 +195,6 @@ class _GroupPageState extends State<GroupPage> {
                   ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class DetailedProfilePage extends StatelessWidget {
-  final String userId;
-
-  const DetailedProfilePage({Key? key, required this.userId}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Detailed Profile")),
-      body: Center(
-        child: Text("Display detailed profile for user ID: $userId"),
       ),
     );
   }

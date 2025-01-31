@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoppy_club/features/home/screens/event_screen.dart';
 import 'package:hoppy_club/features/home/widgets/hobbies_card.dart';
-import 'package:hoppy_club/features/profiles/screens/Swipe_profile.dart';
-import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
-import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 import 'package:hoppy_club/features/home/repository/hobby.dart';
 
@@ -21,12 +17,9 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hobbies'),
-      ),
       body: ListView(
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 70),
           Center(
             child: Text(
               'Hobby Club',
