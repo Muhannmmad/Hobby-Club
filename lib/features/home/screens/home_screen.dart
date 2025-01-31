@@ -78,22 +78,3 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-Widget _buildSectionTitle(String title) {
-  return Center(
-    child: Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ),
-  );
-}

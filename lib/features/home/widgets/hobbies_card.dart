@@ -22,7 +22,7 @@ class HobbiesCard extends StatelessWidget {
             onTap: () {
               final String groupId = hobbies[index].groupId;
 
-              if (groupId != null && groupId.isNotEmpty) {
+              if (groupId.isNotEmpty) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
