@@ -112,12 +112,36 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                   itemCount: userProfiles.length,
                   itemBuilder: (context, index) {
                     final userData = userProfiles[index];
-                    return SingleChildScrollView(
-                      child: buildProfileCard(userData),
+                    return Stack(
+                      children: [
+                        // Layer showing blurred cards behind the main profile
+                        for (int i = 1; i <= 2; i++)
+                          if (index + i < userProfiles.length)
+                            Positioned(
+                              top: 40.0 * i,
+                              left: 20.0 * i,
+                              right: 20.0 * i,
+                              child: buildBlurredCard(),
+                            ),
+                        // Main profile card
+                        SingleChildScrollView(
+                          child: buildProfileCard(userData),
+                        ),
+                      ],
                     );
                   },
                 ),
       bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
+    );
+  }
+
+  Widget buildBlurredCard() {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.5,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.grey.withOpacity(0.2),
+      ),
     );
   }
 
@@ -172,29 +196,49 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          Text(
-            '$name, $age',
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            town,
-            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Hobbies: $hobbies',
-            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'About Me',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            about,
-            style: const TextStyle(fontSize: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 10,
+                  spreadRadius: 5,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Text(
+                  '$name, $age',
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  town,
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Hobbies: $hobbies',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'About Me',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  about,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
           ),
         ],
       ),
