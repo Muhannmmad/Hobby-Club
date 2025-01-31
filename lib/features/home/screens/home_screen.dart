@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoppy_club/features/home/widgets/hobbies_card.dart';
+import 'package:hoppy_club/features/registeration/screens/login.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 import 'package:hoppy_club/features/home/repository/hobby.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,14 +15,85 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  int selectedIndex = 0; // Track the selected index
+  int selectedIndex = 0;
+  String userName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserName();
+  }
+
+  Future<void> fetchUserName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      setState(() {
+        userName = userDoc.data()?['firstName'] ?? 'User';
+      });
+    } catch (e) {
+      debugPrint('Failed to fetch user name: $e');
+    }
+  }
+
+  void logout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    } catch (e) {
+      debugPrint('Error during logout: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
+      body: Column(
         children: [
-          const SizedBox(height: 70),
+          const SizedBox(height: 50), // Adjusted height for better placement
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome,',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      userName,
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: const Color.fromARGB(205, 67, 7, 82),
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  icon: const Icon(Icons.logout, color: Colors.black),
+                  onPressed: logout,
+                  tooltip: 'Log out',
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20), // Adjust spacing for layout
           Center(
             child: Text(
               'Hobby Club',
@@ -50,7 +124,7 @@ class HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          HobbiesCard(hobbies: indoorHobbies),
+          Expanded(child: HobbiesCard(hobbies: indoorHobbies)),
           const SizedBox(height: 20),
           Center(
             child: Container(
@@ -69,9 +143,7 @@ class HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          HobbiesCard(hobbies: outdoorHobbies),
-          const SizedBox(height: 30),
-          const SizedBox(height: 20),
+          Expanded(child: HobbiesCard(hobbies: outdoorHobbies)),
         ],
       ),
       bottomNavigationBar: BottomNavBar(selectedIndex: selectedIndex),
