@@ -34,31 +34,70 @@ class FavoritesScreen extends StatelessWidget {
           }
 
           final favoriteProfiles = snapshot.data!;
-          return ListView.builder(
-            itemCount: favoriteProfiles.length,
-            itemBuilder: (context, index) {
-              final userData = favoriteProfiles[index];
-              final profileImage = userData['profileImage'] ?? '';
-              final name = userData['name'] ?? 'Unknown';
-              final age = userData['age']?.toString() ?? 'N/A';
-              final town = userData['town'] ?? 'Unknown location';
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 8.0,
+                childAspectRatio: 3 / 4,
+              ),
+              itemCount: favoriteProfiles.length,
+              itemBuilder: (context, index) {
+                final userData = favoriteProfiles[index];
+                final profileImage = userData['profileImage'] ?? '';
+                final name = userData['name'] ?? 'Unknown';
+                final age = userData['age']?.toString() ?? 'N/A';
+                final town = userData['town'] ?? 'Unknown location';
 
-              return ListTile(
-                leading: profileImage.isNotEmpty
-                    ? Image.network(
-                        profileImage,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.person, size: 50);
-                        },
-                      )
-                    : const Icon(Icons.person, size: 50),
-                title: Text('$name, $age'),
-                subtitle: Text(town),
-              );
-            },
+                return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  elevation: 4.0,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(16.0),
+                        ),
+                        child: profileImage.isNotEmpty
+                            ? Image.network(
+                                profileImage,
+                                width: double.infinity,
+                                height: 200,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(Icons.person, size: 120);
+                                },
+                              )
+                            : const Icon(Icons.person, size: 120),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '$name, $age',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        town,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14.0,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           );
         },
       ),
