@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/home/screens/event_screen.dart';
 import 'package:hoppy_club/features/profiles/screens/Swipe_profile.dart';
 import 'package:hoppy_club/features/profiles/screens/my_profile_screen.dart';
-import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
+import 'package:hoppy_club/features/profiles/screens/favorite_screen.dart';
 import 'package:hoppy_club/config/config.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
 
@@ -23,7 +23,7 @@ class BottomNavBar extends StatelessWidget {
         nextScreen = const HomeScreen();
         break;
       case 1:
-        nextScreen = const Favorites();
+        nextScreen = const FavoritesScreen();
         break;
       case 2:
         nextScreen = const SwipeableProfilesScreen();

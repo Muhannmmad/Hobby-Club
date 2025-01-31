@@ -76,7 +76,6 @@ class EventScreenState extends State<EventScreen> {
     final currentUser = _auth.currentUser;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Events')),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection('events').snapshots(),
         builder: (context, snapshot) {
