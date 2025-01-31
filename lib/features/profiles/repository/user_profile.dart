@@ -26,7 +26,7 @@ List<User> users = [
   User(
     id: '1',
     firstName: 'Sarah',
-    lastName: 'Anderson',
+    lastName: '',
     age: 20,
     city: 'Frankfurt',
     about:
@@ -38,7 +38,7 @@ List<User> users = [
   User(
     id: '2',
     firstName: 'Max',
-    lastName: 'Müller',
+    lastName: '',
     age: 25,
     city: 'Berlin',
     about: 'Musician and tech enthusiast. Always up for a good conversation.',

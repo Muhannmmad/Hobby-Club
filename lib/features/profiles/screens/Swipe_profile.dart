@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 
@@ -13,34 +14,13 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> userProfiles = [];
   bool isLoading = true;
-  final String userId =
-      'loggedInUserId'; // Replace with actual logged-in user ID
-  Set<String> favoriteIds = {}; // Stores IDs of favorite users
-
-  final List<Map<String, dynamic>> localUsers = [
-    {
-      'id': 'local_1',
-      'name': 'Sarah Anderson',
-      'age': 20,
-      'town': 'Frankfurt',
-      'about': 'I love drawing, cooking, and shopping!',
-      'profileImage': 'assets/sara.png',
-      'hobbies': ['Drawing', 'Cooking', 'Shopping'],
-    },
-    {
-      'id': 'local_2',
-      'name': 'Max Müller',
-      'age': 25,
-      'town': 'Berlin',
-      'about': 'Musician and tech enthusiast.',
-      'profileImage': 'assets/profiles/7.png',
-      'hobbies': ['Music', 'Technology', 'Gaming'],
-    },
-  ];
+  Set<String> favoriteIds = {};
+  String userId = '';
 
   @override
   void initState() {
     super.initState();
+    userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     fetchUserProfiles();
     loadFavorites();
   }
@@ -50,12 +30,12 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
       final querySnapshot = await _firestore.collection('users').get();
       List<Map<String, dynamic>> firestoreUsers = querySnapshot.docs.map((doc) {
         final data = doc.data();
-        data['id'] = doc.id; // Ensure each profile has a unique ID
+        data['id'] = doc.id;
         return data;
       }).toList();
 
       setState(() {
-        userProfiles = [...firestoreUsers, ...localUsers];
+        userProfiles = firestoreUsers;
         isLoading = false;
       });
     } catch (e) {
@@ -67,6 +47,8 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
   }
 
   Future<void> loadFavorites() async {
+    if (userId.isEmpty) return;
+
     try {
       final querySnapshot = await _firestore
           .collection('favorites')
@@ -75,9 +57,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
           .get();
 
       setState(() {
-        favoriteIds = querySnapshot.docs
-            .map((doc) => doc.id)
-            .toSet(); // Store favorite IDs
+        favoriteIds = querySnapshot.docs.map((doc) => doc.id).toSet();
       });
     } catch (e) {
       debugPrint('Failed to load favorites: $e');
@@ -85,15 +65,16 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
   }
 
   Future<void> toggleFavorite(Map<String, dynamic> userProfile) async {
+    if (userId.isEmpty) return;
+
     final String profileId = userProfile['id'];
+    final favoriteRef = _firestore
+        .collection('favorites')
+        .doc(userId)
+        .collection('userFavorites')
+        .doc(profileId);
 
     try {
-      final favoriteRef = _firestore
-          .collection('favorites')
-          .doc(userId)
-          .collection('userFavorites')
-          .doc(profileId);
-
       if (favoriteIds.contains(profileId)) {
         await favoriteRef.delete();
         setState(() {
@@ -101,7 +82,8 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('${userProfile['name']} removed from favorites!')),
+              content: Text(
+                  '${userProfile['name'] ?? 'User'} removed from favorites!')),
         );
       } else {
         await favoriteRef.set(userProfile);
@@ -109,7 +91,9 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
           favoriteIds.add(profileId);
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${userProfile['name']} added to favorites!')),
+          SnackBar(
+              content:
+                  Text('${userProfile['name'] ?? 'User'} added to favorites!')),
         );
       }
     } catch (e) {
@@ -139,12 +123,21 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
 
   Widget buildProfileCard(Map<String, dynamic> userData) {
     final bool isFavorite = favoriteIds.contains(userData['id']);
+    final String name = userData['name'] ?? 'Unknown';
+    final String town = userData['town'] ?? 'Unknown';
+    final String about = userData['about'] ?? 'No details available.';
+    final String profileImage =
+        userData['profileImage'] ?? 'assets/default_profile.png';
+    final String hobbies = userData['hobbies'] is List
+        ? (userData['hobbies'] as List).join(', ')
+        : (userData['hobbies'] ?? 'Not specified');
+    final String age = userData['age']?.toString() ?? 'Unknown';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       child: Column(
         children: [
-          const SizedBox(height: 20), // Moves image further down
+          const SizedBox(height: 20),
           Stack(
             children: [
               Container(
@@ -154,11 +147,9 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                   borderRadius: BorderRadius.circular(20),
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: userData['profileImage'] != null &&
-                            userData['profileImage'].startsWith('http')
-                        ? NetworkImage(userData['profileImage'])
-                        : AssetImage(userData['profileImage'] ??
-                            'assets/default_profile.png') as ImageProvider,
+                    image: profileImage.startsWith('http')
+                        ? NetworkImage(profileImage)
+                        : AssetImage(profileImage) as ImageProvider,
                   ),
                 ),
               ),
@@ -182,17 +173,17 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            '${userData['name'] ?? 'Not provided'}, ${userData['age'] ?? 'N/A'}',
+            '$name, $age',
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           Text(
-            userData['town'] ?? 'Town not provided',
+            town,
             style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
           const SizedBox(height: 10),
           Text(
-            'Hobbies: ${userData['hobbies'] is List ? (userData['hobbies'] as List).join(', ') : userData['hobbies'] ?? 'Not provided'}',
+            'Hobbies: $hobbies',
             style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
           const SizedBox(height: 20),
@@ -202,7 +193,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            userData['about'] ?? 'No details provided.',
+            about,
             style: const TextStyle(fontSize: 16),
           ),
         ],
