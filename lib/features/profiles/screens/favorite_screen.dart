@@ -3,8 +3,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 
-class FavoritesScreen extends StatelessWidget {
+class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
+
+  @override
+  State<FavoritesScreen> createState() => _FavoritesScreenState();
+}
+
+class _FavoritesScreenState extends State<FavoritesScreen> {
+  late Future<List<Map<String, dynamic>>> _favoritesFuture;
+  List<Map<String, dynamic>> favoriteProfiles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _favoritesFuture = fetchFavorites();
+  }
 
   Future<List<Map<String, dynamic>>> fetchFavorites() async {
     final String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -16,14 +30,41 @@ class FavoritesScreen extends StatelessWidget {
         .collection('userFavorites')
         .get();
 
-    return querySnapshot.docs.map((doc) => doc.data()).toList();
+    return querySnapshot.docs.map((doc) {
+      final data = doc.data();
+      data['docId'] = doc.id; // Add document ID for easy deletion later
+      return data;
+    }).toList();
+  }
+
+  Future<void> removeFromFavorites(String docId, int index) async {
+    final String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    if (userId.isEmpty) return;
+
+    await FirebaseFirestore.instance
+        .collection('favorites')
+        .doc(userId)
+        .collection('userFavorites')
+        .doc(docId)
+        .delete();
+
+    // Remove the item locally and refresh the UI
+    setState(() {
+      favoriteProfiles.removeAt(index);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Removed from favorites'),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: fetchFavorites(),
+        future: _favoritesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -33,15 +74,18 @@ class FavoritesScreen extends StatelessWidget {
             return const Center(child: Text('No favorite profiles yet.'));
           }
 
-          final favoriteProfiles = snapshot.data!;
+          if (favoriteProfiles.isEmpty) {
+            favoriteProfiles = snapshot.data!;
+          }
+
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8.0,
-                mainAxisSpacing: 8.0,
-                childAspectRatio: 3 / 4,
+                crossAxisCount: 2, // Two cards per row
+                crossAxisSpacing: 8.0, // Horizontal spacing
+                mainAxisSpacing: 8.0, // Vertical spacing
+                childAspectRatio: 3 / 4, // Aspect ratio of each card
               ),
               itemCount: favoriteProfiles.length,
               itemBuilder: (context, index) {
@@ -50,51 +94,70 @@ class FavoritesScreen extends StatelessWidget {
                 final name = userData['name'] ?? 'Unknown';
                 final age = userData['age']?.toString() ?? 'N/A';
                 final town = userData['town'] ?? 'Unknown location';
+                final docId = userData['docId']; // Document ID for removal
 
-                return Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  elevation: 4.0,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(16.0),
-                        ),
-                        child: profileImage.isNotEmpty
-                            ? Image.network(
-                                profileImage,
-                                width: double.infinity,
-                                height: 200,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(Icons.person, size: 120);
-                                },
-                              )
-                            : const Icon(Icons.person, size: 120),
+                return Stack(
+                  children: [
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '$name, $age',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                        ),
-                        textAlign: TextAlign.center,
+                      elevation: 4.0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(16.0),
+                            ),
+                            child: profileImage.isNotEmpty
+                                ? Image.network(
+                                    profileImage,
+                                    width: double.infinity,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.person,
+                                          size: 120);
+                                    },
+                                  )
+                                : const Icon(Icons.person, size: 120),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '$name, $age',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.0,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            town,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14.0,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        town,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14.0,
+                    ),
+                    Positioned(
+                      top: 8.0,
+                      right: 8.0,
+                      child: IconButton(
+                        onPressed: () async {
+                          await removeFromFavorites(docId, index);
+                        },
+                        icon: const Icon(
+                          Icons.favorite,
+                          color: Colors.red,
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               },
             ),
