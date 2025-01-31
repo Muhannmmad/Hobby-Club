@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 
 class FavoritesScreen extends StatefulWidget {
@@ -32,7 +33,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
     return querySnapshot.docs.map((doc) {
       final data = doc.data();
-      data['docId'] = doc.id; // Add document ID for easy deletion later
+      data['docId'] = doc.id; // Store the document ID for later reference
       return data;
     }).toList();
   }
@@ -48,15 +49,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         .doc(docId)
         .delete();
 
-    // Remove the item locally and refresh the UI
+    // Remove from UI
     setState(() {
       favoriteProfiles.removeAt(index);
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Removed from favorites'),
-      ),
+      const SnackBar(content: Text('Removed from favorites')),
     );
   }
 
@@ -82,82 +81,95 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             padding: const EdgeInsets.all(8.0),
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Two cards per row
-                crossAxisSpacing: 8.0, // Horizontal spacing
-                mainAxisSpacing: 8.0, // Vertical spacing
-                childAspectRatio: 3 / 4, // Aspect ratio of each card
+                crossAxisCount: 2,
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 8.0,
+                childAspectRatio: 3 / 4,
               ),
               itemCount: favoriteProfiles.length,
               itemBuilder: (context, index) {
                 final userData = favoriteProfiles[index];
                 final profileImage = userData['profileImage'] ?? '';
-                final name = userData['name'] ?? 'Unknown';
+                final name = userData['firstName'] ?? 'Unknown';
                 final age = userData['age']?.toString() ?? 'N/A';
                 final town = userData['town'] ?? 'Unknown location';
-                final docId = userData['docId']; // Document ID for removal
+                final userId =
+                    userData['docId']; // Use userId to open the profile
 
-                return Stack(
-                  children: [
-                    Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            DetailedProfilePage(userId: userId),
                       ),
-                      elevation: 4.0,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(16.0),
+                    );
+                  },
+                  child: Stack(
+                    children: [
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        elevation: 4.0,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(16.0),
+                              ),
+                              child: profileImage.isNotEmpty
+                                  ? Image.network(
+                                      profileImage,
+                                      width: double.infinity,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Icon(Icons.person,
+                                            size: 120);
+                                      },
+                                    )
+                                  : const Icon(Icons.person, size: 120),
                             ),
-                            child: profileImage.isNotEmpty
-                                ? Image.network(
-                                    profileImage,
-                                    width: double.infinity,
-                                    height: 200,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(Icons.person,
-                                          size: 120);
-                                    },
-                                  )
-                                : const Icon(Icons.person, size: 120),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '$name, $age',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0,
+                            const SizedBox(height: 8),
+                            Text(
+                              '$name, $age',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            town,
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14.0,
+                            const SizedBox(height: 4),
+                            Text(
+                              town,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14.0,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      top: 8.0,
-                      right: 8.0,
-                      child: IconButton(
-                        onPressed: () async {
-                          await removeFromFavorites(docId, index);
-                        },
-                        icon: const Icon(
-                          Icons.favorite,
-                          color: Colors.red,
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        top: 8.0,
+                        right: 8.0,
+                        child: IconButton(
+                          onPressed: () async {
+                            await removeFromFavorites(userId, index);
+                          },
+                          icon: const Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class DetailedProfilePage extends StatefulWidget {
@@ -12,14 +13,17 @@ class DetailedProfilePage extends StatefulWidget {
 
 class _DetailedProfilePageState extends State<DetailedProfilePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
 
   Map<String, dynamic>? userData;
   bool isLoading = true;
+  bool isFavorite = false;
 
   @override
   void initState() {
     super.initState();
     fetchUserData();
+    checkIfFavorite();
   }
 
   Future<void> fetchUserData() async {
@@ -44,6 +48,57 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
     }
   }
 
+  Future<void> checkIfFavorite() async {
+    if (currentUserId.isEmpty) return;
+
+    final favoriteRef = _firestore
+        .collection('favorites')
+        .doc(currentUserId)
+        .collection('userFavorites')
+        .doc(widget.userId);
+
+    final doc = await favoriteRef.get();
+    setState(() {
+      isFavorite = doc.exists;
+    });
+  }
+
+  Future<void> toggleFavorite() async {
+    if (currentUserId.isEmpty || userData == null) return;
+
+    final favoriteRef = _firestore
+        .collection('favorites')
+        .doc(currentUserId)
+        .collection('userFavorites')
+        .doc(widget.userId);
+
+    try {
+      if (isFavorite) {
+        await favoriteRef.delete();
+        setState(() {
+          isFavorite = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  '${userData?['firstName'] ?? 'User'} removed from favorites!')),
+        );
+      } else {
+        await favoriteRef.set(userData!);
+        setState(() {
+          isFavorite = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  '${userData?['firstName'] ?? 'User'} added to favorites!')),
+        );
+      }
+    } catch (e) {
+      debugPrint('Failed to toggle favorite: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,21 +112,45 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                     child: Column(
                       children: [
                         const SizedBox(height: 20),
-                        // Profile Image
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          height: MediaQuery.of(context).size.height * 0.4,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: userData!['profileImage'] != null
-                                  ? NetworkImage(userData!['profileImage'])
-                                  : const AssetImage(
-                                          'assets/default_profile.png')
-                                      as ImageProvider,
+                        // Profile Image with Favorite Icon
+                        Stack(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: userData!['profileImage'] != null
+                                      ? NetworkImage(userData!['profileImage'])
+                                      : const AssetImage(
+                                              'assets/default_profile.png')
+                                          as ImageProvider,
+                                ),
+                              ),
                             ),
-                          ),
+                            Positioned(
+                              top: 15,
+                              right: 15,
+                              child: GestureDetector(
+                                onTap: toggleFavorite,
+                                child: CircleAvatar(
+                                  backgroundColor:
+                                      Colors.white.withOpacity(0.8),
+                                  radius: 25,
+                                  child: Icon(
+                                    isFavorite
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color:
+                                        isFavorite ? Colors.red : Colors.black,
+                                    size: 30,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 10),
                         // User Info Card
@@ -110,9 +189,8 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                       userData?['gender'] ??
                                           'Gender not provided',
                                       style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[600],
-                                      ),
+                                          fontSize: 16,
+                                          color: Colors.grey[600]),
                                     ),
                                   ],
                                 ),
@@ -125,9 +203,8 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                     Text(
                                       userData?['town'] ?? 'Town not provided',
                                       style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[600],
-                                      ),
+                                          fontSize: 16,
+                                          color: Colors.grey[600]),
                                     ),
                                   ],
                                 ),
@@ -142,9 +219,8 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                         userData?['hobbies'] ??
                                             'Hobbies not provided',
                                         style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey[600],
-                                        ),
+                                            fontSize: 16,
+                                            color: Colors.grey[600]),
                                       ),
                                     ),
                                   ],
@@ -153,9 +229,8 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                 const Text(
                                   'About Me',
                                   style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
