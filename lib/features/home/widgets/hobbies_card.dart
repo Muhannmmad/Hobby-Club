@@ -6,11 +6,9 @@ class HobbiesCard extends StatelessWidget {
   const HobbiesCard({
     super.key,
     required this.hobbies,
-    required this.context,
   });
 
   final List<Hobby> hobbies;
-  final BuildContext context;
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +20,18 @@ class HobbiesCard extends StatelessWidget {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => GroupsPage(hobby: hobbies[index])),
-              );
+              final String? groupId = hobbies[index].groupId;
+
+              if (groupId != null && groupId.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GroupPage(groupId: groupId),
+                  ),
+                );
+              } else {
+                debugPrint("Group ID is null or empty for this hobby.");
+              }
             },
             child: Card(
               elevation: 4,

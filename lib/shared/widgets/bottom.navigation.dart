@@ -17,39 +17,31 @@ class BottomNavBar extends StatelessWidget {
   void onItemTapped(BuildContext context, int index) {
     if (index == selectedIndex) return;
 
+    Widget nextScreen;
     switch (index) {
       case 0:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+        nextScreen = const HomeScreen();
         break;
       case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const Favorites()),
-        );
+        nextScreen = const Favorites();
         break;
       case 2:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const SwipeableProfilesScreen()),
-        );
+        nextScreen = const SwipeableProfilesScreen();
         break;
       case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const EventScreen()),
-        );
+        nextScreen = const EventScreen();
         break;
       case 4:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const MyProfileScreen()),
-        );
+        nextScreen = const MyProfileScreen();
         break;
+      default:
+        return;
     }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => nextScreen),
+    );
   }
 
   @override

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoppy_club/features/home/screens/event_screen.dart';
 import 'package:hoppy_club/features/home/widgets/hobbies_card.dart';
+import 'package:hoppy_club/features/profiles/screens/Swipe_profile.dart';
 import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
-import 'package:hoppy_club/features/chat/screens/chat_screen.dart';
 import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 import 'package:hoppy_club/features/home/repository/hobby.dart';
@@ -15,39 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  int selectedIndex = 0;
-
-  void onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-
-    if (index == 0) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
-    } else if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const Favorites()),
-      );
-    } else if (index == 2) {
-    } else if (index == 3) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ChatScreen()),
-      );
-    } else if (index == 4) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const EditProfileScreen(
-                  userId: '',
-                )),
-      );
-    }
-  }
+  int selectedIndex = 0; // Track the selected index
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +57,7 @@ class HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          HobbiesCard(hobbies: indoorHobbies, context: context),
+          HobbiesCard(hobbies: indoorHobbies),
           const SizedBox(height: 20),
           Center(
             child: Container(
@@ -107,12 +76,31 @@ class HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          HobbiesCard(hobbies: outdoorHobbies, context: context),
+          HobbiesCard(hobbies: outdoorHobbies),
           const SizedBox(height: 30),
           const SizedBox(height: 20),
         ],
       ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 0),
+      bottomNavigationBar: BottomNavBar(selectedIndex: selectedIndex),
     );
   }
+}
+
+Widget _buildSectionTitle(String title) {
+  return Center(
+    child: Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  );
 }

@@ -1,111 +1,198 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:hoppy_club/features/home/repository/hobby.dart';
-import 'package:hoppy_club/features/profiles/repository/user_profile.dart';
-import 'package:hoppy_club/features/profiles/screens/new_mach_screen.dart';
-import 'package:hoppy_club/shared/screens/detailed_profile.dart';
+class GroupPage extends StatefulWidget {
+  final String groupId;
 
-class GroupsPage extends StatelessWidget {
-  final Hobby hobby;
-
-  const GroupsPage({super.key, required this.hobby});
+  const GroupPage({Key? key, required this.groupId}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(hobby.name),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Members'),
-              Tab(text: 'Chat'),
-            ],
-          ),
-        ),
-        body: const TabBarView(
-          children: [
-            MembersTab(),
-            ChatTab(),
-          ],
-        ),
+  _GroupPageState createState() => _GroupPageState();
+}
+
+class _GroupPageState extends State<GroupPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  bool isLoading = false;
+  bool isMember = false;
+  List<String> memberIds = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _setupGroupListener();
+  }
+
+  void _setupGroupListener() {
+    _firestore
+        .collection('groups')
+        .doc(widget.groupId)
+        .snapshots()
+        .listen((doc) {
+      if (doc.exists) {
+        List<dynamic> members =
+            (doc.data() as Map<String, dynamic>)['members'] ?? [];
+        setState(() {
+          memberIds = members.cast<String>();
+          isMember = memberIds.contains(_auth.currentUser?.uid);
+        });
+      }
+    });
+  }
+
+  Future<void> _toggleMembership() async {
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    String? userId = _auth.currentUser?.uid;
+    DocumentReference groupRef =
+        _firestore.collection('groups').doc(widget.groupId);
+
+    try {
+      if (isMember) {
+        await groupRef.update({
+          'members': FieldValue.arrayRemove([userId])
+        });
+      } else {
+        await groupRef.update({
+          'members': FieldValue.arrayUnion([userId])
+        });
+      }
+    } catch (e) {
+      print("Error toggling membership: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void _navigateToDetailedProfile(BuildContext context, String userId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailedProfilePage(userId: userId),
       ),
     );
   }
-}
-
-class MembersTab extends StatelessWidget {
-  const MembersTab({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 8.0,
-            crossAxisSpacing: 8.0,
-            childAspectRatio: 0.7,
+      appBar: AppBar(title: Text("Group Page")),
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: isLoading ? null : _toggleMembership,
+            child: isLoading
+                ? CircularProgressIndicator(color: Colors.white)
+                : Text(isMember ? "Leave Group" : "Join Group"),
           ),
-          itemCount: users.length,
-          itemBuilder: (context, index) {
-            final user = users[index];
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetailedProfile(user: user),
+          const SizedBox(height: 20),
+          Expanded(
+            child: memberIds.isEmpty
+                ? Center(child: Text("No members yet."))
+                : GridView.builder(
+                    padding: const EdgeInsets.all(10),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 3 / 4, // Adjust for card proportions
+                    ),
+                    itemCount: memberIds.length,
+                    itemBuilder: (context, index) {
+                      return FutureBuilder<DocumentSnapshot>(
+                        future: _firestore
+                            .collection('users')
+                            .doc(memberIds[index])
+                            .get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+
+                          if (!snapshot.hasData || snapshot.data == null) {
+                            return SizedBox.shrink();
+                          }
+
+                          var userData =
+                              snapshot.data!.data() as Map<String, dynamic>?;
+
+                          if (userData == null) {
+                            return SizedBox.shrink();
+                          }
+
+                          String name = userData['name'] ?? 'Unknown';
+                          String city = userData['city'] ?? 'Unknown City';
+                          String profilePic = userData['profilePic'] ??
+                              'https://via.placeholder.com/150'; // Fallback image
+                          String age = userData['age']?.toString() ?? '-';
+
+                          return GestureDetector(
+                            onTap: () => _navigateToDetailedProfile(
+                                context, memberIds[index]),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              elevation: 5,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage: NetworkImage(profilePic),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    "$name, $age",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    city.toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
-                );
-              },
-              child: UserCard(user: user),
-            );
-          },
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class ChatTab extends StatelessWidget {
-  const ChatTab({super.key});
+class DetailedProfilePage extends StatelessWidget {
+  final String userId;
+
+  const DetailedProfilePage({Key? key, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView(
-            children: const [
-              ListTile(title: Text('Sara: Hello!')),
-              ListTile(title: Text('Lukas: Hi there!')),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              const Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Type a message...',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.send),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ),
-      ],
+    return Scaffold(
+      appBar: AppBar(title: Text("Detailed Profile")),
+      body: Center(
+        child: Text("Display detailed profile for user ID: $userId"),
+      ),
     );
   }
 }
