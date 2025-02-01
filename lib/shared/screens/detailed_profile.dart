@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hoppy_club/features/profiles/widgets/likes_remove.dart';
 import 'package:hoppy_club/features/profiles/repository/user_profile.dart';
 
@@ -15,7 +16,31 @@ class DetailedProfile extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${user.firstName} ${user.lastName}'),
+        title: Row(
+          children: [
+            Text('${user.firstName} ${user.lastName}'),
+            const SizedBox(width: 8),
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.id)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  final isOnline = snapshot.data!.get('isOnline') ?? false;
+                  return CircleAvatar(
+                    radius: 6,
+                    backgroundColor: isOnline ? Colors.green : Colors.grey,
+                  );
+                }
+                return const CircleAvatar(
+                  radius: 6,
+                  backgroundColor: Colors.grey,
+                );
+              },
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(

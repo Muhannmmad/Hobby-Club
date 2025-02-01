@@ -157,6 +157,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
     final String hobbies = userData['hobbies'] is List
         ? (userData['hobbies'] as List).join(', ')
         : (userData['hobbies'] ?? 'Not specified');
+    final bool isOnline = userData['isOnline'] ?? false; // Online status
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
@@ -213,10 +214,22 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
             ),
             child: Column(
               children: [
-                Text(
-                  '$name, $age ($gender)',
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 10, // Bigger size
+                      backgroundColor: isOnline ? Colors.green : Colors.grey,
+                    ),
+                    const SizedBox(width: 10), // More spacing
+                    Text(
+                      '$name, $age ($gender)',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 10),
                 Text(

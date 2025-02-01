@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
@@ -11,14 +12,12 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   bool isLoading = false;
   bool isPasswordVisible = false;
   bool rememberMe = false;
-
   String? successMessage;
   String? errorMessage;
 
@@ -26,21 +25,22 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     loadSavedCredentials();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<void> loadSavedCredentials() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedEmail = prefs.getString('email') ?? '';
-    final savedPassword = prefs.getString('password') ?? '';
-    final savedRememberMe = prefs.getBool('rememberMe') ?? false;
-
-    if (savedRememberMe) {
-      setState(() {
-        emailController.text = savedEmail;
-        passwordController.text = savedPassword;
-        rememberMe = savedRememberMe;
-      });
-    }
+    setState(() {
+      emailController.text = prefs.getString('email') ?? '';
+      passwordController.text = prefs.getString('password') ?? '';
+      rememberMe = prefs.getBool('rememberMe') ?? false;
+    });
   }
 
   Future<void> saveCredentials(String email, String password) async {
@@ -80,7 +80,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       final user = userCredential.user;
-
       if (user != null) {
         if (rememberMe) {
           await saveCredentials(emailController.text, passwordController.text);
@@ -88,8 +87,15 @@ class _LoginScreenState extends State<LoginScreen> {
           await clearSavedCredentials();
         }
 
-        setState(() => successMessage = "Welcome back!");
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({
+          'isOnline': true, // ✅ Mark user as online
+          'lastSeen': FieldValue.serverTimestamp(), // ✅ Update last seen
+        });
 
+        setState(() => successMessage = "Welcome back!");
         await Future.delayed(const Duration(seconds: 1));
 
         navigateToNextScreen(user);
@@ -112,6 +118,29 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  /// Updates online status when app state changes
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (FirebaseAuth.instance.currentUser != null) {
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      if (state == AppLifecycleState.resumed) {
+        updateOnlineStatus(userId, true); // User is back online
+      } else if (state == AppLifecycleState.paused ||
+          state == AppLifecycleState.inactive ||
+          state == AppLifecycleState.detached) {
+        updateOnlineStatus(userId, false); // User is offline
+      }
+    }
+  }
+
+  /// Updates Firestore online status
+  void updateOnlineStatus(String userId, bool isOnline) {
+    FirebaseFirestore.instance.collection('users').doc(userId).update({
+      'isOnline': isOnline,
+      'lastSeen': FieldValue.serverTimestamp(),
+    }).catchError((e) => print("Error updating online status: $e"));
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -125,25 +154,17 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 100),
-
-              // App Logo
               Image.asset(
                 'assets/icons/Group 3052.png',
                 width: isTablet ? 150 : 100,
                 height: isTablet ? 150 : 100,
               ),
               const SizedBox(height: 20),
-
               const Text(
                 'Hi, Welcome Back! 👋',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
-
-              // Email Input
               buildTextField(
                 controller: emailController,
                 label: 'Email',
@@ -151,8 +172,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 isPassword: false,
               ),
               const SizedBox(height: 10),
-
-              // Password Input
               buildTextField(
                 controller: passwordController,
                 label: 'Password',
@@ -164,8 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 isPasswordVisible: isPasswordVisible,
               ),
               const SizedBox(height: 10),
-
-              // Remember Me Checkbox
               Row(
                 children: [
                   Checkbox(
@@ -181,10 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Text('Remember Me'),
                 ],
               ),
-
               const SizedBox(height: 10),
-
-              // Login Button
               ElevatedButton(
                 onPressed: handleLogin,
                 style: ElevatedButton.styleFrom(
@@ -199,25 +213,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     : const Text(
                         'Log In',
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
                       ),
               ),
-
               const SizedBox(height: 20),
-
-              // Messages
               if (successMessage != null)
                 Text(successMessage!,
                     style: const TextStyle(color: Colors.green)),
               if (errorMessage != null)
                 Text(errorMessage!, style: const TextStyle(color: Colors.red)),
-
               const SizedBox(height: 40),
-
-              // Sign Up Option
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

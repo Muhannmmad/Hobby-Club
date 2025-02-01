@@ -42,14 +42,27 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void logout() async {
-    try {
-      await FirebaseAuth.instance.signOut();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
-    } catch (e) {
-      debugPrint('Error during logout: $e');
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        // Set `isOnline` to false before signing out
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({
+          'isOnline': false,
+        });
+
+        await FirebaseAuth.instance.signOut();
+
+        // Navigate to login screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      } catch (e) {
+        debugPrint('Error during logout: $e');
+      }
     }
   }
 

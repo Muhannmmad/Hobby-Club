@@ -101,20 +101,34 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 10,
+                                      backgroundColor:
+                                          (userData?['isOnline'] ?? false)
+                                              ? Colors.green
+                                              : Colors.grey,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 10),
                                 profileDetail(
                                     Icons.person,
                                     userData?['gender'] ??
                                         'Gender not provided'),
-                                profileDetail(Icons.location_on,
-                                    '${userData?['city'] ?? 'City not provided'}, ${userData?['state'] ?? 'State not provided'}, ${userData?['country'] ?? 'Country not provided'}'),
+                                profileDetail(
+                                  Icons.location_on,
+                                  '${userData?['city'] ?? 'City not provided'}, ${userData?['state'] ?? 'State not provided'}, ${userData?['country'] ?? 'Country not provided'}',
+                                ),
                                 profileDetail(
                                     Icons.star,
                                     userData?['hobbies'] ??

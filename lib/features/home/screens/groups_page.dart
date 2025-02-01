@@ -136,8 +136,9 @@ class _GroupPageState extends State<GroupPage> {
                           String profileImage = userData['profileImage'] ??
                               'https://via.placeholder.com/150'; // Fallback image
                           String firstName = userData['firstName'] ?? 'Unknown';
-
                           String age = userData['age']?.toString() ?? '-';
+
+                          bool isOnline = userData['isOnline'] ?? false;
 
                           return GestureDetector(
                             onTap: () => _navigateToDetailedProfile(
@@ -162,8 +163,17 @@ class _GroupPageState extends State<GroupPage> {
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8),
-                                    child: Column(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
+                                        CircleAvatar(
+                                          radius: 6,
+                                          backgroundColor: isOnline
+                                              ? Colors.green
+                                              : Colors.grey,
+                                        ),
+                                        const SizedBox(width: 6),
                                         Text(
                                           "$firstName , $age",
                                           style: const TextStyle(

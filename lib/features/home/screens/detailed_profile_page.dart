@@ -172,12 +172,24 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 6,
+                                      backgroundColor:
+                                          (userData?['isOnline'] ?? false)
+                                              ? Colors.green
+                                              : Colors.grey,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 10),
                                 Row(

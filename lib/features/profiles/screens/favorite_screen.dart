@@ -31,11 +31,21 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         .collection('userFavorites')
         .get();
 
-    return querySnapshot.docs.map((doc) {
+    List<Map<String, dynamic>> favorites = [];
+    for (var doc in querySnapshot.docs) {
       final data = doc.data();
-      data['docId'] = doc.id; // Store the document ID for later reference
-      return data;
-    }).toList();
+      data['docId'] = doc.id;
+
+      // Fetch user's online status
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(doc.id)
+          .get();
+      data['isOnline'] = userDoc.data()?['isOnline'] ?? false;
+
+      favorites.add(data);
+    }
+    return favorites;
   }
 
   Future<void> removeFromFavorites(String docId, int index) async {
@@ -49,7 +59,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         .doc(docId)
         .delete();
 
-    // Remove from UI
     setState(() {
       favoriteProfiles.removeAt(index);
     });
@@ -94,8 +103,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 final age = userData['age']?.toString() ?? 'N/A';
                 final country = userData['country'] ?? 'Unknown';
                 final city = userData['city'] ?? 'Unknown';
-                final userId =
-                    userData['docId']; // Use userId to open the profile
+                final userId = userData['docId'];
+                final bool isOnline = userData['isOnline'];
 
                 return GestureDetector(
                   onTap: () {
@@ -136,13 +145,28 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                   : const Icon(Icons.person, size: 120),
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              '$name, $age',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.0,
-                              ),
-                              textAlign: TextAlign.center,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color:
+                                        isOnline ? Colors.green : Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '$name, $age',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 4),
                             Text(
