@@ -105,110 +105,120 @@ class _GroupPageState extends State<GroupPage> {
           ),
           const SizedBox(height: 10),
           Expanded(
-            child: memberIds.isEmpty
-                ? const Center(child: Text("No members yet."))
-                : GridView.builder(
-                    padding: const EdgeInsets.all(8),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 6,
-                      mainAxisSpacing: 6,
-                      childAspectRatio: 1 / 1.3,
-                    ),
-                    itemCount: memberIds.length,
-                    itemBuilder: (context, index) {
-                      return FutureBuilder<DocumentSnapshot>(
-                        future: _firestore
-                            .collection('users')
-                            .doc(memberIds[index])
-                            .get(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
+              child: memberIds.isEmpty
+                  ? const Center(child: Text("No members yet."))
+                  : GridView.builder(
+                      padding: const EdgeInsets.all(8),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 6,
+                        mainAxisSpacing: 6,
+                        childAspectRatio: 1 / 1.3,
+                      ),
+                      itemCount: memberIds.length,
+                      itemBuilder: (context, index) {
+                        return FutureBuilder<DocumentSnapshot>(
+                          future: _firestore
+                              .collection('users')
+                              .doc(memberIds[index])
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
 
-                          if (!snapshot.hasData || snapshot.data == null) {
-                            return const SizedBox.shrink();
-                          }
+                            if (!snapshot.hasData || snapshot.data == null) {
+                              return const SizedBox.shrink();
+                            }
 
-                          var userData =
-                              snapshot.data!.data() as Map<String, dynamic>?;
+                            var userData =
+                                snapshot.data!.data() as Map<String, dynamic>?;
 
-                          if (userData == null) {
-                            return const SizedBox.shrink();
-                          }
+                            if (userData == null) {
+                              return const SizedBox.shrink();
+                            }
 
-                          // Fetch profile data
-                          String profileImage = userData['profileImage'] ??
-                              'https://via.placeholder.com/100'; // Fallback image
-                          String firstName = userData['firstName'] ?? 'Unknown';
-                          String age = userData['age']?.toString() ?? '-';
+                            // Fetch profile data
+                            String profileImage = userData['profileImage'] ??
+                                'https://via.placeholder.com/100'; // Fallback image
+                            String firstName =
+                                userData['firstName'] ?? 'Unknown';
+                            String age = userData['age']?.toString() ?? '-';
+                            bool isOnline = userData['isOnline'] ?? false;
 
-                          bool isOnline = userData['isOnline'] ?? false;
-
-                          return GestureDetector(
-                            onTap: () => _navigateToDetailedProfile(
-                                context, memberIds[index]),
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              elevation: 3,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                            return GestureDetector(
+                              onTap: () => _navigateToDetailedProfile(
+                                  context, memberIds[index]),
+                              child: Stack(
                                 children: [
                                   ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(10)),
+                                    borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
                                       profileImage,
-                                      height: 125,
                                       width: double.infinity,
+                                      height: double.infinity,
                                       fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Container(
+                                          color: Colors.grey[300],
+                                          child: const Icon(Icons.person,
+                                              size: 80),
+                                        );
+                                      },
                                     ),
                                   ),
-                                  const SizedBox(height: 6),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            CircleAvatar(
-                                              radius: 4,
-                                              backgroundColor: isOnline
-                                                  ? Colors.green
-                                                  : Colors.grey,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              "$firstName, $age",
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
+                                  Positioned(
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(6.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.6),
+                                        borderRadius:
+                                            const BorderRadius.vertical(
+                                          bottom: Radius.circular(10),
                                         ),
-                                      ],
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 4,
+                                                backgroundColor: isOnline
+                                                    ? Colors.green
+                                                    : Colors.grey,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                "$firstName, $age",
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-          ),
+                            );
+                          },
+                        );
+                      },
+                    )),
         ],
       ),
     );

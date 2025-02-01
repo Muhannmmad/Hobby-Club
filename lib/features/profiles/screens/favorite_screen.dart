@@ -87,118 +87,128 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           }
 
           return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8.0,
-                mainAxisSpacing: 8.0,
-                childAspectRatio: 4 / 6,
-              ),
-              itemCount: favoriteProfiles.length,
-              itemBuilder: (context, index) {
-                final userData = favoriteProfiles[index];
-                final profileImage = userData['profileImage'] ?? '';
-                final name = userData['firstName'] ?? 'Unknown';
-                final age = userData['age']?.toString() ?? 'N/A';
-                final country = userData['country'] ?? 'Unknown';
-                final city = userData['city'] ?? 'Unknown';
-                final userId = userData['docId'];
-                final bool isOnline = userData['isOnline'];
+              padding: const EdgeInsets.all(8.0),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                  childAspectRatio: 4 / 6,
+                ),
+                itemCount: favoriteProfiles.length,
+                itemBuilder: (context, index) {
+                  final userData = favoriteProfiles[index];
+                  final profileImage = userData['profileImage'] ?? '';
+                  final name = userData['firstName'] ?? 'Unknown';
+                  final age = userData['age']?.toString() ?? 'N/A';
+                  final country = userData['country'] ?? 'Unknown';
+                  final city = userData['city'] ?? 'Unknown';
+                  final userId = userData['docId'];
+                  final bool isOnline = userData['isOnline'];
 
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            DetailedProfilePage(userId: userId),
-                      ),
-                    );
-                  },
-                  child: Stack(
-                    children: [
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.0),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailedProfilePage(userId: userId),
                         ),
-                        elevation: 4.0,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(16.0),
-                              ),
-                              child: profileImage.isNotEmpty
-                                  ? Image.network(
-                                      profileImage,
-                                      width: double.infinity,
-                                      height: 200,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return const Icon(Icons.person,
-                                            size: 120);
-                                      },
-                                    )
-                                  : const Icon(Icons.person, size: 120),
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color:
-                                        isOnline ? Colors.green : Colors.grey,
-                                  ),
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16.0),
+                          child: profileImage.isNotEmpty
+                              ? Image.network(
+                                  profileImage,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Colors.grey[300],
+                                      child:
+                                          const Icon(Icons.person, size: 120),
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  color: Colors.grey[300],
+                                  child: const Icon(Icons.person, size: 120),
                                 ),
-                                const SizedBox(width: 6),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              borderRadius: const BorderRadius.vertical(
+                                bottom: Radius.circular(16.0),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: isOnline
+                                            ? Colors.green
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      '$name, $age',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
                                 Text(
-                                  '$name, $age',
+                                  '$city, $country',
                                   style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.0,
+                                    color: Colors.white,
+                                    fontSize: 14.0,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '$city, $country',
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14.0,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        top: 8.0,
-                        right: 8.0,
-                        child: IconButton(
-                          onPressed: () async {
-                            await removeFromFavorites(userId, index);
-                          },
-                          icon: const Icon(
-                            Icons.favorite,
-                            color: Colors.red,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          );
+                        Positioned(
+                          top: 8.0,
+                          right: 8.0,
+                          child: IconButton(
+                            onPressed: () async {
+                              await removeFromFavorites(userId, index);
+                            },
+                            icon: const Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ));
         },
       ),
       bottomNavigationBar: const BottomNavBar(selectedIndex: 1),
