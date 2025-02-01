@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
@@ -122,13 +123,61 @@ class EventScreenState extends State<EventScreen> {
                   return Card(
                     margin: const EdgeInsets.all(8.0),
                     child: ListTile(
-                      title: Text(data['name']),
-                      subtitle: Text(
-                        'Place: ${data['place']}\n'
-                        'Date: ${data['date']} at ${data['time']}\n'
-                        'Description: ${data['description']}\n'
-                        'Created by: $creatorName\n'
-                        'Joined: $joinedUsersDisplay',
+                      title: Text(
+                        data['name'],
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.purple,
+                        ),
+                      ),
+                      subtitle: RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 15),
+                          children: [
+                            const TextSpan(
+                              text: 'Place: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            TextSpan(text: '${data['place']}\n'),
+                            const TextSpan(
+                              text: 'Date: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            TextSpan(
+                                text: '${data['date']} at ${data['time']}\n'),
+                            const TextSpan(
+                              text: 'Description: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            TextSpan(text: '${data['description']}\n'),
+                            const TextSpan(
+                              text: 'Created by: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            TextSpan(text: '$creatorName\n'),
+                            const TextSpan(
+                              text: 'Joined by: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.green),
+                            ),
+                            TextSpan(
+                              text: joinedUsersDisplay,
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueAccent,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       isThreeLine: true,
                       trailing: currentUserId == creatorUid
@@ -150,7 +199,18 @@ class EventScreenState extends State<EventScreen> {
                             )
                           : ElevatedButton(
                               onPressed: () => _toggleJoinEvent(event.id),
-                              child: Text(isJoined ? 'Leave' : 'Join'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    isJoined ? Colors.green : Colors.purple,
+                              ),
+                              child: Text(
+                                isJoined ? 'Joined' : 'Join',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                     ),
                   );
@@ -299,7 +359,7 @@ class _EventDialogState extends State<EventDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancel'),
         ),
-        ElevatedButton(
+        TextButton(
           onPressed: _saveEvent,
           child: const Text('Save'),
         ),

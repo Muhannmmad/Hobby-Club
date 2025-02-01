@@ -58,7 +58,7 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 50), // Adjusted height for better placement
+          const SizedBox(height: 50),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
             child: Row(
@@ -75,13 +75,21 @@ class HomeScreenState extends State<HomeScreen> {
                         color: Colors.black,
                       ),
                     ),
-                    Text(
-                      userName,
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(205, 67, 7, 82),
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          userName,
+                          style: GoogleFonts.spicyRice(
+                            fontSize: 20,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        const Text(
+                          '❤️',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -93,7 +101,7 @@ class HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 20), // Adjust spacing for layout
+          const SizedBox(height: 20),
           Center(
             child: Text(
               'Hobby Club',
