@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:country_state_city_pro/country_state_city_pro.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,17 +18,24 @@ class EditProfileScreen extends StatefulWidget {
 class EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController ageController = TextEditingController();
-  final TextEditingController genderController = TextEditingController();
-  final TextEditingController townController = TextEditingController();
   final TextEditingController hobbiesController = TextEditingController();
   final TextEditingController aboutController = TextEditingController();
+  final TextEditingController countryController = TextEditingController();
+  final TextEditingController stateController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
 
   File? _profileImage;
   bool isLoading = false;
 
+  String? selectedGender;
+  String? selectedAge;
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  final List<String> ageOptions =
+      List.generate(91, (index) => (index + 10).toString());
+  final List<String> genderOptions = ['Male', 'Female', 'Other'];
 
   @override
   void initState() {
@@ -43,11 +51,16 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         setState(() {
           firstNameController.text = data['firstName'] ?? '';
           lastNameController.text = data['lastName'] ?? '';
-          ageController.text = data['age'] ?? '';
-          genderController.text = data['gender'] ?? '';
-          townController.text = data['town'] ?? '';
           hobbiesController.text = data['hobbies'] ?? '';
           aboutController.text = data['about'] ?? '';
+
+          selectedAge = ageOptions.contains(data['age']) ? data['age'] : null;
+          selectedGender =
+              genderOptions.contains(data['gender']) ? data['gender'] : null;
+
+          countryController.text = data['country'] ?? '';
+          stateController.text = data['state'] ?? '';
+          cityController.text = data['city'] ?? '';
         });
       }
     } catch (e) {
@@ -87,9 +100,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       await _firestore.collection('users').doc(widget.userId).set({
         'firstName': firstNameController.text,
         'lastName': lastNameController.text,
-        'age': ageController.text,
-        'gender': genderController.text,
-        'town': townController.text,
+        'age': selectedAge,
+        'gender': selectedGender,
+        'country': countryController.text,
+        'state': stateController.text,
+        'city': cityController.text,
         'hobbies': hobbiesController.text,
         'about': aboutController.text,
         if (imageUrl != null) 'profileImage': imageUrl,
@@ -150,54 +165,64 @@ class EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 20),
 
-              // First Name & Last Name in a Row
+              // First Name & Last Name
               Row(
                 children: [
                   Expanded(
                     child: buildTextField(
-                      controller: firstNameController,
-                      label: 'First Name',
-                    ),
+                        controller: firstNameController, label: 'First Name'),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: buildTextField(
-                      controller: lastNameController,
-                      label: 'Last Name',
-                    ),
+                        controller: lastNameController, label: 'Last Name'),
                   ),
                 ],
               ),
-              buildTextField(controller: ageController, label: 'Age'),
-              buildTextField(controller: genderController, label: 'Gender'),
-              buildTextField(controller: townController, label: 'Town'),
-              buildTextField(controller: hobbiesController, label: 'Hobbies'),
-              const SizedBox(height: 10),
-              buildTextField(
-                controller: aboutController,
-                label: 'About me',
-                isMultiLine: true,
+
+              // Age Dropdown
+              buildDropdown(
+                label: 'Age',
+                value: selectedAge,
+                items: ageOptions,
+                onChanged: (val) => setState(() => selectedAge = val),
               ),
+
+              // Gender Dropdown
+              buildDropdown(
+                label: 'Gender',
+                value: selectedGender,
+                items: genderOptions,
+                onChanged: (val) => setState(() => selectedGender = val),
+              ),
+
+              // Country, State, City Picker
+              CountryStateCityPicker(
+                country: countryController,
+                state: stateController,
+                city: cityController,
+              ),
+
+              buildTextField(controller: hobbiesController, label: 'Hobbies'),
+              buildTextField(
+                  controller: aboutController,
+                  label: 'About me',
+                  isMultiLine: true),
+
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: isLoading ? null : saveProfile,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
+                      borderRadius: BorderRadius.circular(30.0)),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
                 ),
                 child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                        'Save changes',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
-                      ),
+                    : const Text('Save changes',
+                        style: TextStyle(color: Colors.white, fontSize: 18)),
               ),
             ],
           ),
@@ -206,11 +231,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget buildTextField({
-    required TextEditingController controller,
-    required String label,
-    bool isMultiLine = false,
-  }) {
+  Widget buildTextField(
+      {required TextEditingController controller,
+      required String label,
+      bool isMultiLine = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextField(
@@ -218,12 +242,27 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         maxLines: isMultiLine ? 5 : 1,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.7),
+          border: OutlineInputBorder(),
         ),
+      ),
+    );
+  }
+
+  Widget buildDropdown(
+      {required String label,
+      required String? value,
+      required List<String> items,
+      required Function(String?) onChanged}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: DropdownButtonFormField<String>(
+        value: value,
+        decoration:
+            InputDecoration(labelText: label, border: OutlineInputBorder()),
+        items: items
+            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+            .toList(),
+        onChanged: onChanged,
       ),
     );
   }
