@@ -45,7 +45,6 @@ class HomeScreenState extends State<HomeScreen> {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        // Set `isOnline` to false before signing out
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
@@ -55,7 +54,6 @@ class HomeScreenState extends State<HomeScreen> {
 
         await FirebaseAuth.instance.signOut();
 
-        // Navigate to login screen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -70,7 +68,6 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        // ✅ Make EVERYTHING scrollable
         child: Column(
           children: [
             const SizedBox(height: 50),
@@ -109,17 +106,28 @@ class HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.logout, color: Colors.black),
-                    onPressed: logout,
-                    tooltip: 'Log out',
+                  Row(
+                    children: [
+                      const Text(
+                        'Log out',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.logout, color: Colors.black),
+                        onPressed: logout,
+                        tooltip: 'Log out',
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
             Center(
-              // ✅ "Hobby Club" now scrolls with everything
               child: Text(
                 'Hobby Club',
                 style: GoogleFonts.spicyRice(
