@@ -66,7 +66,7 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                 : SingleChildScrollView(
                     child: Column(
                       children: [
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 10),
                         Container(
                           width: MediaQuery.of(context).size.width * 0.9,
                           height: MediaQuery.of(context).size.height * 0.4,
@@ -109,54 +109,16 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.person,
-                                        color: Colors.purple),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      userData?['gender'] ??
-                                          'Gender not provided',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.location_on,
-                                        color: Colors.purple),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      userData?['town'] ?? 'Town not provided',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.star,
-                                        color: Colors.purple),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        userData?['hobbies'] ??
-                                            'Hobbies not provided',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                profileDetail(
+                                    Icons.person,
+                                    userData?['gender'] ??
+                                        'Gender not provided'),
+                                profileDetail(Icons.location_on,
+                                    '${userData?['city'] ?? 'City not provided'}, ${userData?['state'] ?? 'State not provided'}, ${userData?['country'] ?? 'Country not provided'}'),
+                                profileDetail(
+                                    Icons.star,
+                                    userData?['hobbies'] ??
+                                        'Hobbies not provided'),
                                 const SizedBox(height: 20),
                                 const Text(
                                   'About Me',
@@ -213,6 +175,24 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                   ),
       ),
       bottomNavigationBar: const BottomNavBar(selectedIndex: 4),
+    );
+  }
+
+  Widget profileDetail(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.purple),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
