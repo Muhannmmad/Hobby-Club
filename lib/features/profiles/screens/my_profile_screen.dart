@@ -104,7 +104,7 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                 Row(
                                   children: [
                                     CircleAvatar(
-                                      radius: 10,
+                                      radius: 8,
                                       backgroundColor:
                                           (userData?['isOnline'] ?? false)
                                               ? Colors.green

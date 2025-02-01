@@ -175,7 +175,7 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                 Row(
                                   children: [
                                     CircleAvatar(
-                                      radius: 6,
+                                      radius: 8,
                                       backgroundColor:
                                           (userData?['isOnline'] ?? false)
                                               ? Colors.green
