@@ -109,154 +109,165 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
             : userData == null
                 ? const Center(child: Text('No profile data found.'))
                 : SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        // Profile Image with Favorite Icon
-                        Stack(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: userData!['profileImage'] != null
-                                      ? NetworkImage(userData!['profileImage'])
-                                      : const AssetImage(
-                                              'assets/default_profile.png')
-                                          as ImageProvider,
-                                ),
-                              ),
+                    child: Center(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        padding: const EdgeInsets.all(8),
+                        margin: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(25),
+                          border: Border.all(color: Colors.amber, width: 8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 15,
+                              spreadRadius: 2,
+                              offset: const Offset(0, 8),
                             ),
-                            Positioned(
-                              top: 15,
-                              right: 15,
-                              child: GestureDetector(
-                                onTap: toggleFavorite,
-                                child: CircleAvatar(
-                                  backgroundColor:
-                                      Colors.white.withOpacity(0.8),
-                                  radius: 25,
-                                  child: Icon(
-                                    isFavorite
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                    color:
-                                        isFavorite ? Colors.red : Colors.black,
-                                    size: 30,
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            // Profile Image with Favorite Icon
+                            Stack(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: userData!['profileImage'] != null
+                                          ? NetworkImage(
+                                              userData!['profileImage'])
+                                          : const AssetImage(
+                                                  'assets/default_profile.png')
+                                              as ImageProvider,
+                                    ),
                                   ),
                                 ),
+                                Positioned(
+                                  top: 15,
+                                  right: 15,
+                                  child: GestureDetector(
+                                    onTap: toggleFavorite,
+                                    child: CircleAvatar(
+                                      backgroundColor:
+                                          Colors.white.withOpacity(0.8),
+                                      radius: 25,
+                                      child: Icon(
+                                        isFavorite
+                                            ? Icons.favorite
+                                            : Icons.favorite_border,
+                                        color: isFavorite
+                                            ? Colors.red
+                                            : Colors.black,
+                                        size: 30,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+
+                            Container(
+                              padding: const EdgeInsets.all(15),
+                              margin: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 7,
+                                        backgroundColor:
+                                            (userData?['isOnline'] ?? false)
+                                                ? Colors.green
+                                                : Colors.grey,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.person,
+                                          color: Colors.purple),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                          userData?['gender'] ??
+                                              'Gender not provided',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey[700])),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.location_on,
+                                          color: Colors.purple),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          '${userData?['city'] ?? 'City'}\n${userData?['state'] ?? 'State'}\n${userData?['country'] ?? 'Country'}',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey[700]),
+                                          maxLines: 3,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.star,
+                                          color: Colors.purple),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          userData?['hobbies'] ??
+                                              'Hobbies not provided',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey[700]),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20),
+                                  const Text(
+                                    'About Me',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                      userData?['about'] ??
+                                          'No details provided.',
+                                      style: const TextStyle(fontSize: 16)),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
-                        // User Info Card
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 5),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 8,
-                                      backgroundColor:
-                                          (userData?['isOnline'] ?? false)
-                                              ? Colors.green
-                                              : Colors.grey,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.person,
-                                        color: Colors.purple),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      userData?['gender'] ??
-                                          'Gender not provided',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey[600]),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.location_on,
-                                        color: Colors.purple),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        '${userData?['city'] ?? 'City'}\n${userData?['state'] ?? 'State'}\n${userData?['country'] ?? 'Country'}',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey[600]),
-                                        maxLines: 3, // Allows up to 3 lines
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.star,
-                                        color: Colors.purple),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        userData?['hobbies'] ??
-                                            'Hobbies not provided',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey[600]),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 20),
-                                const Text(
-                                  'About Me',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  userData?['about'] ?? 'No details provided.',
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
       ),

@@ -69,103 +69,109 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          const SizedBox(height: 50),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Welcome,',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black,
+      body: SingleChildScrollView(
+        // ✅ Make EVERYTHING scrollable
+        child: Column(
+          children: [
+            const SizedBox(height: 50),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome,',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          userName,
-                          style: GoogleFonts.spicyRice(
-                            fontSize: 20,
-                            fontStyle: FontStyle.italic,
+                      Row(
+                        children: [
+                          Text(
+                            userName,
+                            style: GoogleFonts.spicyRice(
+                              fontSize: 20,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 5),
-                        const Text(
-                          '❤️',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                IconButton(
-                  icon: const Icon(Icons.logout, color: Colors.black),
-                  onPressed: logout,
-                  tooltip: 'Log out',
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Center(
-            child: Text(
-              'Hobby Club',
-              style: GoogleFonts.spicyRice(
-                textStyle: Theme.of(context).textTheme.displayLarge,
-                fontSize: 48,
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.italic,
-                color: const Color.fromARGB(205, 67, 7, 82),
+                          const SizedBox(width: 5),
+                          const Text(
+                            '❤️',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.logout, color: Colors.black),
+                    onPressed: logout,
+                    tooltip: 'Log out',
+                  ),
+                ],
               ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Text(
-                'Indoor Hobbies',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            const SizedBox(height: 20),
+            Center(
+              // ✅ "Hobby Club" now scrolls with everything
+              child: Text(
+                'Hobby Club',
+                style: GoogleFonts.spicyRice(
+                  textStyle: Theme.of(context).textTheme.displayLarge,
+                  fontSize: 48,
+                  fontWeight: FontWeight.w700,
+                  fontStyle: FontStyle.italic,
+                  color: const Color.fromARGB(205, 67, 7, 82),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Expanded(child: HobbiesCard(hobbies: indoorHobbies)),
-          const SizedBox(height: 20),
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Text(
-                'Outdoor Hobbies',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            const SizedBox(height: 20),
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text(
+                  'Indoor Hobbies',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Expanded(child: HobbiesCard(hobbies: outdoorHobbies)),
-        ],
+            const SizedBox(height: 10),
+            HobbiesCard(hobbies: indoorHobbies),
+            const SizedBox(height: 20),
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text(
+                  'Outdoor Hobbies',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            HobbiesCard(hobbies: outdoorHobbies),
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavBar(selectedIndex: selectedIndex),
     );

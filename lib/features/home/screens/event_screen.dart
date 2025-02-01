@@ -165,13 +165,13 @@ class EventScreenState extends State<EventScreen> {
                               text: 'Joined by: ',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   color: Colors.green),
                             ),
                             TextSpan(
                               text: joinedUsersDisplay,
                               style: GoogleFonts.poppins(
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blueAccent,
                               ),
@@ -206,7 +206,7 @@ class EventScreenState extends State<EventScreen> {
                               child: Text(
                                 isJoined ? 'Joined' : 'Join',
                                 style: const TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
@@ -224,8 +224,8 @@ class EventScreenState extends State<EventScreen> {
       floatingActionButton: ElevatedButton(
         onPressed: () => _showEventDialog(),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.purple, // Button color
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          backgroundColor: Colors.purple,
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
           ),

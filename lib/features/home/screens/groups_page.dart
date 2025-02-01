@@ -90,22 +90,31 @@ class _GroupPageState extends State<GroupPage> {
         children: [
           ElevatedButton(
             onPressed: isLoading ? null : _toggleMembership,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.purple,
+            ),
             child: isLoading
                 ? const CircularProgressIndicator(color: Colors.white)
-                : Text(isMember ? "Leave Group" : "Join Group"),
+                : Text(
+                    isMember ? "Leave Group" : "Join Group",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           Expanded(
             child: memberIds.isEmpty
                 ? const Center(child: Text("No members yet."))
                 : GridView.builder(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(8),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 1 / 1.3,
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 6,
+                      mainAxisSpacing: 6,
+                      childAspectRatio: 1 / 1.2,
                     ),
                     itemCount: memberIds.length,
                     itemBuilder: (context, index) {
@@ -134,7 +143,7 @@ class _GroupPageState extends State<GroupPage> {
 
                           // Fetch profile data
                           String profileImage = userData['profileImage'] ??
-                              'https://via.placeholder.com/150'; // Fallback image
+                              'https://via.placeholder.com/100'; // Fallback image
                           String firstName = userData['firstName'] ?? 'Unknown';
                           String age = userData['age']?.toString() ?? '-';
 
@@ -145,42 +154,48 @@ class _GroupPageState extends State<GroupPage> {
                                 context, memberIds[index]),
                             child: Card(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              elevation: 5,
+                              elevation: 3,
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(10)),
                                     child: Image.network(
                                       profileImage,
-                                      height: 200,
+                                      height: 125,
                                       width: double.infinity,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 6),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                        horizontal: 4),
+                                    child: Column(
                                       children: [
-                                        CircleAvatar(
-                                          radius: 6,
-                                          backgroundColor: isOnline
-                                              ? Colors.green
-                                              : Colors.grey,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          "$firstName , $age",
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.center,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 4,
+                                              backgroundColor: isOnline
+                                                  ? Colors.green
+                                                  : Colors.grey,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              "$firstName, $age",
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
