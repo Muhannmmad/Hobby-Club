@@ -83,7 +83,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
-                  '${userProfile['name'] ?? 'User'} removed from favorites!')),
+                  '${userProfile['firstName'] ?? 'User'} removed from favorites!')),
         );
       } else {
         await favoriteRef.set(userProfile);
@@ -92,8 +92,8 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text('${userProfile['name'] ?? 'User'} added to favorites!')),
+              content: Text(
+                  '${userProfile['firstName'] ?? 'User'} added to favorites!')),
         );
       }
     } catch (e) {
@@ -145,7 +145,9 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
 
   Widget buildProfileCard(Map<String, dynamic> userData) {
     final bool isFavorite = favoriteIds.contains(userData['id']);
-    final String name = userData['name'] ?? 'Unknown';
+    final String firstName = userData['firstName'] ?? 'Unknown';
+    final String lastName = userData['lastName'] ?? '';
+    final String fullName = '$firstName $lastName'.trim();
     final String age = userData['age']?.toString() ?? 'Unknown';
     final String gender = userData['gender'] ?? 'Unknown';
     final String country = userData['country'] ?? 'Unknown';
@@ -157,7 +159,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
     final String hobbies = userData['hobbies'] is List
         ? (userData['hobbies'] as List).join(', ')
         : (userData['hobbies'] ?? 'Not specified');
-    final bool isOnline = userData['isOnline'] ?? false; // Online status
+    final bool isOnline = userData['isOnline'] ?? false;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
@@ -218,12 +220,12 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircleAvatar(
-                      radius: 10, // Bigger size
+                      radius: 10,
                       backgroundColor: isOnline ? Colors.green : Colors.grey,
                     ),
-                    const SizedBox(width: 10), // More spacing
+                    const SizedBox(width: 10),
                     Text(
-                      '$name, $age ($gender)',
+                      '$fullName, $age',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -232,25 +234,43 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  '$city, $state, $country',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.person, color: Colors.purple),
+                    const SizedBox(width: 5),
+                    Text(gender,
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.purple)),
+                  ],
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  'Hobbies: $hobbies',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.location_on, color: Colors.purple),
+                    const SizedBox(width: 5),
+                    Text('$city, $state, $country',
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.purple)),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.star, color: Colors.purple),
+                    const SizedBox(width: 5),
+                    Text('Hobbies: $hobbies',
+                        style: TextStyle(fontSize: 16, color: Colors.purple)),
+                  ],
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'About Me',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                const Text('About Me',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
-                Text(
-                  about,
-                  style: const TextStyle(fontSize: 16),
-                ),
+                Text(about, style: const TextStyle(fontSize: 16)),
               ],
             ),
           ),
