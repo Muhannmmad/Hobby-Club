@@ -93,7 +93,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 8.0,
                 mainAxisSpacing: 8.0,
-                childAspectRatio: 3 / 4,
+                childAspectRatio: 4 / 6,
               ),
               itemCount: favoriteProfiles.length,
               itemBuilder: (context, index) {

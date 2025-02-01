@@ -114,7 +114,7 @@ class _GroupPageState extends State<GroupPage> {
                       crossAxisCount: 3,
                       crossAxisSpacing: 6,
                       mainAxisSpacing: 6,
-                      childAspectRatio: 1 / 1.2,
+                      childAspectRatio: 1 / 1.3,
                     ),
                     itemCount: memberIds.length,
                     itemBuilder: (context, index) {
