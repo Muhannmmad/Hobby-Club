@@ -216,11 +216,20 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
             ),
             child: Column(
               children: [
-                Text(
-                  '$fullName, $age',
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 8,
+                      backgroundColor: isOnline ? Colors.green : Colors.grey,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      '$fullName, $age',
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -228,10 +237,9 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                     const Icon(Icons.person, color: Colors.purple),
                     const SizedBox(width: 5),
                     Expanded(
-                      child: Text(gender,
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.purple)),
-                    ),
+                        child: Text(gender,
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.purple))),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -240,10 +248,9 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                     const Icon(Icons.location_on, color: Colors.purple),
                     const SizedBox(width: 5),
                     Expanded(
-                      child: Text('$city, $state, $country',
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.purple)),
-                    ),
+                        child: Text('$city, $state, $country',
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.purple))),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -252,9 +259,9 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                     const Icon(Icons.star, color: Colors.purple),
                     const SizedBox(width: 5),
                     Expanded(
-                      child: Text('Hobbies: $hobbies',
-                          style: TextStyle(fontSize: 16, color: Colors.purple)),
-                    ),
+                        child: Text('Hobbies: $hobbies',
+                            style: TextStyle(
+                                fontSize: 16, color: Colors.grey[600]))),
                   ],
                 ),
                 const SizedBox(height: 20),
