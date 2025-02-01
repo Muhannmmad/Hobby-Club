@@ -200,12 +200,15 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                     const Icon(Icons.location_on,
                                         color: Colors.purple),
                                     const SizedBox(width: 8),
-                                    Text(
-                                      userData?['town'] ?? 'Town not provided',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey[600]),
-                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        '${userData?['city'] ?? 'City'}\n${userData?['state'] ?? 'State'}\n${userData?['country'] ?? 'Country'}',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.grey[600]),
+                                        maxLines: 3, // Allows up to 3 lines
+                                      ),
+                                    )
                                   ],
                                 ),
                                 const SizedBox(height: 10),

@@ -92,7 +92,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 final profileImage = userData['profileImage'] ?? '';
                 final name = userData['firstName'] ?? 'Unknown';
                 final age = userData['age']?.toString() ?? 'N/A';
-                final town = userData['town'] ?? 'Unknown location';
+                final country = userData['country'] ?? 'Unknown';
+                final city = userData['city'] ?? 'Unknown';
                 final userId =
                     userData['docId']; // Use userId to open the profile
 
@@ -145,7 +146,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              town,
+                              '$city, $country',
                               style: const TextStyle(
                                 color: Colors.grey,
                                 fontSize: 14.0,

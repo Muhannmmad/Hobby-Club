@@ -114,7 +114,6 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                     final userData = userProfiles[index];
                     return Stack(
                       children: [
-                        // Layer showing blurred cards behind the main profile
                         for (int i = 1; i <= 2; i++)
                           if (index + i < userProfiles.length)
                             Positioned(
@@ -123,7 +122,6 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                               right: 20.0 * i,
                               child: buildBlurredCard(),
                             ),
-                        // Main profile card
                         SingleChildScrollView(
                           child: buildProfileCard(userData),
                         ),
@@ -148,14 +146,17 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
   Widget buildProfileCard(Map<String, dynamic> userData) {
     final bool isFavorite = favoriteIds.contains(userData['id']);
     final String name = userData['name'] ?? 'Unknown';
-    final String town = userData['town'] ?? 'Unknown';
+    final String age = userData['age']?.toString() ?? 'Unknown';
+    final String gender = userData['gender'] ?? 'Unknown';
+    final String country = userData['country'] ?? 'Unknown';
+    final String state = userData['state'] ?? 'Unknown';
+    final String city = userData['city'] ?? 'Unknown';
     final String about = userData['about'] ?? 'No details available.';
     final String profileImage =
         userData['profileImage'] ?? 'assets/default_profile.png';
     final String hobbies = userData['hobbies'] is List
         ? (userData['hobbies'] as List).join(', ')
         : (userData['hobbies'] ?? 'Not specified');
-    final String age = userData['age']?.toString() ?? 'Unknown';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
@@ -213,13 +214,13 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
             child: Column(
               children: [
                 Text(
-                  '$name, $age',
+                  '$name, $age ($gender)',
                   style: const TextStyle(
                       fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  town,
+                  '$city, $state, $country',
                   style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 10),

@@ -105,8 +105,7 @@ class _GroupPageState extends State<GroupPage> {
                       crossAxisCount: 2,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
-                      childAspectRatio:
-                          1 / 1.4, // Bigger square with data below
+                      childAspectRatio: 1 / 1.3,
                     ),
                     itemCount: memberIds.length,
                     itemBuilder: (context, index) {
@@ -138,7 +137,6 @@ class _GroupPageState extends State<GroupPage> {
                               'https://via.placeholder.com/150'; // Fallback image
                           String firstName = userData['firstName'] ?? 'Unknown';
 
-                          String city = userData['town'] ?? 'Unknown City';
                           String age = userData['age']?.toString() ?? '-';
 
                           return GestureDetector(
@@ -171,14 +169,6 @@ class _GroupPageState extends State<GroupPage> {
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Text(
-                                          city.toUpperCase(),
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey,
                                           ),
                                           textAlign: TextAlign.center,
                                         ),
