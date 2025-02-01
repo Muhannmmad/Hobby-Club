@@ -192,8 +192,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           ),
                         ),
                         Positioned(
-                          top: 8.0,
-                          right: 8.0,
+                          top: 0.0,
+                          right: 0.0,
                           child: IconButton(
                             onPressed: () async {
                               await removeFromFavorites(userId, index);

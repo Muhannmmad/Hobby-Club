@@ -112,34 +112,12 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                   itemCount: userProfiles.length,
                   itemBuilder: (context, index) {
                     final userData = userProfiles[index];
-                    return Stack(
-                      children: [
-                        for (int i = 1; i <= 2; i++)
-                          if (index + i < userProfiles.length)
-                            Positioned(
-                              top: 40.0 * i,
-                              left: 20.0 * i,
-                              right: 20.0 * i,
-                              child: buildBlurredCard(),
-                            ),
-                        SingleChildScrollView(
-                          child: buildProfileCard(userData),
-                        ),
-                      ],
+                    return SingleChildScrollView(
+                      child: buildProfileCard(userData),
                     );
                   },
                 ),
       bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
-    );
-  }
-
-  Widget buildBlurredCard() {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.5,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.grey.withOpacity(0.2),
-      ),
     );
   }
 
@@ -149,40 +127,44 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
     final String lastName = userData['lastName'] ?? '';
     final String fullName = '$firstName $lastName'.trim();
     final String age = userData['age']?.toString() ?? 'Unknown';
-    final String gender = userData['gender'] ?? 'Unknown';
-    final String country = userData['country'] ?? 'Unknown';
-    final String state = userData['state'] ?? 'Unknown';
-    final String city = userData['city'] ?? 'Unknown';
-    final String about = userData['about'] ?? 'No details available.';
+    final bool isOnline = userData['isOnline'] ?? false;
     final String profileImage =
         userData['profileImage'] ?? 'assets/default_profile.png';
+    final String location =
+        '${userData['city'] ?? ''}, ${userData['state'] ?? ''}, ${userData['country'] ?? ''}'
+            .trim();
+    final String about = userData['about'] ?? 'No details available.';
     final String hobbies = userData['hobbies'] is List
         ? (userData['hobbies'] as List).join(', ')
         : (userData['hobbies'] ?? 'Not specified');
-    final bool isOnline = userData['isOnline'] ?? false;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
       child: Column(
         children: [
-          const SizedBox(height: 20),
           Stack(
             children: [
               Container(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.5,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
+                margin: const EdgeInsets.only(top: 40), // Push image down
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    profileImage,
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.55,
                     fit: BoxFit.cover,
-                    image: profileImage.startsWith('http')
-                        ? NetworkImage(profileImage)
-                        : AssetImage(profileImage) as ImageProvider,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.55,
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.person, size: 100),
+                      );
+                    },
                   ),
                 ),
               ),
               Positioned(
-                top: 15,
+                top: 55,
                 right: 15,
                 child: GestureDetector(
                   onTap: () => toggleFavorite(userData),
@@ -197,10 +179,40 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                   ),
                 ),
               ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 6,
+                        backgroundColor: isOnline ? Colors.green : Colors.grey,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '$fullName, $age',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 20),
           Container(
+            width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -215,63 +227,23 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
               ],
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 8,
-                      backgroundColor: isOnline ? Colors.green : Colors.grey,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      '$fullName, $age',
-                      style: const TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                Text('📍 $location',
+                    style: const TextStyle(
+                        fontSize: 18,
+                        color: const Color.fromARGB(255, 186, 8, 222))),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(Icons.person, color: Colors.purple),
-                    const SizedBox(width: 5),
-                    Expanded(
-                        child: Text(gender,
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.purple))),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, color: Colors.purple),
-                    const SizedBox(width: 5),
-                    Expanded(
-                        child: Text('$city, $state, $country',
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.purple))),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.purple),
-                    const SizedBox(width: 5),
-                    Expanded(
-                        child: Text('Hobbies: $hobbies',
-                            style: TextStyle(
-                                fontSize: 16, color: Colors.grey[600]))),
-                  ],
-                ),
+                Text('⭐ Hobbies: $hobbies',
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: const Color.fromARGB(255, 186, 8, 222))),
                 const SizedBox(height: 20),
                 const Text('About Me',
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
-                Text(about,
-                    style: const TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center),
+                Text(about, style: const TextStyle(fontSize: 16)),
               ],
             ),
           ),
