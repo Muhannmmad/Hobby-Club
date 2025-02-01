@@ -253,11 +253,18 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                     const SizedBox(width: 5),
                     Expanded(
                       child: Text('Hobbies: $hobbies',
-                          style:
-                              TextStyle(fontSize: 16, color: Colors.grey[600])),
+                          style: TextStyle(fontSize: 16, color: Colors.purple)),
                     ),
                   ],
                 ),
+                const SizedBox(height: 20),
+                const Text('About Me',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Text(about,
+                    style: const TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center),
               ],
             ),
           ),
