@@ -188,6 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ElevatedButton(
                 onPressed: handleLogin,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
                   padding: EdgeInsets.symmetric(
                     vertical: isTablet ? 18 : 15,
                     horizontal: isTablet ? 100 : 80,
@@ -195,7 +196,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Log In'),
+                    : const Text(
+                        'Log In',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
 
               const SizedBox(height: 20),

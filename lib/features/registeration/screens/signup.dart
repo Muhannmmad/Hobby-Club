@@ -191,7 +191,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                             horizontal: 80,
                           ),
                           textStyle: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                           foregroundColor: Colors.white,
