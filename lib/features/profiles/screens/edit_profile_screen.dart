@@ -242,7 +242,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         maxLines: isMultiLine ? 5 : 1,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
       ),
     );
@@ -257,8 +257,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: DropdownButtonFormField<String>(
         value: value,
-        decoration:
-            InputDecoration(labelText: label, border: OutlineInputBorder()),
+        decoration: InputDecoration(
+            labelText: label, border: const OutlineInputBorder()),
         items: items
             .map((e) => DropdownMenuItem(value: e, child: Text(e)))
             .toList(),
