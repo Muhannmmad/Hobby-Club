@@ -57,6 +57,8 @@ class MyProfileScreenState extends State<MyProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SafeArea(
         child: isLoading
@@ -66,10 +68,10 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                 : SingleChildScrollView(
                     child: Column(
                       children: [
-                        const SizedBox(height: 10),
+                        SizedBox(height: screenHeight * 0.02),
                         Container(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          height: MediaQuery.of(context).size.height * 0.4,
+                          width: screenWidth * 0.9,
+                          height: screenHeight * 0.4,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             image: DecorationImage(
@@ -82,11 +84,12 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: screenHeight * 0.02),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.05),
                           child: Container(
-                            padding: const EdgeInsets.all(20),
+                            padding: EdgeInsets.all(screenWidth * 0.05),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -110,43 +113,47 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                               ? Colors.green
                                               : Colors.grey,
                                     ),
-                                    const SizedBox(width: 8),
+                                    SizedBox(width: screenWidth * 0.02),
                                     Text(
                                       '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
-                                      style: const TextStyle(
-                                        fontSize: 18,
+                                      style: TextStyle(
+                                        fontSize: screenWidth * 0.04,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: screenHeight * 0.02),
                                 profileDetail(
                                     Icons.person,
                                     userData?['gender'] ??
-                                        'Gender not provided'),
+                                        'Gender not provided',
+                                    screenWidth),
                                 profileDetail(
                                   Icons.location_on,
                                   '${userData?['city'] ?? 'City not provided'}, ${userData?['state'] ?? 'State not provided'}, ${userData?['country'] ?? 'Country not provided'}',
+                                  screenWidth,
                                 ),
                                 profileDetail(
                                     Icons.star,
                                     userData?['hobbies'] ??
-                                        'Hobbies not provided'),
-                                const SizedBox(height: 20),
-                                const Text(
+                                        'Hobbies not provided',
+                                    screenWidth),
+                                SizedBox(height: screenHeight * 0.02),
+                                Text(
                                   'About Me',
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: screenWidth * 0.04,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(height: screenHeight * 0.01),
                                 Text(
                                   userData?['about'] ?? 'No details provided.',
-                                  style: const TextStyle(fontSize: 16),
+                                  style:
+                                      TextStyle(fontSize: screenWidth * 0.040),
                                 ),
-                                const SizedBox(height: 20),
+                                SizedBox(height: screenHeight * 0.02),
                                 Center(
                                   child: ElevatedButton(
                                     onPressed: () {
@@ -168,14 +175,15 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                         borderRadius:
                                             BorderRadius.circular(30.0),
                                       ),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: screenWidth * 0.04,
+                                          vertical: screenHeight * 0.01),
                                     ),
-                                    child: const Text(
+                                    child: Text(
                                       'Edit Profile',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 14,
+                                        fontSize: screenWidth * 0.04,
                                       ),
                                     ),
                                   ),
@@ -192,17 +200,18 @@ class MyProfileScreenState extends State<MyProfileScreen> {
     );
   }
 
-  Widget profileDetail(IconData icon, String text) {
+  Widget profileDetail(IconData icon, String text, double screenWidth) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.only(bottom: screenWidth * 0.02),
       child: Row(
         children: [
-          Icon(icon, color: Colors.purple),
-          const SizedBox(width: 8),
+          Icon(icon, color: Colors.purple, size: screenWidth * 0.06),
+          SizedBox(width: screenWidth * 0.02),
           Expanded(
             child: Text(
               text,
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              style: TextStyle(
+                  fontSize: screenWidth * 0.045, color: Colors.grey[600]),
             ),
           ),
         ],
