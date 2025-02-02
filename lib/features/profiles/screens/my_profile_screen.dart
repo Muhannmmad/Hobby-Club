@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -81,7 +79,7 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                               image: userData!['profileImage'] != null
                                   ? NetworkImage(userData!['profileImage'])
                                   : const AssetImage(
-                                          'assets/default_profile.png')
+                                          'assets/profiles/profile.jpg')
                                       as ImageProvider,
                             ),
                           ),
