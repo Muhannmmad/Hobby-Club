@@ -231,13 +231,11 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
               children: [
                 Text('📍 $location',
                     style: const TextStyle(
-                        fontSize: 18,
-                        color: const Color.fromARGB(255, 186, 8, 222))),
+                        fontSize: 18, color: Color.fromARGB(255, 186, 8, 222))),
                 const SizedBox(height: 10),
                 Text('⭐ Hobbies: $hobbies',
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: const Color.fromARGB(255, 186, 8, 222))),
+                    style: const TextStyle(
+                        fontSize: 16, color: Color.fromARGB(255, 186, 8, 222))),
                 const SizedBox(height: 20),
                 const Text('About Me',
                     style:

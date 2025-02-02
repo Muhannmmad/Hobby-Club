@@ -46,11 +46,16 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    const double baseWidth = 375; // Reference mobile width
+    final double scaleFactor = screenSize.width / baseWidth;
+
     return BottomAppBar(
       shape: const CircularNotchedRectangle(),
       notchMargin: 8.0,
       child: Container(
-        height: 70,
+        height:
+            (60 * scaleFactor).clamp(50.0, 80.0), // Adjust height dynamically
         decoration: BoxDecoration(
           color: darkpurble,
           borderRadius: BorderRadius.circular(30),
@@ -66,19 +71,20 @@ class BottomNavBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            _buildNavItem(Icons.home, 'Home', 0, context),
-            _buildNavItem(Icons.favorite, 'Favorites', 1, context),
-            _buildNavItem(Icons.search, 'Search', 2, context),
-            _buildNavItem(Icons.note_alt_rounded, 'Events', 3, context),
-            _buildNavItem(Icons.person, 'Profile', 4, context),
+            _buildNavItem(Icons.home, 'Home', 0, context, scaleFactor),
+            _buildNavItem(Icons.favorite, 'Favorites', 1, context, scaleFactor),
+            _buildNavItem(Icons.search, 'Search', 2, context, scaleFactor),
+            _buildNavItem(
+                Icons.note_alt_rounded, 'Events', 3, context, scaleFactor),
+            _buildNavItem(Icons.person, 'Profile', 4, context, scaleFactor),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(
-      IconData icon, String label, int index, BuildContext context) {
+  Widget _buildNavItem(IconData icon, String label, int index,
+      BuildContext context, double scaleFactor) {
     return GestureDetector(
       onTap: () => onItemTapped(context, index),
       child: Column(
@@ -86,11 +92,16 @@ class BottomNavBar extends StatelessWidget {
         children: [
           Icon(
             icon,
+            size: (24 * scaleFactor).clamp(20.0, 30.0), // Adjusted scaling
             color: selectedIndex == index ? Colors.purple[400] : Colors.white,
           ),
+          SizedBox(height: 4), // Small spacing
           Text(
             label,
             style: TextStyle(
+              fontSize:
+                  (10 * scaleFactor).clamp(10.0, 14.0), // Adjusted text size
+              fontWeight: FontWeight.w500,
               color: selectedIndex == index ? Colors.purple[400] : Colors.white,
             ),
           ),

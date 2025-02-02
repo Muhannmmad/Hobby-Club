@@ -66,14 +66,18 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 50),
+            SizedBox(height: screenHeight * 0.05),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.05,
+                  vertical: screenHeight * 0.02),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -83,7 +87,7 @@ class HomeScreenState extends State<HomeScreen> {
                       Text(
                         'Welcome,',
                         style: GoogleFonts.poppins(
-                          fontSize: 18,
+                          fontSize: screenWidth * 0.030,
                           fontWeight: FontWeight.w400,
                           color: Colors.black,
                         ),
@@ -93,14 +97,14 @@ class HomeScreenState extends State<HomeScreen> {
                           Text(
                             userName,
                             style: GoogleFonts.spicyRice(
-                              fontSize: 20,
+                              fontSize: screenWidth * 0.03,
                               fontStyle: FontStyle.italic,
                             ),
                           ),
-                          const SizedBox(width: 5),
-                          const Text(
+                          SizedBox(width: screenWidth * 0.01),
+                          Text(
                             '❤️',
-                            style: TextStyle(fontSize: 20),
+                            style: TextStyle(fontSize: screenWidth * 0.03),
                           ),
                         ],
                       ),
@@ -108,16 +112,17 @@ class HomeScreenState extends State<HomeScreen> {
                   ),
                   Row(
                     children: [
-                      const Text(
+                      Text(
                         'Log out',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: screenWidth * 0.03,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.logout, color: Colors.black),
+                        icon: Icon(Icons.logout,
+                            color: Colors.black, size: screenWidth * 0.06),
                         onPressed: logout,
                         tooltip: 'Log out',
                       ),
@@ -126,62 +131,48 @@ class HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: screenHeight * 0.03),
             Center(
               child: Text(
                 'Hobby Club',
                 style: GoogleFonts.spicyRice(
-                  textStyle: Theme.of(context).textTheme.displayLarge,
-                  fontSize: 48,
+                  fontSize: screenWidth * 0.10,
                   fontWeight: FontWeight.w700,
                   fontStyle: FontStyle.italic,
                   color: const Color.fromARGB(205, 67, 7, 82),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Text(
-                  'Indoor Hobbies',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
+            SizedBox(height: screenHeight * 0.03),
+            _buildCategoryBox('Indoor Hobbies', screenWidth),
             HobbiesCard(hobbies: indoorHobbies),
-            const SizedBox(height: 20),
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Text(
-                  'Outdoor Hobbies',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
+            SizedBox(height: screenHeight * 0.03),
+            _buildCategoryBox('Outdoor Hobbies', screenWidth),
             HobbiesCard(hobbies: outdoorHobbies),
-            const SizedBox(height: 20),
+            SizedBox(height: screenHeight * 0.03),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavBar(selectedIndex: selectedIndex),
+    );
+  }
+
+  Widget _buildCategoryBox(String title, double screenWidth) {
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(screenWidth * 0.02),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(screenWidth * 0.03),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: screenWidth * 0.040,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 }

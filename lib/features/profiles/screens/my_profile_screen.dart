@@ -114,7 +114,7 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                     Text(
                                       '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
                                       style: const TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -169,13 +169,13 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                             BorderRadius.circular(30.0),
                                       ),
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 60, vertical: 15),
+                                          horizontal: 16, vertical: 8),
                                     ),
                                     child: const Text(
                                       'Edit Profile',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 16,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ),

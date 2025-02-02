@@ -84,8 +84,16 @@ class _GroupPageState extends State<GroupPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Group Members")),
+      appBar: AppBar(
+        title: Text(
+          "Group Members",
+          style: TextStyle(fontSize: screenWidth * 0.05),
+        ),
+      ),
       body: Column(
         children: [
           ElevatedButton(
@@ -97,16 +105,22 @@ class _GroupPageState extends State<GroupPage> {
                 ? const CircularProgressIndicator(color: Colors.white)
                 : Text(
                     isMember ? "Leave Group" : "Join Group",
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
+                      fontSize: screenWidth * 0.04,
                     ),
                   ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: screenHeight * 0.02),
           Expanded(
               child: memberIds.isEmpty
-                  ? const Center(child: Text("No members yet."))
+                  ? Center(
+                      child: Text(
+                        "No members yet.",
+                        style: TextStyle(fontSize: screenWidth * 0.04),
+                      ),
+                    )
                   : GridView.builder(
                       padding: const EdgeInsets.all(8),
                       gridDelegate:
@@ -165,8 +179,8 @@ class _GroupPageState extends State<GroupPage> {
                                           (context, error, stackTrace) {
                                         return Container(
                                           color: Colors.grey[300],
-                                          child: const Icon(Icons.person,
-                                              size: 80),
+                                          child: Icon(Icons.person,
+                                              size: screenWidth * 0.2),
                                         );
                                       },
                                     ),
@@ -176,11 +190,10 @@ class _GroupPageState extends State<GroupPage> {
                                     left: 0,
                                     right: 0,
                                     child: Container(
-                                      padding: const EdgeInsets.all(6.0),
+                                      padding: EdgeInsets.all(6.0),
                                       decoration: BoxDecoration(
                                         color: Colors.black.withOpacity(0.6),
-                                        borderRadius:
-                                            const BorderRadius.vertical(
+                                        borderRadius: BorderRadius.vertical(
                                           bottom: Radius.circular(10),
                                         ),
                                       ),
@@ -196,11 +209,11 @@ class _GroupPageState extends State<GroupPage> {
                                                     ? Colors.green
                                                     : Colors.grey,
                                               ),
-                                              const SizedBox(width: 4),
+                                              SizedBox(width: 4),
                                               Text(
                                                 "$firstName, $age",
-                                                style: const TextStyle(
-                                                  fontSize: 12,
+                                                style: TextStyle(
+                                                  fontSize: screenWidth * 0.020,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,
                                                 ),

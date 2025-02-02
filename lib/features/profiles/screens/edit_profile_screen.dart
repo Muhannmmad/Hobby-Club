@@ -145,7 +145,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 100),
+              const SizedBox(height: 80),
               GestureDetector(
                 onTap: pickImage,
                 child: CircleAvatar(
@@ -158,12 +158,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       : null,
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               const Text(
                 'Tap to upload Profile Pic',
                 style: TextStyle(color: Colors.black),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
 
               // First Name & Last Name
               Row(
@@ -172,7 +172,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     child: buildTextField(
                         controller: firstNameController, label: 'First Name'),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: buildTextField(
                         controller: lastNameController, label: 'Last Name'),
@@ -209,7 +209,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   label: 'About me',
                   isMultiLine: true),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 4),
               ElevatedButton(
                 onPressed: isLoading ? null : saveProfile,
                 style: ElevatedButton.styleFrom(
@@ -217,12 +217,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0)),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
                 child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text('Save changes',
-                        style: TextStyle(color: Colors.white, fontSize: 18)),
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
               ),
             ],
           ),

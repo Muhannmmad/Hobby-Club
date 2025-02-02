@@ -12,6 +12,9 @@ class HobbiesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double textSize = screenWidth * 0.04; // Adjust text size dynamically
+
     return SizedBox(
       height: 220,
       child: ListView.builder(
@@ -53,10 +56,10 @@ class HobbiesCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(2.0),
                     child: Text(
                       hobbies[index].name,
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: textSize),
                     ),
                   ),
                 ],

@@ -126,7 +126,7 @@ class EventScreenState extends State<EventScreen> {
                       title: Text(
                         data['name'],
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.purple,
                         ),
@@ -206,7 +206,7 @@ class EventScreenState extends State<EventScreen> {
                               child: Text(
                                 isJoined ? 'Joined' : 'Join',
                                 style: const TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
@@ -225,7 +225,7 @@ class EventScreenState extends State<EventScreen> {
         onPressed: () => _showEventDialog(),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.purple,
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
           ),
@@ -233,7 +233,7 @@ class EventScreenState extends State<EventScreen> {
         child: const Text(
           'Create new event',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),

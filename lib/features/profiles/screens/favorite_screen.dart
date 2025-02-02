@@ -36,7 +36,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       final data = doc.data();
       data['docId'] = doc.id;
 
-      // Fetch user's online status
       final userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(doc.id)
@@ -70,6 +69,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final double scaleFactor = screenWidth / 375;
+
     return Scaffold(
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _favoritesFuture,
@@ -87,7 +89,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           }
 
           return Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8.0 * scaleFactor),
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -119,7 +121,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     child: Stack(
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(16.0),
+                          borderRadius:
+                              BorderRadius.circular(16.0 * scaleFactor),
                           child: profileImage.isNotEmpty
                               ? Image.network(
                                   profileImage,
@@ -129,14 +132,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                   errorBuilder: (context, error, stackTrace) {
                                     return Container(
                                       color: Colors.grey[300],
-                                      child:
-                                          const Icon(Icons.person, size: 120),
+                                      child: Icon(Icons.person,
+                                          size: 120 * scaleFactor),
                                     );
                                   },
                                 )
                               : Container(
                                   color: Colors.grey[300],
-                                  child: const Icon(Icons.person, size: 120),
+                                  child: Icon(Icons.person,
+                                      size: 120 * scaleFactor),
                                 ),
                         ),
                         Positioned(
@@ -144,11 +148,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           left: 0,
                           right: 0,
                           child: Container(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(8.0 * scaleFactor),
                             decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.6),
-                              borderRadius: const BorderRadius.vertical(
-                                bottom: Radius.circular(16.0),
+                              borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(16.0 * scaleFactor),
                               ),
                             ),
                             child: Column(
@@ -157,8 +161,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Container(
-                                      width: 10,
-                                      height: 10,
+                                      width: 10 * scaleFactor,
+                                      height: 10 * scaleFactor,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: isOnline
@@ -166,24 +170,24 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                             : Colors.grey,
                                       ),
                                     ),
-                                    const SizedBox(width: 6),
+                                    SizedBox(width: 6 * scaleFactor),
                                     Text(
                                       '$name, $age',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 16.0,
+                                        fontSize: 12.0 * scaleFactor,
                                         color: Colors.white,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 4),
+                                SizedBox(height: 4 * scaleFactor),
                                 Text(
                                   '$city, $country',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 14.0,
+                                    fontSize: 12.0 * scaleFactor,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -198,9 +202,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             onPressed: () async {
                               await removeFromFavorites(userId, index);
                             },
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.favorite,
                               color: Colors.red,
+                              size: 24 * scaleFactor,
                             ),
                           ),
                         ),
