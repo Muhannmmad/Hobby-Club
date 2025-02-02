@@ -26,6 +26,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   File? _profileImage;
+  String? _profileImageUrl;
   bool isLoading = false;
 
   String? selectedGender;
@@ -62,6 +63,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
           countryController.text = data['country'] ?? '';
           stateController.text = data['state'] ?? '';
           cityController.text = data['city'] ?? '';
+
+          _profileImageUrl = data['profileImage'];
         });
       }
     } catch (e) {
@@ -76,11 +79,20 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       if (pickedFile != null) {
         setState(() {
           _profileImage = File(pickedFile.path);
+          _profileImageUrl =
+              null; // Clear the existing URL when a new image is picked
         });
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
     }
+  }
+
+  Future<void> removeImage() async {
+    setState(() {
+      _profileImage = null;
+      _profileImageUrl = null;
+    });
   }
 
   Future<void> saveProfile() async {
@@ -96,7 +108,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     });
 
     try {
-      String? imageUrl;
+      String? imageUrl = _profileImageUrl;
       if (_profileImage != null) {
         final ref = _storage.ref().child(
             'profile_pictures/${widget.userId}/${DateTime.now().millisecondsSinceEpoch}.jpg');
@@ -115,7 +127,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         'city': cityController.text,
         'hobbies': hobbiesController.text,
         'about': aboutController.text,
-        if (imageUrl != null) 'profileImage': imageUrl,
+        'profileImage': imageUrl,
       }, SetOptions(merge: true));
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -147,14 +159,37 @@ class EditProfileScreenState extends State<EditProfileScreen> {
               const SizedBox(height: 80),
               GestureDetector(
                 onTap: pickImage,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Colors.grey[300],
-                  backgroundImage:
-                      _profileImage != null ? FileImage(_profileImage!) : null,
-                  child: _profileImage == null
-                      ? Icon(Icons.person, size: 50, color: Colors.grey[700])
-                      : null,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.grey[300],
+                      backgroundImage: _profileImage != null
+                          ? FileImage(_profileImage!)
+                          : (_profileImageUrl != null
+                              ? NetworkImage(_profileImageUrl!) as ImageProvider
+                              : null),
+                      child: _profileImage == null && _profileImageUrl == null
+                          ? Icon(Icons.person,
+                              size: 50, color: Colors.grey[700])
+                          : null,
+                    ),
+                    if (_profileImage != null || _profileImageUrl != null)
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: removeImage,
+                          child: const CircleAvatar(
+                            radius: 14,
+                            backgroundColor: Colors.red,
+                            child: Icon(Icons.close,
+                                size: 16, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
               const SizedBox(height: 8),
