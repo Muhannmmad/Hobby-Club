@@ -13,10 +13,10 @@ class HobbiesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double textSize = screenWidth * 0.04; // Adjust text size dynamically
+    double textSize = screenWidth * 0.045;
 
     return SizedBox(
-      height: 220,
+      height: 240,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: hobbies.length,
@@ -41,25 +41,35 @@ class HobbiesCard extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
                 children: [
                   ClipRRect(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
                     child: Image.asset(
                       hobbies[index].image,
-                      width: 160,
-                      height: 160,
+                      width: 220,
+                      height: 220,
                       fit: BoxFit.cover,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
+                  Container(
+                    width: 220,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(10)),
+                    ),
                     child: Text(
                       hobbies[index].name,
-                      style: TextStyle(fontSize: textSize),
+                      style: TextStyle(
+                        fontSize: textSize,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ],
