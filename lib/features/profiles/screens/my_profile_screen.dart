@@ -114,11 +114,16 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                               : Colors.grey,
                                     ),
                                     SizedBox(width: screenWidth * 0.02),
-                                    Text(
-                                      '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
-                                      style: TextStyle(
-                                        fontSize: screenWidth * 0.04,
-                                        fontWeight: FontWeight.bold,
+                                    Expanded(
+                                      child: Text(
+                                        '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
+                                        style: TextStyle(
+                                          fontSize: screenWidth * 0.04,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        softWrap: true,
                                       ),
                                     ),
                                   ],

@@ -157,37 +157,42 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             ),
                             child: Column(
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 10 * scaleFactor,
-                                      height: 10 * scaleFactor,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: isOnline
-                                            ? Colors.green
-                                            : Colors.grey,
+                                RichText(
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                    children: [
+                                      WidgetSpan(
+                                        alignment: PlaceholderAlignment.middle,
+                                        child: Container(
+                                          width: 10 * scaleFactor,
+                                          height: 10 * scaleFactor,
+                                          margin: EdgeInsets.only(
+                                              right: 4 * scaleFactor),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: isOnline
+                                                ? Colors.green
+                                                : Colors.grey,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(width: 6 * scaleFactor),
-                                    Text(
-                                      '$name, $age',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12.0 * scaleFactor,
-                                        color: Colors.white,
+                                      TextSpan(
+                                        text: '$name, $age',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12.0 * scaleFactor,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(height: 4 * scaleFactor),
                                 Text(
                                   '$city, $country',
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 12.0 * scaleFactor,
+                                    fontSize: 10.0 * scaleFactor,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),

@@ -30,7 +30,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
       final querySnapshot = await _firestore.collection('users').get();
       List<Map<String, dynamic>> firestoreUsers = querySnapshot.docs.map((doc) {
         final data = doc.data();
-        data['id'] = doc.id;
+        data['id'] = doc.id; // Assign Firestore document ID
         return data;
       }).toList();
 
@@ -94,7 +94,6 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : userProfiles.isEmpty
@@ -127,114 +126,161 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
         ? (userData['hobbies'] as List).join(', ')
         : (userData['hobbies'] ?? 'Not specified');
 
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: Opacity(
-            opacity: 0.3,
-            child: PageView.builder(
-              itemCount: userProfiles.length,
-              itemBuilder: (context, i) {
-                if (i == index) return const SizedBox.shrink();
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Image.network(
-                      userProfiles[i]['profileImage'] ??
-                          'assets/default_profile.png',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                );
-              },
-            ),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 12,
+                spreadRadius: 5,
+              ),
+            ],
           ),
-        ),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
-            child: Column(
-              children: [
-                Stack(
-                  children: [
-                    ClipRRect(
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              if (index + 1 < userProfiles.length)
+                Positioned(
+                  top: 1,
+                  left: 4,
+                  right: -2,
+                  child: Transform.translate(
+                    offset: const Offset(15, 25),
+                    child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: Image.network(
-                        profileImage,
+                        userProfiles[index + 1]['profileImage'] ??
+                            'assets/default_profile.png',
                         width: double.infinity,
-                        height: MediaQuery.of(context).size.height * 0.55,
+                        height: MediaQuery.of(context).size.height * 0.63,
                         fit: BoxFit.cover,
+                        color: Colors.black.withOpacity(0.2),
+                        colorBlendMode: BlendMode.darken,
                       ),
                     ),
-                    Positioned(
-                      top: 55,
-                      right: 15,
-                      child: GestureDetector(
-                        onTap: () => toggleFavorite(userData),
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white.withOpacity(0.8),
-                          radius: 25,
-                          child: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? Colors.red : Colors.black,
-                            size: 30,
+                  ),
+                ),
+              Column(
+                children: [
+                  Expanded(
+                    flex: 8,
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: Image.network(
+                            profileImage,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
                           ),
+                        ),
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: GestureDetector(
+                            onTap: () => toggleFavorite(userData),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white.withOpacity(0.8),
+                              radius: 25,
+                              child: Icon(
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: isFavorite ? Colors.red : Colors.black,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    flex: 3,
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            blurRadius: 10,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 6,
+                                  backgroundColor:
+                                      isOnline ? Colors.green : Colors.grey,
+                                ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    '$fullName, $age',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              '📍 $location',
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              '⭐ Hobbies: $hobbies',
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey),
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              'About Me',
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 10),
+                            SingleChildScrollView(
+                              child: Text(
+                                about,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        blurRadius: 10,
-                        spreadRadius: 5,
-                      ),
-                    ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 6,
-                            backgroundColor:
-                                isOnline ? Colors.green : Colors.grey,
-                          ),
-                          const SizedBox(width: 6),
-                          Text('$fullName, $age',
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      Text('📍 $location',
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.grey)),
-                      Text('⭐ Hobbies: $hobbies',
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.grey)),
-                      const SizedBox(height: 10),
-                      Text('About Me',
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
-                      Text(about, style: const TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

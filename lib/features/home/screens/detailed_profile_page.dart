@@ -194,11 +194,17 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                                 : Colors.grey,
                                       ),
                                       const SizedBox(width: 6),
-                                      Text(
-                                        '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
-                                        style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+                                      Expanded(
+                                        child: Text(
+                                          '${userData?['firstName'] ?? 'Not provided'} ${userData?['lastName'] ?? ''}, ${userData?['age'] ?? 'N/A'}',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          softWrap: true,
+                                        ),
                                       ),
                                     ],
                                   ),

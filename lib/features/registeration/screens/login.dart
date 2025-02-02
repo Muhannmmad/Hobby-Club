@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
@@ -11,7 +12,7 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
@@ -23,7 +24,37 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     loadSavedCredentials();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// Detects app lifecycle changes and updates online status
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (FirebaseAuth.instance.currentUser != null) {
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      if (state == AppLifecycleState.resumed) {
+        updateOnlineStatus(userId, true); // User is back online
+      } else if (state == AppLifecycleState.paused ||
+          state == AppLifecycleState.inactive ||
+          state == AppLifecycleState.detached) {
+        updateOnlineStatus(userId, false); // User is offline
+      }
+    }
+  }
+
+  /// Updates Firestore online status
+  void updateOnlineStatus(String userId, bool isOnline) {
+    FirebaseFirestore.instance.collection('users').doc(userId).update({
+      'isOnline': isOnline,
+      'lastSeen': FieldValue.serverTimestamp(),
+    }).catchError((e) => print("Error updating online status: $e"));
   }
 
   Future<void> loadSavedCredentials() async {
@@ -59,9 +90,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final user = userCredential.user;
       if (user != null) {
-        setState(() => successMessage = "Welcome back!");
-        await Future.delayed(const Duration(seconds: 1));
+        updateOnlineStatus(user.uid, true); // Set user as online
 
+        setState(() => successMessage = "Welcome back!");
+
+        if (rememberMe) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('email', emailController.text.trim());
+          await prefs.setString('password', passwordController.text.trim());
+          await prefs.setBool('rememberMe', true);
+        } else {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.remove('email');
+          await prefs.remove('password');
+          await prefs.setBool('rememberMe', false);
+        }
+
+        await Future.delayed(const Duration(seconds: 1));
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -78,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    const double baseWidth = 375; // Base reference width for scaling
+    const double baseWidth = 375;
     final double scaleFactor = screenSize.width / baseWidth;
 
     return Scaffold(
@@ -98,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 'Hi, Welcome Back! 👋',
                 style: TextStyle(
-                  fontSize: (16 * scaleFactor).clamp(18, 28),
+                  fontSize: (12 * scaleFactor).clamp(18, 28),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -121,6 +166,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 isPasswordVisible: isPasswordVisible,
                 scaleFactor: scaleFactor,
+              ),
+              SizedBox(height: 10 * scaleFactor),
+              Row(
+                children: [
+                  Checkbox(
+                    value: rememberMe,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        rememberMe = value ?? false;
+                      });
+                    },
+                  ),
+                  const Text("Remember Me"),
+                ],
               ),
               SizedBox(height: 20 * scaleFactor),
               ElevatedButton(
@@ -150,23 +209,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
               ),
-              SizedBox(height: 20 * scaleFactor),
-              if (successMessage != null)
-                Text(
-                  successMessage!,
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: (14 * scaleFactor).clamp(12, 16),
-                  ),
-                ),
-              if (errorMessage != null)
-                Text(
-                  errorMessage!,
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: (14 * scaleFactor).clamp(12, 16),
-                  ),
-                ),
               SizedBox(height: 40 * scaleFactor),
               _buildLoginRow(scaleFactor),
             ],
@@ -190,15 +232,12 @@ class _LoginScreenState extends State<LoginScreen> {
       obscureText: isPassword && !isPasswordVisible,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(fontSize: (14 * scaleFactor).clamp(12, 18)),
         hintText: hint,
-        hintStyle: TextStyle(fontSize: (14 * scaleFactor).clamp(12, 18)),
         suffixIcon: isPassword
             ? IconButton(
-                icon: Icon(
-                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                  size: (20 * scaleFactor).clamp(16, 24),
-                ),
+                icon: Icon(isPasswordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off),
                 onPressed: toggleVisibility,
               )
             : null,
@@ -211,16 +250,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          "No account? ",
-          style: TextStyle(
-            fontSize: (14 * scaleFactor).clamp(10, 18),
-          ),
-        ),
+        const Text("No account? "),
         Transform.scale(
-          scale: scaleFactor.clamp(0.8, 1.2),
-          child: const SignupButton(),
-        ),
+            scale: scaleFactor.clamp(0.8, 1.2), child: const SignupButton()),
       ],
     );
   }

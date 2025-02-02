@@ -95,7 +95,7 @@ class BottomNavBar extends StatelessWidget {
             size: (24 * scaleFactor).clamp(20.0, 30.0), // Adjusted scaling
             color: selectedIndex == index ? Colors.purple[400] : Colors.white,
           ),
-          SizedBox(height: 4), // Small spacing
+          const SizedBox(height: 4), // Small spacing
           Text(
             label,
             style: TextStyle(

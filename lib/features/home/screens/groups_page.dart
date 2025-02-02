@@ -190,10 +190,11 @@ class _GroupPageState extends State<GroupPage> {
                                     left: 0,
                                     right: 0,
                                     child: Container(
-                                      padding: EdgeInsets.all(6.0),
+                                      padding: const EdgeInsets.all(6.0),
                                       decoration: BoxDecoration(
                                         color: Colors.black.withOpacity(0.6),
-                                        borderRadius: BorderRadius.vertical(
+                                        borderRadius:
+                                            const BorderRadius.vertical(
                                           bottom: Radius.circular(10),
                                         ),
                                       ),
@@ -209,18 +210,24 @@ class _GroupPageState extends State<GroupPage> {
                                                     ? Colors.green
                                                     : Colors.grey,
                                               ),
-                                              SizedBox(width: 4),
-                                              Text(
-                                                "$firstName, $age",
-                                                style: TextStyle(
-                                                  fontSize: screenWidth * 0.020,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
+                                              const SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  "$firstName, $age",
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        screenWidth * 0.020,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.visible,
                                                 ),
-                                                textAlign: TextAlign.center,
                                               ),
                                             ],
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
