@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ class DetailedProfilePage extends StatefulWidget {
   const DetailedProfilePage({super.key, required this.userId});
 
   @override
+  // ignore: library_private_types_in_public_api
   _DetailedProfilePageState createState() => _DetailedProfilePageState();
 }
 

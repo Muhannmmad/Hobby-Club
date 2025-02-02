@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,10 +11,10 @@ class GroupPage extends StatefulWidget {
   const GroupPage({super.key, required this.groupId});
 
   @override
-  _GroupPageState createState() => _GroupPageState();
+  GroupPageState createState() => GroupPageState();
 }
 
-class _GroupPageState extends State<GroupPage> {
+class GroupPageState extends State<GroupPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -65,7 +67,7 @@ class _GroupPageState extends State<GroupPage> {
         });
       }
     } catch (e) {
-      print("Error toggling membership: $e");
+      ("Error toggling membership: $e");
     } finally {
       setState(() {
         isLoading = false;

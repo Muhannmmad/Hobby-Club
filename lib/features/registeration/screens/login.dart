@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
     FirebaseFirestore.instance.collection('users').doc(userId).update({
       'isOnline': isOnline,
       'lastSeen': FieldValue.serverTimestamp(),
-    }).catchError((e) => print("Error updating online status: $e"));
+    }).catchError((e) => ("Error updating online status: $e"));
   }
 
   Future<void> loadSavedCredentials() async {

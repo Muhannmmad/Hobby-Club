@@ -251,10 +251,10 @@ class EventDialog extends StatefulWidget {
   const EventDialog({super.key, this.eventId, this.eventData});
 
   @override
-  _EventDialogState createState() => _EventDialogState();
+  EventDialogState createState() => EventDialogState();
 }
 
-class _EventDialogState extends State<EventDialog> {
+class EventDialogState extends State<EventDialog> {
   final _formKey = GlobalKey<FormState>();
   String _name = '';
   String _place = '';
