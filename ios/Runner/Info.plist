@@ -62,5 +62,11 @@
 	<true/>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Wir benötigen Zugriff auf Ihre Fotos, um sie in der App anzuzeigen.</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library to upload a profile picture.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>We need access to save images to your photo library.</string>
+
 </dict>
 </plist>
