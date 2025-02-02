@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/features/home/screens/home_screen.dart';
+import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
 import 'package:hoppy_club/features/registeration/widgets/log_in_button.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_login.dart';
 import 'package:hoppy_club/features/registeration/repository/user_service.dart';
@@ -13,6 +15,7 @@ class SignUpScreen extends StatefulWidget {
 
 class SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -34,7 +37,12 @@ class SignUpScreenState extends State<SignUpScreen> {
       if (response.success) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(
+            builder: (context) => EditProfileScreen(
+              userId:
+                  _auth.currentUser!.uid, // Pass the current user ID correctly
+            ),
+          ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -56,7 +64,7 @@ class SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    const double baseWidth = 375; // Base reference width for scaling
+    const double baseWidth = 375;
     final double scaleFactor = screenSize.width / baseWidth;
 
     return Scaffold(

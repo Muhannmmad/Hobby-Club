@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_state_city_pro/country_state_city_pro.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/features/profiles/screens/my_profile_screen.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:hoppy_club/features/home/screens/home_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String userId;
@@ -23,6 +23,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController countryController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   File? _profileImage;
   bool isLoading = false;
@@ -83,6 +84,13 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> saveProfile() async {
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill all required fields")),
+      );
+      return;
+    }
+
     setState(() {
       isLoading = true;
     });
@@ -116,7 +124,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const MyProfileScreen()),
       );
     } catch (e) {
       debugPrint('Error saving profile: $e');
@@ -131,15 +139,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          'Edit Profile',
-          style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
-      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SingleChildScrollView(
@@ -164,65 +163,74 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                 style: TextStyle(color: Colors.black),
               ),
               const SizedBox(height: 8),
-
-              // First Name & Last Name
-              Row(
-                children: [
-                  Expanded(
-                    child: buildTextField(
-                        controller: firstNameController, label: 'First Name'),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: buildTextField(
-                        controller: lastNameController, label: 'Last Name'),
-                  ),
-                ],
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: buildTextField(
+                            controller: firstNameController,
+                            label: 'First Name',
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: buildTextField(
+                            controller: lastNameController,
+                            label: 'Last Name',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    buildDropdown(
+                      label: 'Age',
+                      value: selectedAge,
+                      items: ageOptions,
+                      onChanged: (val) => setState(() => selectedAge = val),
+                    ),
+                    const SizedBox(height: 12),
+                    buildDropdown(
+                      label: 'Gender',
+                      value: selectedGender,
+                      items: genderOptions,
+                      onChanged: (val) => setState(() => selectedGender = val),
+                    ),
+                    const SizedBox(height: 12),
+                    CountryStateCityPicker(
+                      country: countryController,
+                      state: stateController,
+                      city: cityController,
+                    ),
+                    const SizedBox(height: 12),
+                    buildTextField(
+                        controller: hobbiesController, label: 'Hobbies'),
+                    const SizedBox(height: 12),
+                    buildTextField(
+                        controller: aboutController,
+                        label: 'About me',
+                        isMultiLine: true),
+                  ],
+                ),
               ),
-
-              // Age Dropdown
-              buildDropdown(
-                label: 'Age',
-                value: selectedAge,
-                items: ageOptions,
-                onChanged: (val) => setState(() => selectedAge = val),
-              ),
-
-              // Gender Dropdown
-              buildDropdown(
-                label: 'Gender',
-                value: selectedGender,
-                items: genderOptions,
-                onChanged: (val) => setState(() => selectedGender = val),
-              ),
-
-              // Country, State, City Picker
-              CountryStateCityPicker(
-                country: countryController,
-                state: stateController,
-                city: cityController,
-              ),
-
-              buildTextField(controller: hobbiesController, label: 'Hobbies'),
-              buildTextField(
-                  controller: aboutController,
-                  label: 'About me',
-                  isMultiLine: true),
-
-              const SizedBox(height: 4),
               ElevatedButton(
                 onPressed: isLoading ? null : saveProfile,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
                 child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Save changes',
-                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                    : const Text(
+                        'Save changes',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
               ),
             ],
           ),
@@ -231,39 +239,47 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget buildTextField(
-      {required TextEditingController controller,
-      required String label,
-      bool isMultiLine = false}) {
+  // **Added buildTextField**
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String label,
+    bool isMultiLine = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         maxLines: isMultiLine ? 5 : 1,
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),
         ),
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return 'Please enter $label';
+          }
+          return null;
+        },
       ),
     );
   }
 
-  Widget buildDropdown(
-      {required String label,
-      required String? value,
-      required List<String> items,
-      required Function(String?) onChanged}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: DropdownButtonFormField<String>(
-        value: value,
-        decoration: InputDecoration(
-            labelText: label, border: const OutlineInputBorder()),
-        items: items
-            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-            .toList(),
-        onChanged: onChanged,
+  // **Added buildDropdown**
+  Widget buildDropdown({
+    required String label,
+    required String? value,
+    required List<String> items,
+    required Function(String?) onChanged,
+  }) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
       ),
+      items:
+          items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      onChanged: onChanged,
     );
   }
 }
