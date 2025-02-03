@@ -74,14 +74,25 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                           height: screenHeight * 0.4,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: userData!['profileImage'] != null
-                                  ? NetworkImage(userData!['profileImage'])
-                                  : const AssetImage(
-                                          'assets/profiles/profile.jpg')
-                                      as ImageProvider,
-                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: userData!['profileImage'] != null &&
+                                    userData!['profileImage'].isNotEmpty
+                                ? Image.network(
+                                    userData!['profileImage'],
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        'assets/profiles/profile.jpg',
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  )
+                                : Image.asset(
+                                    'assets/profiles/profile.jpg',
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
                         SizedBox(height: screenHeight * 0.02),
@@ -167,8 +178,8 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               EditProfileScreen(
-                                            userId: _auth.currentUser!.uid,
-                                          ),
+                                                  userId:
+                                                      _auth.currentUser!.uid),
                                         ),
                                       ).then((_) {
                                         fetchUserData();
