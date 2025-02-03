@@ -78,156 +78,160 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final double scaleFactor = screenWidth / 375;
 
-    return Scaffold(
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _favoritesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Failed to load favorites.'));
-          } else if (snapshot.data == null || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No favorite profiles yet.'));
-          }
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _favoritesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Center(child: Text('Failed to load favorites.'));
+            } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No favorite profiles yet.'));
+            }
 
-          favoriteProfiles = snapshot.data!;
+            favoriteProfiles = snapshot.data!;
 
-          return Padding(
-            padding: EdgeInsets.all(8.0 * scaleFactor),
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8.0,
-                mainAxisSpacing: 8.0,
-                childAspectRatio: 4 / 6,
-              ),
-              itemCount: favoriteProfiles.length,
-              itemBuilder: (context, index) {
-                final userData = favoriteProfiles[index];
-                final profileImage = userData['profileImage'] ?? '';
-                final name = userData['firstName'] ?? 'Unknown';
-                final age = userData['age']?.toString() ?? 'N/A';
-                final country = userData['country'] ?? 'Unknown';
-                final city = userData['city'] ?? 'Unknown';
-                final userId = userData['docId'];
-                final bool isOnline = userData['isOnline'];
+            return Padding(
+              padding: EdgeInsets.all(8.0 * scaleFactor),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                  childAspectRatio: 4 / 6,
+                ),
+                itemCount: favoriteProfiles.length,
+                itemBuilder: (context, index) {
+                  final userData = favoriteProfiles[index];
+                  final profileImage = userData['profileImage'] ?? '';
+                  final name = userData['firstName'] ?? 'Unknown';
+                  final age = userData['age']?.toString() ?? 'N/A';
+                  final country = userData['country'] ?? 'Unknown';
+                  final city = userData['city'] ?? 'Unknown';
+                  final userId = userData['docId'];
+                  final bool isOnline = userData['isOnline'];
 
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            DetailedProfilePage(userId: userId),
-                      ),
-                    );
-                  },
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(16.0 * scaleFactor),
-                        child: profileImage.isNotEmpty
-                            ? Image.network(
-                                profileImage,
-                                width: double.infinity,
-                                height: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return SizedBox(
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      child: Image.asset(
-                                        'assets/profiles/profile.jpg',
-                                        fit: BoxFit.cover,
-                                      ));
-                                },
-                              )
-                            : Container(
-                                color: Colors.grey[300],
-                                child:
-                                    Icon(Icons.person, size: 120 * scaleFactor),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailedProfilePage(userId: userId),
+                        ),
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(16.0 * scaleFactor),
+                          child: profileImage.isNotEmpty
+                              ? Image.network(
+                                  profileImage,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return SizedBox(
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        child: Image.asset(
+                                          'assets/profiles/profile.jpg',
+                                          fit: BoxFit.cover,
+                                        ));
+                                  },
+                                )
+                              : Container(
+                                  color: Colors.grey[300],
+                                  child: Icon(Icons.person,
+                                      size: 120 * scaleFactor),
+                                ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(8.0 * scaleFactor),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(16.0 * scaleFactor),
                               ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          padding: EdgeInsets.all(8.0 * scaleFactor),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.vertical(
-                              bottom: Radius.circular(16.0 * scaleFactor),
                             ),
-                          ),
-                          child: Column(
-                            children: [
-                              RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  children: [
-                                    WidgetSpan(
-                                      alignment: PlaceholderAlignment.middle,
-                                      child: Container(
-                                        width: 15 * scaleFactor,
-                                        height: 15 * scaleFactor,
-                                        margin: EdgeInsets.only(
-                                            right: 4 * scaleFactor),
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: isOnline
-                                              ? Colors.green
-                                              : Colors.grey,
+                            child: Column(
+                              children: [
+                                RichText(
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                    children: [
+                                      WidgetSpan(
+                                        alignment: PlaceholderAlignment.middle,
+                                        child: Container(
+                                          width: 15 * scaleFactor,
+                                          height: 15 * scaleFactor,
+                                          margin: EdgeInsets.only(
+                                              right: 4 * scaleFactor),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: isOnline
+                                                ? Colors.green
+                                                : Colors.grey,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    TextSpan(
-                                      text: '$name, $age',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0 * scaleFactor,
-                                        color: Colors.white,
+                                      TextSpan(
+                                        text: '$name, $age',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0 * scaleFactor,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 4 * scaleFactor),
-                              Text(
-                                '$city, $country',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10.0 * scaleFactor,
+                                SizedBox(height: 4 * scaleFactor),
+                                Text(
+                                  '$city, $country',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10.0 * scaleFactor,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        top: 0.0,
-                        right: 0.0,
-                        child: IconButton(
-                          onPressed: () async {
-                            await removeFromFavorites(userId, index);
-                          },
-                          icon: Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                            size: 24 * scaleFactor,
+                        Positioned(
+                          top: 0.0,
+                          right: 0.0,
+                          child: IconButton(
+                            onPressed: () async {
+                              await removeFromFavorites(userId, index);
+                            },
+                            icon: Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                              size: 24 * scaleFactor,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          );
-        },
+                      ],
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        bottomNavigationBar: const BottomNavBar(selectedIndex: 1),
       ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 1),
     );
   }
 }

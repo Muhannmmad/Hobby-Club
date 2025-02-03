@@ -126,92 +126,95 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
     const double baseWidth = 375;
     final double scaleFactor = screenSize.width / baseWidth;
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(20 * scaleFactor),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 100 * scaleFactor),
-              Image.asset(
-                'assets/icons/Group 3052.png',
-                width: 100 * scaleFactor,
-                height: 100 * scaleFactor,
-              ),
-              SizedBox(height: 20 * scaleFactor),
-              Text(
-                'Hi, Welcome Back! 👋',
-                style: TextStyle(
-                  fontSize: (12 * scaleFactor).clamp(18, 28),
-                  fontWeight: FontWeight.bold,
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(20 * scaleFactor),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 100 * scaleFactor),
+                Image.asset(
+                  'assets/icons/Group 3052.png',
+                  width: 100 * scaleFactor,
+                  height: 100 * scaleFactor,
                 ),
-              ),
-              SizedBox(height: 20 * scaleFactor),
-              buildTextField(
-                controller: emailController,
-                label: 'Email',
-                hint: 'example@gmail.com',
-                isPassword: false,
-                scaleFactor: scaleFactor,
-              ),
-              SizedBox(height: 10 * scaleFactor),
-              buildTextField(
-                controller: passwordController,
-                label: 'Password',
-                hint: 'Enter Your Password',
-                isPassword: true,
-                toggleVisibility: () {
-                  setState(() => isPasswordVisible = !isPasswordVisible);
-                },
-                isPasswordVisible: isPasswordVisible,
-                scaleFactor: scaleFactor,
-              ),
-              SizedBox(height: 10 * scaleFactor),
-              Row(
-                children: [
-                  Checkbox(
-                    value: rememberMe,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        rememberMe = value ?? false;
-                      });
-                    },
-                  ),
-                  const Text("Remember Me"),
-                ],
-              ),
-              SizedBox(height: 20 * scaleFactor),
-              ElevatedButton(
-                onPressed: handleLogin,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 8 * scaleFactor,
-                    horizontal: 20 * scaleFactor,
+                SizedBox(height: 20 * scaleFactor),
+                Text(
+                  'Hi, Welcome Back! 👋',
+                  style: TextStyle(
+                    fontSize: (12 * scaleFactor).clamp(18, 28),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: isLoading
-                    ? SizedBox(
-                        width: 20 * scaleFactor,
-                        height: 20 * scaleFactor,
-                        child: const CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
+                SizedBox(height: 20 * scaleFactor),
+                buildTextField(
+                  controller: emailController,
+                  label: 'Email',
+                  hint: 'example@gmail.com',
+                  isPassword: false,
+                  scaleFactor: scaleFactor,
+                ),
+                SizedBox(height: 10 * scaleFactor),
+                buildTextField(
+                  controller: passwordController,
+                  label: 'Password',
+                  hint: 'Enter Your Password',
+                  isPassword: true,
+                  toggleVisibility: () {
+                    setState(() => isPasswordVisible = !isPasswordVisible);
+                  },
+                  isPasswordVisible: isPasswordVisible,
+                  scaleFactor: scaleFactor,
+                ),
+                SizedBox(height: 10 * scaleFactor),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: rememberMe,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          rememberMe = value ?? false;
+                        });
+                      },
+                    ),
+                    const Text("Remember Me"),
+                  ],
+                ),
+                SizedBox(height: 20 * scaleFactor),
+                ElevatedButton(
+                  onPressed: handleLogin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 8 * scaleFactor,
+                      horizontal: 20 * scaleFactor,
+                    ),
+                  ),
+                  child: isLoading
+                      ? SizedBox(
+                          width: 20 * scaleFactor,
+                          height: 20 * scaleFactor,
+                          child: const CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          'Log In',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: (16 * scaleFactor).clamp(12, 18),
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      )
-                    : Text(
-                        'Log In',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: (16 * scaleFactor).clamp(12, 18),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-              ),
-              SizedBox(height: 40 * scaleFactor),
-              _buildLoginRow(scaleFactor),
-            ],
+                ),
+                SizedBox(height: 40 * scaleFactor),
+                _buildLoginRow(scaleFactor),
+              ],
+            ),
           ),
         ),
       ),

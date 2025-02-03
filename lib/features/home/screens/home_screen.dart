@@ -69,91 +69,94 @@ class HomeScreenState extends State<HomeScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: screenHeight * 0.05),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.05,
-                  vertical: screenHeight * 0.02),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Welcome,',
-                        style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.030,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: screenHeight * 0.05),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.05,
+                    vertical: screenHeight * 0.02),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome,',
+                          style: GoogleFonts.poppins(
+                            fontSize: screenWidth * 0.030,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            userName,
-                            style: GoogleFonts.spicyRice(
-                              fontSize: screenWidth * 0.03,
-                              fontStyle: FontStyle.italic,
+                        Row(
+                          children: [
+                            Text(
+                              userName,
+                              style: GoogleFonts.spicyRice(
+                                fontSize: screenWidth * 0.03,
+                                fontStyle: FontStyle.italic,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: screenWidth * 0.01),
-                          Text(
-                            '❤️',
-                            style: TextStyle(fontSize: screenWidth * 0.03),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'Log out',
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.03,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                            SizedBox(width: screenWidth * 0.01),
+                            Text(
+                              '❤️',
+                              style: TextStyle(fontSize: screenWidth * 0.03),
+                            ),
+                          ],
                         ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.logout,
-                            color: Colors.black, size: screenWidth * 0.06),
-                        onPressed: logout,
-                        tooltip: 'Log out',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.00),
-            Center(
-              child: Text(
-                'Hobby Club',
-                style: GoogleFonts.spicyRice(
-                  fontSize: screenWidth * 0.10,
-                  fontWeight: FontWeight.w700,
-                  fontStyle: FontStyle.italic,
-                  color: const Color.fromARGB(205, 67, 7, 82),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Log out',
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.03,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.logout,
+                              color: Colors.black, size: screenWidth * 0.06),
+                          onPressed: logout,
+                          tooltip: 'Log out',
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            _buildCategoryBox('Indoor Hobbies', screenWidth),
-            HobbiesCard(hobbies: indoorHobbies),
-            SizedBox(height: screenHeight * 0.02),
-            _buildCategoryBox('Outdoor Hobbies', screenWidth),
-            HobbiesCard(hobbies: outdoorHobbies),
-            SizedBox(height: screenHeight * 0.02),
-          ],
+              SizedBox(height: screenHeight * 0.00),
+              Center(
+                child: Text(
+                  'Hobby Club',
+                  style: GoogleFonts.spicyRice(
+                    fontSize: screenWidth * 0.10,
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle.italic,
+                    color: const Color.fromARGB(205, 67, 7, 82),
+                  ),
+                ),
+              ),
+              SizedBox(height: screenHeight * 0.02),
+              _buildCategoryBox('Indoor Hobbies', screenWidth),
+              HobbiesCard(hobbies: indoorHobbies),
+              SizedBox(height: screenHeight * 0.02),
+              _buildCategoryBox('Outdoor Hobbies', screenWidth),
+              HobbiesCard(hobbies: outdoorHobbies),
+              SizedBox(height: screenHeight * 0.02),
+            ],
+          ),
         ),
+        bottomNavigationBar: BottomNavBar(selectedIndex: selectedIndex),
       ),
-      bottomNavigationBar: BottomNavBar(selectedIndex: selectedIndex),
     );
   }
 

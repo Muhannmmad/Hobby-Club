@@ -95,19 +95,22 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : userProfiles.isEmpty
-              ? const Center(child: Text('No profiles available.'))
-              : PageView.builder(
-                  itemCount: userProfiles.length,
-                  itemBuilder: (context, index) {
-                    final userData = userProfiles[index];
-                    return buildProfileCard(userData, index);
-                  },
-                ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : userProfiles.isEmpty
+                ? const Center(child: Text('No profiles available.'))
+                : PageView.builder(
+                    itemCount: userProfiles.length,
+                    itemBuilder: (context, index) {
+                      final userData = userProfiles[index];
+                      return buildProfileCard(userData, index);
+                    },
+                  ),
+        bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
+      ),
     );
   }
 

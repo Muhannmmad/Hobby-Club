@@ -66,78 +66,81 @@ class SignUpScreenState extends State<SignUpScreen> {
     const double baseWidth = 375;
     final double scaleFactor = screenSize.width / baseWidth;
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: 20 * scaleFactor, vertical: 50 * scaleFactor),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/icons/Group 3052.png',
-                  width: 100 * scaleFactor,
-                  height: 100 * scaleFactor,
-                ),
-                SizedBox(height: 20 * scaleFactor),
-                Text(
-                  'Create an account',
-                  style: TextStyle(
-                    fontSize: (20 * scaleFactor).clamp(20, 32),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: 20 * scaleFactor, vertical: 50 * scaleFactor),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/icons/Group 3052.png',
+                    width: 100 * scaleFactor,
+                    height: 100 * scaleFactor,
                   ),
-                ),
-                SizedBox(height: 10 * scaleFactor),
-                Text(
-                  'Connect with your friends today!',
-                  style: TextStyle(
-                    fontSize: (16 * scaleFactor).clamp(12, 18),
-                    color: Colors.black,
+                  SizedBox(height: 20 * scaleFactor),
+                  Text(
+                    'Create an account',
+                    style: TextStyle(
+                      fontSize: (20 * scaleFactor).clamp(20, 32),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-                SizedBox(height: 20 * scaleFactor),
-                _buildTextField(_usernameController, 'Username', scaleFactor),
-                SizedBox(height: 10 * scaleFactor),
-                _buildTextField(_emailController, 'Email', scaleFactor),
-                SizedBox(height: 10 * scaleFactor),
-                _buildPasswordField(_passwordController, 'Enter Your Password',
-                    _isPasswordVisible, () {
-                  setState(() {
-                    _isPasswordVisible = !_isPasswordVisible;
-                  });
-                }, scaleFactor),
-                SizedBox(height: 10 * scaleFactor),
-                _buildPasswordField(_confirmPasswordController,
-                    'Confirm Your Password', _isConfirmPasswordVisible, () {
-                  setState(() {
-                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                  });
-                }, scaleFactor),
-                SizedBox(height: 20 * scaleFactor),
-                ElevatedButton(
-                  onPressed: _signUp,
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 8 * scaleFactor,
-                        horizontal: 20 * scaleFactor),
-                    textStyle: TextStyle(
-                        fontSize: (16 * scaleFactor).clamp(12, 18),
-                        fontWeight: FontWeight.bold),
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.purple,
+                  SizedBox(height: 10 * scaleFactor),
+                  Text(
+                    'Connect with your friends today!',
+                    style: TextStyle(
+                      fontSize: (16 * scaleFactor).clamp(12, 18),
+                      color: Colors.black,
+                    ),
                   ),
-                  child: const Text('Sign Up'),
-                ),
-                SizedBox(height: 20 * scaleFactor),
-                _buildDivider(scaleFactor),
-                SizedBox(height: 10 * scaleFactor),
-                IconScroller(),
-                SizedBox(height: 15 * scaleFactor),
-                _buildLoginRow(scaleFactor),
-              ],
+                  SizedBox(height: 20 * scaleFactor),
+                  _buildTextField(_usernameController, 'Username', scaleFactor),
+                  SizedBox(height: 10 * scaleFactor),
+                  _buildTextField(_emailController, 'Email', scaleFactor),
+                  SizedBox(height: 10 * scaleFactor),
+                  _buildPasswordField(_passwordController,
+                      'Enter Your Password', _isPasswordVisible, () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  }, scaleFactor),
+                  SizedBox(height: 10 * scaleFactor),
+                  _buildPasswordField(_confirmPasswordController,
+                      'Confirm Your Password', _isConfirmPasswordVisible, () {
+                    setState(() {
+                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                    });
+                  }, scaleFactor),
+                  SizedBox(height: 20 * scaleFactor),
+                  ElevatedButton(
+                    onPressed: _signUp,
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 8 * scaleFactor,
+                          horizontal: 20 * scaleFactor),
+                      textStyle: TextStyle(
+                          fontSize: (16 * scaleFactor).clamp(12, 18),
+                          fontWeight: FontWeight.bold),
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.purple,
+                    ),
+                    child: const Text('Sign Up'),
+                  ),
+                  SizedBox(height: 20 * scaleFactor),
+                  _buildDivider(scaleFactor),
+                  SizedBox(height: 10 * scaleFactor),
+                  IconScroller(),
+                  SizedBox(height: 15 * scaleFactor),
+                  _buildLoginRow(scaleFactor),
+                ],
+              ),
             ),
           ),
         ),

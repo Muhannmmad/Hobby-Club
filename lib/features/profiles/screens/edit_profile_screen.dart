@@ -149,125 +149,130 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 80),
-              GestureDetector(
-                onTap: pickImage,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.grey[300],
-                      backgroundImage: _profileImage != null
-                          ? FileImage(_profileImage!)
-                          : (_profileImageUrl != null
-                              ? NetworkImage(_profileImageUrl!) as ImageProvider
-                              : null),
-                      child: _profileImage == null && _profileImageUrl == null
-                          ? Icon(Icons.person,
-                              size: 50, color: Colors.grey[700])
-                          : null,
-                    ),
-                    if (_profileImage != null || _profileImageUrl != null)
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: removeImage,
-                          child: const CircleAvatar(
-                            radius: 14,
-                            backgroundColor: Colors.red,
-                            child: Icon(Icons.close,
-                                size: 16, color: Colors.white),
-                          ),
-                        ),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 80),
+                GestureDetector(
+                  onTap: pickImage,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.grey[300],
+                        backgroundImage: _profileImage != null
+                            ? FileImage(_profileImage!)
+                            : (_profileImageUrl != null
+                                ? NetworkImage(_profileImageUrl!)
+                                    as ImageProvider
+                                : null),
+                        child: _profileImage == null && _profileImageUrl == null
+                            ? Icon(Icons.person,
+                                size: 50, color: Colors.grey[700])
+                            : null,
                       ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Tap to upload Profile Pic',
-                style: TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 8),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: buildTextField(
-                            controller: firstNameController,
-                            label: 'First Name',
+                      if (_profileImage != null || _profileImageUrl != null)
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: removeImage,
+                            child: const CircleAvatar(
+                              radius: 14,
+                              backgroundColor: Colors.red,
+                              child: Icon(Icons.close,
+                                  size: 16, color: Colors.white),
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: buildTextField(
-                            controller: lastNameController,
-                            label: 'Last Name',
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    buildDropdown(
-                      label: 'Age',
-                      value: selectedAge,
-                      items: ageOptions,
-                      onChanged: (val) => setState(() => selectedAge = val),
-                    ),
-                    const SizedBox(height: 12),
-                    buildDropdown(
-                      label: 'Gender',
-                      value: selectedGender,
-                      items: genderOptions,
-                      onChanged: (val) => setState(() => selectedGender = val),
-                    ),
-                    const SizedBox(height: 12),
-                    CountryStateCityPicker(
-                      country: countryController,
-                      state: stateController,
-                      city: cityController,
-                    ),
-                    const SizedBox(height: 12),
-                    buildTextField(
-                        controller: hobbiesController, label: 'Hobbies'),
-                    const SizedBox(height: 12),
-                    buildTextField(
-                        controller: aboutController,
-                        label: 'About me',
-                        isMultiLine: true),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: isLoading ? null : saveProfile,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+                    ],
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
-                child: isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                        'Save changes',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                const SizedBox(height: 8),
+                const Text(
+                  'Tap to upload Profile Pic',
+                  style: TextStyle(color: Colors.black),
+                ),
+                const SizedBox(height: 8),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: buildTextField(
+                              controller: firstNameController,
+                              label: 'First Name',
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: buildTextField(
+                              controller: lastNameController,
+                              label: 'Last Name',
+                            ),
+                          ),
+                        ],
                       ),
-              ),
-            ],
+                      const SizedBox(height: 12),
+                      buildDropdown(
+                        label: 'Age',
+                        value: selectedAge,
+                        items: ageOptions,
+                        onChanged: (val) => setState(() => selectedAge = val),
+                      ),
+                      const SizedBox(height: 12),
+                      buildDropdown(
+                        label: 'Gender',
+                        value: selectedGender,
+                        items: genderOptions,
+                        onChanged: (val) =>
+                            setState(() => selectedGender = val),
+                      ),
+                      const SizedBox(height: 12),
+                      CountryStateCityPicker(
+                        country: countryController,
+                        state: stateController,
+                        city: cityController,
+                      ),
+                      const SizedBox(height: 12),
+                      buildTextField(
+                          controller: hobbiesController, label: 'Hobbies'),
+                      const SizedBox(height: 12),
+                      buildTextField(
+                          controller: aboutController,
+                          label: 'About me',
+                          isMultiLine: true),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: isLoading ? null : saveProfile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  ),
+                  child: isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Save changes',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
