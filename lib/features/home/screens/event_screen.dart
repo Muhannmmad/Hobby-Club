@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
+import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class EventScreen extends StatefulWidget {
@@ -76,172 +76,266 @@ class EventScreenState extends State<EventScreen> {
   Widget build(BuildContext context) {
     final currentUser = _auth.currentUser;
 
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        body: StreamBuilder<QuerySnapshot>(
-          stream: _firestore.collection('events').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return const Center(
-                  child: Text('No events available. Create one!'));
-            }
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Join and Creat Events'),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestore.collection('events').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(
+                child: Text('No events available. Create one!'));
+          }
 
-            final events = snapshot.data!.docs;
+          final events = snapshot.data!.docs;
 
-            return ListView.builder(
-              itemCount: events.length,
-              itemBuilder: (context, index) {
-                final event = events[index];
-                final data = event.data() as Map<String, dynamic>;
-                final creatorUid = data['creatorUid'] ?? 'Unknown';
+          return ListView.builder(
+            itemCount: events.length,
+            itemBuilder: (context, index) {
+              final event = events[index];
+              final data = event.data() as Map<String, dynamic>;
+              final creatorUid = data['creatorUid'] ?? 'Unknown';
 
-                // Fetch creator details
-                final creatorNameFuture = _getUserProfile(creatorUid);
+              // Fetch creator details
+              final creatorNameFuture = _getUserProfile(creatorUid);
 
-                final joinedUsers = (data['joinedUsers'] as List?)
-                        ?.whereType<Map<String, dynamic>>()
-                        .toList() ??
-                    [];
-                final currentUserId = currentUser?.uid;
-                final isJoined = currentUserId != null &&
-                    joinedUsers.any((user) => user['uid'] == currentUserId);
+              final joinedUsers = (data['joinedUsers'] as List?)
+                      ?.whereType<Map<String, dynamic>>()
+                      .toList() ??
+                  [];
+              final currentUserId = currentUser?.uid;
+              final isJoined = currentUserId != null &&
+                  joinedUsers.any((user) => user['uid'] == currentUserId);
 
-                final joinedUsersDisplay = joinedUsers.map((user) {
-                  return '${user['firstName']} ${user['lastName']}';
-                }).join(', ');
+              final joinedUsersDisplay = joinedUsers.map((user) {
+                return '${user['firstName']} ${user['lastName']}';
+              }).join(', ');
 
-                return FutureBuilder<Map<String, String>>(
-                  future: creatorNameFuture,
-                  builder: (context, snapshot) {
-                    final creatorProfile = snapshot.data;
-                    final creatorName = creatorProfile != null
-                        ? '${creatorProfile['firstName']} ${creatorProfile['lastName']}'
-                        : 'Fetching...';
+              return FutureBuilder<Map<String, String>>(
+                future: creatorNameFuture,
+                builder: (context, snapshot) {
+                  final creatorProfile = snapshot.data;
+                  final creatorName = creatorProfile != null
+                      ? '${creatorProfile['firstName']} ${creatorProfile['lastName']}'
+                      : 'Fetching...';
 
-                    return Card(
-                      margin: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        title: Text(
-                          data['name'],
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.purple,
-                          ),
+                  return Card(
+                    margin: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      title: Text(
+                        data['name'] ?? 'Unknown Event',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.purple,
                         ),
-                        subtitle: RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 15),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 15),
+                              children: [
+                                const TextSpan(
+                                  text: 'Place: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                TextSpan(
+                                    text: '${data['place'] ?? 'Unknown'}\n'),
+                                const TextSpan(
+                                  text: 'Date: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                TextSpan(
+                                  text:
+                                      '${data['date'] ?? 'N/A'} at ${data['time'] ?? 'N/A'}\n',
+                                ),
+                                const TextSpan(
+                                  text: 'Description: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                TextSpan(
+                                    text:
+                                        '${data['description'] ?? 'No description'}\n'),
+                              ],
+                            ),
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              const TextSpan(
-                                text: 'Place: ',
+                              const Text(
+                                'Created by: ',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
-                              TextSpan(text: '${data['place']}\n'),
-                              const TextSpan(
-                                text: 'Date: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
-                              TextSpan(
-                                  text: '${data['date']} at ${data['time']}\n'),
-                              const TextSpan(
-                                text: 'Description: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
-                              TextSpan(text: '${data['description']}\n'),
-                              const TextSpan(
-                                text: 'Created by: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
-                              TextSpan(text: '$creatorName\n'),
-                              const TextSpan(
-                                text: 'Joined by: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    color: Colors.green),
-                              ),
-                              TextSpan(
-                                text: joinedUsersDisplay,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.blueAccent,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailedProfilePage(
+                                          userId: creatorUid),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  creatorName ?? 'Unknown',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        isThreeLine: true,
-                        trailing: currentUserId == creatorUid
-                            ? PopupMenuButton<String>(
-                                onSelected: (value) {
-                                  if (value == 'Edit') {
-                                    _showEventDialog(
-                                        eventId: event.id, eventData: data);
-                                  } else if (value == 'Delete') {
-                                    _deleteEvent(event.id);
-                                  }
-                                },
-                                itemBuilder: (context) => [
-                                  const PopupMenuItem(
-                                      value: 'Edit', child: Text('Edit')),
-                                  const PopupMenuItem(
-                                      value: 'Delete', child: Text('Delete')),
-                                ],
-                              )
-                            : ElevatedButton(
-                                onPressed: () => _toggleJoinEvent(event.id),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      isJoined ? Colors.green : Colors.purple,
-                                ),
-                                child: Text(
-                                  isJoined ? 'Joined' : 'Join',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
+                          const SizedBox(
+                              height: 8), // Space before joined members
+                          const Text(
+                            'Joined by:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.green,
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(top: 4),
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.blueAccent),
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.grey.shade100,
+                            ),
+                            constraints: const BoxConstraints(
+                              maxHeight:
+                                  150, // Increased height for better visibility
+                              minWidth: double.infinity,
+                            ),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: joinedUsers.map((user) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      print(
+                                          "User data: $user"); // Debugging user data
+
+                                      String? userId = user['uid']
+                                          ?.toString(); // Fetch correct UID field
+
+                                      if (userId != null && userId.isNotEmpty) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                DetailedProfilePage(
+                                                    userId: userId),
+                                          ),
+                                        );
+                                      } else {
+                                        print(
+                                            "User ID is missing! Full user data: $user"); // More debugging
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'User profile not available')),
+                                        );
+                                      }
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4),
+                                      child: Text(
+                                        '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'
+                                            .trim(),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blueAccent,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: currentUserId == creatorUid
+                          ? PopupMenuButton<String>(
+                              onSelected: (value) {
+                                if (value == 'Edit') {
+                                  _showEventDialog(
+                                      eventId: event.id, eventData: data);
+                                } else if (value == 'Delete') {
+                                  _deleteEvent(event.id);
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                const PopupMenuItem(
+                                    value: 'Edit', child: Text('Edit')),
+                                const PopupMenuItem(
+                                    value: 'Delete', child: Text('Delete')),
+                              ],
+                            )
+                          : ElevatedButton(
+                              onPressed: () => _toggleJoinEvent(event.id),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    isJoined ? Colors.green : Colors.purple,
+                              ),
+                              child: Text(
+                                isJoined ? 'Joined' : 'Join',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
-                      ),
-                    );
-                  },
-                );
-              },
-            );
-          },
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: ElevatedButton(
-          onPressed: () => _showEventDialog(),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25),
-            ),
-          ),
-          child: const Text(
-            'Create new event',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+                            ),
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: ElevatedButton(
+        onPressed: () => _showEventDialog(),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.purple,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
           ),
         ),
-        bottomNavigationBar: const BottomNavBar(selectedIndex: 3),
+        child: const Text(
+          'Create new event',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }

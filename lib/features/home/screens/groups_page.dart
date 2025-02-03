@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
+import 'package:hoppy_club/features/home/screens/event_screen.dart';
 
 class GroupPage extends StatefulWidget {
   final String groupId;
@@ -92,27 +93,52 @@ class GroupPageState extends State<GroupPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Group Members",
+          "Group Members and Events",
           style: TextStyle(fontSize: screenWidth * 0.05),
         ),
       ),
       body: Column(
         children: [
-          ElevatedButton(
-            onPressed: isLoading ? null : _toggleMembership,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
-            ),
-            child: isLoading
-                ? const CircularProgressIndicator(color: Colors.white)
-                : Text(
-                    isMember ? "Leave Group" : "Join Group",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: screenWidth * 0.04,
-                    ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: isLoading ? null : _toggleMembership,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                ),
+                child: isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        isMember ? "Leave Group" : "Join Group",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: screenWidth * 0.04,
+                        ),
+                      ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const EventScreen()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                ),
+                child: Text(
+                  "Events",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: screenWidth * 0.04,
                   ),
+                ),
+              ),
+            ],
           ),
           SizedBox(height: screenHeight * 0.02),
           Expanded(

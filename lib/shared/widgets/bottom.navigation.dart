@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/features/home/screens/event_screen.dart';
+import 'package:hoppy_club/chat_room.dart';
 import 'package:hoppy_club/features/profiles/screens/Swipe_profile.dart';
 import 'package:hoppy_club/features/profiles/screens/my_profile_screen.dart';
 import 'package:hoppy_club/features/profiles/screens/favorite_screen.dart';
@@ -29,7 +29,7 @@ class BottomNavBar extends StatelessWidget {
         nextScreen = const SwipeableProfilesScreen();
         break;
       case 3:
-        nextScreen = const EventScreen();
+        nextScreen = ChatRoomScreen();
         break;
       case 4:
         nextScreen = const MyProfileScreen();
@@ -75,7 +75,7 @@ class BottomNavBar extends StatelessWidget {
             _buildNavItem(Icons.favorite, 'Favorites', 1, context, scaleFactor),
             _buildNavItem(Icons.search, 'Search', 2, context, scaleFactor),
             _buildNavItem(
-                Icons.note_alt_rounded, 'Events', 3, context, scaleFactor),
+                Icons.chat_bubble, 'Chat Room', 3, context, scaleFactor),
             _buildNavItem(Icons.person, 'Profile', 4, context, scaleFactor),
           ],
         ),
