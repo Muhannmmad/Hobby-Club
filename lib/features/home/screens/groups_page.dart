@@ -170,21 +170,27 @@ class GroupPageState extends State<GroupPage> {
                                   context, memberIds[index]),
                               child: Stack(
                                 children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                      profileImage,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Container(
-                                          color: Colors.grey[300],
-                                          child: Icon(Icons.person,
-                                              size: screenWidth * 0.2),
-                                        );
-                                      },
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        profileImage,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return SizedBox(
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              child: Image.asset(
+                                                'assets/profiles/profile.jpg',
+                                                fit: BoxFit.cover,
+                                              ));
+                                        },
+                                      ),
                                     ),
                                   ),
                                   Positioned(

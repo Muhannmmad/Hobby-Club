@@ -143,14 +143,28 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                     borderRadius: BorderRadius.circular(20),
                                     image: DecorationImage(
                                       fit: BoxFit.cover,
-                                      image: userData!['profileImage'] != null
+                                      image: userData!['profileImage'] !=
+                                                  null &&
+                                              userData!['profileImage']
+                                                  .isNotEmpty
                                           ? NetworkImage(
                                               userData!['profileImage'])
                                           : const AssetImage(
-                                                  'assets/default_profile.png')
+                                                  'assets/profiles/profile.jpg')
                                               as ImageProvider,
                                     ),
                                   ),
+                                  child: userData!['profileImage'] == null ||
+                                          userData!['profileImage'].isEmpty
+                                      ? Center(
+                                          child: Image.asset(
+                                            'assets/profiles/profile.jpg',
+                                            fit: BoxFit.cover,
+                                            height: double.infinity,
+                                            width: double.infinity,
+                                          ),
+                                        )
+                                      : SizedBox.shrink(),
                                 ),
                                 Positioned(
                                   top: 15,

@@ -133,11 +133,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                 height: double.infinity,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Colors.grey[300],
-                                    child: Icon(Icons.person,
-                                        size: 120 * scaleFactor),
-                                  );
+                                  return SizedBox(
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      child: Image.asset(
+                                        'assets/profiles/profile.jpg',
+                                        fit: BoxFit.cover,
+                                      ));
                                 },
                               )
                             : Container(
@@ -167,8 +169,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                     WidgetSpan(
                                       alignment: PlaceholderAlignment.middle,
                                       child: Container(
-                                        width: 10 * scaleFactor,
-                                        height: 10 * scaleFactor,
+                                        width: 15 * scaleFactor,
+                                        height: 15 * scaleFactor,
                                         margin: EdgeInsets.only(
                                             right: 4 * scaleFactor),
                                         decoration: BoxDecoration(
@@ -183,7 +185,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                       text: '$name, $age',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 12.0 * scaleFactor,
+                                        fontSize: 16.0 * scaleFactor,
                                         color: Colors.white,
                                       ),
                                     ),
