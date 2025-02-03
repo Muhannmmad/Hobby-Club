@@ -27,7 +27,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     final String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     if (userId.isEmpty) return;
 
-    // Remove the profile from Firestore
     await FirebaseFirestore.instance
         .collection('favorites')
         .doc(userId)
@@ -35,12 +34,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         .doc(docId)
         .delete();
 
-    // Remove the profile from the UI
     setState(() {
       favoriteProfiles.removeAt(index);
     });
 
-    // Show a snackbar to confirm the action
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Removed from favorites')),
     );
@@ -50,7 +47,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     final String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     if (userId.isEmpty) return [];
 
-    // Get the user's favorite profiles
     final querySnapshot = await FirebaseFirestore.instance
         .collection('favorites')
         .doc(userId)
@@ -62,7 +58,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       final favoriteData = doc.data();
       final userId = doc.id;
 
-      // Fetch the latest data from the 'users' collection
       final userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
@@ -70,7 +65,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
       if (userDoc.exists) {
         final userData = userDoc.data() ?? {};
-        // Merge the latest user data with the favorite data
         favoriteData.addAll(userData);
         favoriteData['docId'] = userId;
         favorites.add(favoriteData);
@@ -86,7 +80,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
     return Scaffold(
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: fetchFavorites(),
+        future: _favoritesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -96,7 +90,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             return const Center(child: Text('No favorite profiles yet.'));
           }
 
-          final favoriteProfiles = snapshot.data!;
+          favoriteProfiles = snapshot.data!;
 
           return Padding(
             padding: EdgeInsets.all(8.0 * scaleFactor),
