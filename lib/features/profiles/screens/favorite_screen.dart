@@ -127,30 +127,31 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     child: Stack(
                       children: [
                         ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(16.0 * scaleFactor),
-                          child: profileImage.isNotEmpty
-                              ? Image.network(
-                                  profileImage,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return SizedBox(
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        child: Image.asset(
-                                          'assets/profiles/profile.jpg',
-                                          fit: BoxFit.cover,
-                                        ));
-                                  },
-                                )
-                              : Container(
-                                  color: Colors.grey[300],
-                                  child: Icon(Icons.person,
-                                      size: 120 * scaleFactor),
-                                ),
-                        ),
+                            borderRadius:
+                                BorderRadius.circular(16.0 * scaleFactor),
+                            child: profileImage.isNotEmpty
+                                ? Image.network(
+                                    profileImage,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return SizedBox(
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          child: Image.asset(
+                                            'assets/profiles/profile.jpg',
+                                            fit: BoxFit.cover,
+                                          ));
+                                    },
+                                  )
+                                : SizedBox(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    child: Image.asset(
+                                      'assets/profiles/profile.jpg',
+                                      fit: BoxFit.cover,
+                                    ))),
                         Positioned(
                           bottom: 0,
                           left: 0,

@@ -157,14 +157,14 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                   child: userData!['profileImage'] == null ||
                                           userData!['profileImage'].isEmpty
                                       ? Center(
-                                          child: Image.asset(
-                                            'assets/profiles/profile.jpg',
-                                            fit: BoxFit.cover,
-                                            height: double.infinity,
-                                            width: double.infinity,
-                                          ),
-                                        )
-                                      : SizedBox.shrink(),
+                                          child: SizedBox(
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              child: Image.asset(
+                                                'assets/profiles/profile.jpg',
+                                                fit: BoxFit.cover,
+                                              )))
+                                      : const SizedBox.shrink(),
                                 ),
                                 Positioned(
                                   top: 15,
