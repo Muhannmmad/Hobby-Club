@@ -89,10 +89,23 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> removeImage() async {
-    setState(() {
-      _profileImage = null;
-      _profileImageUrl = null;
-    });
+    if (_profileImageUrl != null) {
+      try {
+        // Get the reference to the image in Firebase Storage
+        final storageRef =
+            FirebaseStorage.instance.refFromURL(_profileImageUrl!);
+
+        // Delete the image from Firebase Storage
+        await storageRef.delete();
+
+        setState(() {
+          _profileImage = null;
+          _profileImageUrl = null;
+        });
+      } catch (e) {
+        ('Error deleting image: $e');
+      }
+    }
   }
 
   Future<void> saveProfile() async {
