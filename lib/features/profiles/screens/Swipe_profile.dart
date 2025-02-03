@@ -118,7 +118,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
             .trim();
     final String age = userData['age']?.toString() ?? 'Unknown';
     final bool isOnline = userData['isOnline'] ?? false;
-    final String? profileImage = userData['profileImage'];
+    final String profileImage = userData['profileImage'] ?? '';
     final String location =
         "${userData['city'] ?? ''}, ${userData['state'] ?? ''}, ${userData['country'] ?? ''}"
             .trim();
@@ -147,6 +147,36 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
           child: Stack(
             clipBehavior: Clip.none,
             children: [
+              if (index + 1 < userProfiles.length)
+                Positioned(
+                  top: 1,
+                  left: 4,
+                  right: -2,
+                  child: Transform.translate(
+                    offset: const Offset(15, 25),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.network(
+                        userProfiles[index + 1]['profileImage'] ?? '',
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height * 0.63,
+                        fit: BoxFit.cover,
+                        color: Colors.black.withOpacity(0.2),
+                        colorBlendMode: BlendMode.darken,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/profiles/profile.jpg',
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height * 0.63,
+                            fit: BoxFit.cover,
+                            color: Colors.black.withOpacity(0.2),
+                            colorBlendMode: BlendMode.darken,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               Column(
                 children: [
                   Expanded(
@@ -155,19 +185,20 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(15),
-                          child: profileImage != null
-                              ? Image.network(
-                                  profileImage,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.asset(
-                                  'assets/profiles/profile.jpg',
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
+                          child: Image.network(
+                            profileImage,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/profiles/profile.jpg',
+                                width: double.infinity,
+                                height: double.infinity,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
                         ),
                         Positioned(
                           top: 10,
