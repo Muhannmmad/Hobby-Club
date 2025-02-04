@@ -29,7 +29,7 @@ class BottomNavBar extends StatelessWidget {
         nextScreen = const SwipeableProfilesScreen();
         break;
       case 3:
-        nextScreen = ChatRoomScreen();
+        nextScreen = const ChatRoomScreen();
         break;
       case 4:
         nextScreen = const MyProfileScreen();
