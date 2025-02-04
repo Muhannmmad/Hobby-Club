@@ -20,8 +20,15 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ScrollController _scrollController = ScrollController();
 
-  Map<String, bool> messageStatus =
-      {}; // Store toggle state for private messages
+  Map<String, bool> messageStatus = {};
+
+  void _scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
+  }
 
   void _toggleMessageStatus(String senderId) {
     setState(() {
@@ -47,6 +54,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
     });
 
     _messageController.clear();
+    _scrollToBottom();
   }
 
   void _deleteMessage(String messageId, String senderId) async {
@@ -84,12 +92,10 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
         .where('isRead', isEqualTo: false)
         .get();
 
-    // Mark messages as read
     for (var doc in unreadMessages.docs) {
       await doc.reference.update({'isRead': true});
     }
 
-    // Toggle message icon color for the clicked user
     _toggleMessageStatus(receiverId);
 
     showDialog(
@@ -116,6 +122,12 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
@@ -137,9 +149,14 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                       return const Center(child: Text('No messages yet'));
                     }
 
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _scrollToBottom();
+                    });
+
                     String? lastDisplayedDate;
+
                     return ListView.builder(
-                      controller: _scrollController, // Add ScrollController
+                      controller: _scrollController,
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
                         DocumentSnapshot doc = snapshot.data!.docs[index];
@@ -150,35 +167,32 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                         Timestamp? timestamp = data['timestamp'] as Timestamp?;
                         DateTime dateTime =
                             timestamp?.toDate() ?? DateTime.now();
-                        String date =
-                            DateFormat('MMM d, yyyy').format(dateTime);
                         String time = DateFormat('hh:mm a').format(dateTime);
+                        String messageDate =
+                            DateFormat('yyyy-MM-dd').format(dateTime);
 
-                        Widget dateWidget = const SizedBox.shrink();
-                        if (lastDisplayedDate != date) {
-                          lastDisplayedDate = date;
-                          dateWidget = Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Center(
-                              child: Text(
-                                date,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: Color.fromARGB(255, 63, 63, 63),
-                                ),
-                              ),
-                            ),
-                          );
+                        bool showDateHeader = lastDisplayedDate != messageDate;
+                        if (showDateHeader) {
+                          lastDisplayedDate = messageDate;
                         }
 
                         return Column(
-                          crossAxisAlignment: isMine
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            if (index == 0 || lastDisplayedDate != date)
-                              dateWidget,
+                            if (showDateHeader)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  DateFormat('EEEE, MMM d, yyyy')
+                                      .format(dateTime),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 2.0, horizontal: 8.0),
@@ -216,62 +230,25 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                                 ),
                                               ),
                                             ),
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  data['senderName'],
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.blue,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                GestureDetector(
-                                                  onTap: () =>
-                                                      _showPrivateChatScreen(
-                                                    data['senderId'],
-                                                    data['senderName'],
-                                                  ),
-                                                  child: StreamBuilder<
-                                                      QuerySnapshot>(
-                                                    stream: _firestore
-                                                        .collection(
-                                                            'privateMessages')
-                                                        .where('receiverId',
-                                                            isEqualTo: _auth
-                                                                .currentUser
-                                                                ?.uid)
-                                                        .where('senderId',
-                                                            isEqualTo: data[
-                                                                'senderId'])
-                                                        .where('isRead',
-                                                            isEqualTo: false)
-                                                        .snapshots(),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      bool hasUnreadMessage =
-                                                          snapshot.hasData &&
-                                                              snapshot
-                                                                  .data!
-                                                                  .docs
-                                                                  .isNotEmpty;
-
-                                                      return Icon(
-                                                        Icons.message,
-                                                        color: messageStatus[data[
-                                                                    'senderId']] ==
-                                                                true
-                                                            ? Colors.green
-                                                            : (hasUnreadMessage
-                                                                ? Colors.red
-                                                                : Colors.green),
-                                                        size: 20,
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
+                                            child: Text(
+                                              data['senderName'],
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          GestureDetector(
+                                            onTap: () => _showPrivateChatScreen(
+                                              data['senderId'],
+                                              data['senderName'],
+                                            ),
+                                            child: const Icon(
+                                              Icons.message,
+                                              color: Colors.green,
+                                              size: 20,
                                             ),
                                           ),
                                         ],
@@ -282,15 +259,13 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                       ),
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Expanded(
-                                            child: Text(
-                                              time,
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey[600]),
-                                            ),
+                                          Text(
+                                            time,
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey[600]),
                                           ),
                                           if (isMine)
                                             IconButton(
@@ -314,8 +289,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0, horizontal: 16.0),
+                padding: const EdgeInsets.all(12.0),
                 child: Row(
                   children: [
                     Expanded(
@@ -324,16 +298,33 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                         decoration: InputDecoration(
                           hintText: 'Enter message...',
                           filled: true,
-                          fillColor: Colors.blueGrey.withOpacity(0.3),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
-                            borderSide: BorderSide.none,
+                          fillColor: Colors.grey[300],
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(25)),
+                            borderSide:
+                                BorderSide(color: Colors.blue[900]!, width: 1),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(25)),
+                            borderSide:
+                                BorderSide(color: Colors.blue[900]!, width: 1),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(25)),
+                            borderSide:
+                                BorderSide(color: Colors.blue[900]!, width: 2),
                           ),
                         ),
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.send, color: Colors.blue),
+                      icon: Transform.rotate(
+                        angle: -90 * (3.141592653589793 / 180),
+                        child: const Icon(Icons.send, color: Colors.blue),
+                      ),
                       onPressed: _sendMessage,
                     ),
                   ],

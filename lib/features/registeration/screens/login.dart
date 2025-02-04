@@ -216,7 +216,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
                       successMessage!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.green,
                         fontWeight: FontWeight.bold,
                       ),
@@ -227,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
                       errorMessage!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
                       ),
