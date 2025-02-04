@@ -12,7 +12,7 @@ dependencies:
 
   video_player: ^2.9.2
     
-  flutter_launcher_icons: ^0.14.1
+  
   google_fonts: ^6.2.1
   
   shared_preferences: ^2.3.3
@@ -30,6 +30,7 @@ dependencies:
   firebase_storage: ^12.4.1
   image_picker: ^1.1.2
   country_state_city_pro: ^0.0.6
+  flutter_launcher_icons: ^0.14.3
 
 
 dev_dependencies:
