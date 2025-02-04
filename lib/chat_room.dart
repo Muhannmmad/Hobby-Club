@@ -221,6 +221,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                                 Text(
                                                   data['senderName'],
                                                   style: const TextStyle(
+                                                    fontSize: 14,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.blue,
                                                   ),
@@ -283,12 +284,21 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            time,
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey[600]),
+                                          Expanded(
+                                            child: Text(
+                                              time,
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey[600]),
+                                            ),
                                           ),
+                                          if (isMine)
+                                            IconButton(
+                                              icon: const Icon(Icons.delete,
+                                                  color: Colors.red),
+                                              onPressed: () => _deleteMessage(
+                                                  doc.id, data['senderId']),
+                                            ),
                                         ],
                                       ),
                                     ],
