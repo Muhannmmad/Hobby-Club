@@ -78,7 +78,7 @@ class EventScreenState extends State<EventScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Join and Creat Events'),
+        title: const Text('Join & Creat'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection('events').snapshots(),
@@ -124,192 +124,204 @@ class EventScreenState extends State<EventScreen> {
                       : 'Fetching...';
 
                   return Card(
+                    color: Colors.grey.shade300, // Darker card background
                     margin: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      title: Text(
-                        data['name'] ?? 'Unknown Event',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.purple,
-                        ),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              style: const TextStyle(
-                                  color: Colors.black, fontSize: 15),
-                              children: [
-                                const TextSpan(
-                                  text: 'Place: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                                TextSpan(
-                                    text: '${data['place'] ?? 'Unknown'}\n'),
-                                const TextSpan(
-                                  text: 'Date: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                                TextSpan(
-                                  text:
-                                      '${data['date'] ?? 'N/A'} at ${data['time'] ?? 'N/A'}\n',
-                                ),
-                                const TextSpan(
-                                  text: 'Description: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                                TextSpan(
-                                    text:
-                                        '${data['description'] ?? 'No description'}\n'),
-                              ],
-                            ),
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Created by: ',
-                                style: TextStyle(
+                              Text(
+                                data['name'] ?? 'Unknown Event',
+                                style: const TextStyle(
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  color: Colors.purple,
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => DetailedProfilePage(
-                                          userId: creatorUid),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  creatorName ?? 'Unknown',
+                              const SizedBox(height: 4),
+                              RichText(
+                                text: TextSpan(
                                   style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue,
+                                      color: Colors.black, fontSize: 15),
+                                  children: [
+                                    const TextSpan(
+                                      text: 'Place: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                                    TextSpan(
+                                        text:
+                                            '${data['place'] ?? 'Unknown'}\n'),
+                                    const TextSpan(
+                                      text: 'Date: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                                    TextSpan(
+                                      text:
+                                          '${data['date'] ?? 'N/A'} at ${data['time'] ?? 'N/A'}\n',
+                                    ),
+                                    const TextSpan(
+                                      text: 'Description: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                                    TextSpan(
+                                        text:
+                                            '${data['description'] ?? 'No description'}\n'),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+
+                              // Created by section
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    'Created by: ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailedProfilePage(
+                                                  userId: creatorUid),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      creatorName ?? 'Unknown',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 8),
+
+                              // Joined users section (Scrollable Box)
+                              const Text(
+                                'Joined by:',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: Colors.green,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 4),
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.blueAccent),
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Colors.grey.shade200,
+                                ),
+                                constraints: const BoxConstraints(
+                                  maxHeight:
+                                      150, // Scrollable when too many users
+                                  minWidth: double.infinity,
+                                ),
+                                child: SingleChildScrollView(
+                                  child: Wrap(
+                                    children: joinedUsers.map<Widget>((user) {
+                                      String? userId = user['uid']?.toString();
+                                      String userName =
+                                          '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'
+                                              .trim();
+
+                                      return GestureDetector(
+                                        onTap: () {
+                                          if (userId != null &&
+                                              userId.isNotEmpty) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DetailedProfilePage(
+                                                        userId: userId),
+                                              ),
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  content: Text(
+                                                      'User profile not available')),
+                                            );
+                                          }
+                                        },
+                                        child: Text(
+                                          '$userName, ',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blueAccent,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(
-                              height: 8), // Space before joined members
-                          const Text(
-                            'Joined by:',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.green,
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(top: 4),
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.blueAccent),
-                              borderRadius: BorderRadius.circular(8),
-                              color: Colors.grey.shade100,
-                            ),
-                            constraints: const BoxConstraints(
-                              maxHeight:
-                                  150, // Increased height for better visibility
-                              minWidth: double.infinity,
-                            ),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: joinedUsers.map((user) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      print(
-                                          "User data: $user"); // Debugging user data
+                        ),
 
-                                      String? userId = user['uid']
-                                          ?.toString(); // Fetch correct UID field
-
-                                      if (userId != null && userId.isNotEmpty) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                DetailedProfilePage(
-                                                    userId: userId),
-                                          ),
-                                        );
-                                      } else {
-                                        print(
-                                            "User ID is missing! Full user data: $user"); // More debugging
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                              content: Text(
-                                                  'User profile not available')),
-                                        );
-                                      }
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 4),
-                                      child: Text(
-                                        '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'
-                                            .trim(),
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.blueAccent,
-                                        ),
-                                      ),
+                        // Moved the Join/Joined Button to the Top Right
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: currentUserId == creatorUid
+                              ? PopupMenuButton<String>(
+                                  onSelected: (value) {
+                                    if (value == 'Edit') {
+                                      _showEventDialog(
+                                          eventId: event.id, eventData: data);
+                                    } else if (value == 'Delete') {
+                                      _deleteEvent(event.id);
+                                    }
+                                  },
+                                  itemBuilder: (context) => [
+                                    const PopupMenuItem(
+                                        value: 'Edit', child: Text('Edit')),
+                                    const PopupMenuItem(
+                                        value: 'Delete', child: Text('Delete')),
+                                  ],
+                                )
+                              : ElevatedButton(
+                                  onPressed: () => _toggleJoinEvent(event.id),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        isJoined ? Colors.green : Colors.purple,
+                                  ),
+                                  child: Text(
+                                    isJoined ? 'Joined' : 'Join',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
                                     ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      trailing: currentUserId == creatorUid
-                          ? PopupMenuButton<String>(
-                              onSelected: (value) {
-                                if (value == 'Edit') {
-                                  _showEventDialog(
-                                      eventId: event.id, eventData: data);
-                                } else if (value == 'Delete') {
-                                  _deleteEvent(event.id);
-                                }
-                              },
-                              itemBuilder: (context) => [
-                                const PopupMenuItem(
-                                    value: 'Edit', child: Text('Edit')),
-                                const PopupMenuItem(
-                                    value: 'Delete', child: Text('Delete')),
-                              ],
-                            )
-                          : ElevatedButton(
-                              onPressed: () => _toggleJoinEvent(event.id),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    isJoined ? Colors.green : Colors.purple,
-                              ),
-                              child: Text(
-                                isJoined ? 'Joined' : 'Join',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                            ),
+                        ),
+                      ],
                     ),
                   );
                 },
