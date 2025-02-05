@@ -46,12 +46,17 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
     String firstName = userDoc['firstName'] ?? 'Unknown';
     String lastName = userDoc['lastName'] ?? '';
 
-    await _firestore.collection('chatroom').add({
+    DocumentReference newMessageRef = _firestore.collection('chatroom').doc();
+
+    await newMessageRef.set({
       'text': _messageController.text,
       'senderId': user.uid,
       'senderName': '$firstName $lastName',
       'timestamp': FieldValue.serverTimestamp(),
     });
+
+// Wait for Firestore to update timestamp
+    await Future.delayed(const Duration(milliseconds: 500));
 
     _messageController.clear();
     _scrollToBottom();
@@ -139,6 +144,8 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                 child: StreamBuilder(
                   stream: _firestore
                       .collection('chatroom')
+                      .where('timestamp',
+                          isNotEqualTo: null) // Ignore null timestamps
                       .orderBy('timestamp', descending: false)
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -165,8 +172,10 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                         bool isMine =
                             data['senderId'] == _auth.currentUser?.uid;
                         Timestamp? timestamp = data['timestamp'] as Timestamp?;
-                        DateTime dateTime =
-                            timestamp?.toDate() ?? DateTime.now();
+                        DateTime dateTime = timestamp != null
+                            ? timestamp.toDate()
+                            : DateTime.now();
+
                         String time = DateFormat('hh:mm a').format(dateTime);
                         String messageDate =
                             DateFormat('yyyy-MM-dd').format(dateTime);

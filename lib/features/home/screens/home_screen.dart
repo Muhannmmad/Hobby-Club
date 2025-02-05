@@ -70,7 +70,7 @@ class HomeScreenState extends State<HomeScreen> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return PopScope(
-      canPop: false,
+      canPop: true,
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
