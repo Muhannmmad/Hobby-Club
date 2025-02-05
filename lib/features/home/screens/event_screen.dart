@@ -111,7 +111,7 @@ class EventScreenState extends State<EventScreen> {
               final isJoined = currentUserId != null &&
                   joinedUsers.any((user) => user['uid'] == currentUserId);
 
-              final joinedUsersDisplay = joinedUsers.map((user) {
+              joinedUsers.map((user) {
                 return '${user['firstName']} ${user['lastName']}';
               }).join(', ');
 
@@ -203,7 +203,7 @@ class EventScreenState extends State<EventScreen> {
                                       );
                                     },
                                     child: Text(
-                                      creatorName ?? 'Unknown',
+                                      creatorName,
                                       style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
