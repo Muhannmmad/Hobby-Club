@@ -121,6 +121,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   final userData = favoriteProfiles[index];
                   final profileImage = userData['profileImage'] ?? '';
                   final name = userData['firstName'] ?? 'Unknown';
+                  final age = userData['age']?.toString() ?? 'N/A';
+                  final country = userData['country'] ?? 'Unknown';
+                  final city = userData['city'] ?? 'Unknown';
                   final userId = userData['docId'];
                   final bool isOnline = userData['isOnline'];
 
@@ -174,6 +177,63 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               Icons.favorite,
                               color: Colors.red,
                               size: 22 * scaleFactor,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(8.0 * scaleFactor),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(16.0 * scaleFactor),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                RichText(
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                    children: [
+                                      WidgetSpan(
+                                        alignment: PlaceholderAlignment.middle,
+                                        child: Container(
+                                          width: 15 * scaleFactor,
+                                          height: 15 * scaleFactor,
+                                          margin: EdgeInsets.only(
+                                              right: 4 * scaleFactor),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: isOnline
+                                                ? Colors.green
+                                                : Colors.grey,
+                                          ),
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: '$name, $age',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0 * scaleFactor,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 4 * scaleFactor),
+                                Text(
+                                  '$city, $country',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10.0 * scaleFactor,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
                           ),
                         ),
