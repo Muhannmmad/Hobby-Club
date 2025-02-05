@@ -236,7 +236,7 @@ class SignUpScreenState extends State<SignUpScreen> {
           "Already a member? ",
           style: TextStyle(
             color: Colors.black,
-            fontSize: (14 * scaleFactor).clamp(10, 18),
+            fontSize: (12 * scaleFactor).clamp(10, 18),
           ),
         ),
         Transform.scale(

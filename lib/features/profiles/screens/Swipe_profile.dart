@@ -1,9 +1,8 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
+import 'package:hoppy_club/shared/widgets/private_chat%20.dart';
 
 class SwipeableProfilesScreen extends StatefulWidget {
   const SwipeableProfilesScreen({super.key});
@@ -96,7 +95,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: true,
       child: Scaffold(
         body: isLoading
             ? const Center(child: CircularProgressIndicator())
@@ -166,16 +165,6 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                         fit: BoxFit.cover,
                         color: Colors.black.withOpacity(0.2),
                         colorBlendMode: BlendMode.darken,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            'assets/profiles/profile.jpg',
-                            width: double.infinity,
-                            height: MediaQuery.of(context).size.height * 0.63,
-                            fit: BoxFit.cover,
-                            color: Colors.black.withOpacity(0.2),
-                            colorBlendMode: BlendMode.darken,
-                          );
-                        },
                       ),
                     ),
                   ),
@@ -193,14 +182,6 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                             width: double.infinity,
                             height: double.infinity,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'assets/profiles/profile.jpg',
-                                width: double.infinity,
-                                height: double.infinity,
-                                fit: BoxFit.cover,
-                              );
-                            },
                           ),
                         ),
                         Positioned(
@@ -216,6 +197,33 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                                     ? Icons.favorite
                                     : Icons.favorite_border,
                                 color: isFavorite ? Colors.red : Colors.black,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 10,
+                          right: 60,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PrivateChatScreen(
+                                    receiverId: userData['id'],
+                                    receiverName:
+                                        userData['firstName'] ?? 'Unknown',
+                                  ),
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white.withOpacity(0.8),
+                              radius: 25,
+                              child: const Icon(
+                                Icons.message,
+                                color: Colors.green,
                                 size: 30,
                               ),
                             ),
@@ -241,58 +249,54 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                           ),
                         ],
                       ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 6,
-                                  backgroundColor:
-                                      isOnline ? Colors.green : Colors.grey,
-                                ),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    '$fullName, $age',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              '📍 $location',
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.grey),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              '⭐ Hobbies: $hobbies',
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.grey),
-                            ),
-                            const SizedBox(height: 10),
-                            const Text(
-                              'About Me',
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 10),
-                            SingleChildScrollView(
-                              child: Text(
-                                about,
-                                style: const TextStyle(fontSize: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 6,
+                                backgroundColor:
+                                    isOnline ? Colors.green : Colors.grey,
                               ),
-                            ),
-                          ],
-                        ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  '$fullName, $age',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            '📍 $location',
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            '⭐ Hobbies: $hobbies',
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey),
+                          ),
+                          const SizedBox(height: 10),
+                          const Text(
+                            'About Me',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            about,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
                       ),
                     ),
                   ),

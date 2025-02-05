@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/shared/widgets/private_chat%20.dart';
 
 class DetailedProfilePage extends StatefulWidget {
   final String userId;
@@ -10,7 +11,6 @@ class DetailedProfilePage extends StatefulWidget {
   const DetailedProfilePage({super.key, required this.userId});
 
   @override
-  // ignore: library_private_types_in_public_api
   _DetailedProfilePageState createState() => _DetailedProfilePageState();
 }
 
@@ -83,8 +83,9 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  '${userData?['firstName'] ?? 'User'} removed from favorites!')),
+            content: Text(
+                '${userData?['firstName'] ?? 'User'} removed from favorites!'),
+          ),
         );
       } else {
         await favoriteRef.set(userData!);
@@ -93,13 +94,28 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  '${userData?['firstName'] ?? 'User'} added to favorites!')),
+            content:
+                Text('${userData?['firstName'] ?? 'User'} added to favorites!'),
+          ),
         );
       }
     } catch (e) {
       debugPrint('Failed to toggle favorite: $e');
     }
+  }
+
+  void startPrivateChat() {
+    if (userData == null) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PrivateChatScreen(
+          receiverId: widget.userId,
+          receiverName: userData?['firstName'] ?? 'Unknown',
+        ),
+      ),
+    );
   }
 
   @override
@@ -132,7 +148,7 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                         ),
                         child: Column(
                           children: [
-                            // Profile Image with Favorite Icon
+                            // Profile Image with Favorite & Message Icons
                             Stack(
                               children: [
                                 Container(
@@ -158,17 +174,20 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                           userData!['profileImage'].isEmpty
                                       ? Center(
                                           child: SizedBox(
-                                              width: double.infinity,
-                                              height: double.infinity,
-                                              child: Image.asset(
-                                                'assets/profiles/profile.jpg',
-                                                fit: BoxFit.cover,
-                                              )))
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            child: Image.asset(
+                                              'assets/profiles/profile.jpg',
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        )
                                       : const SizedBox.shrink(),
                                 ),
+                                // Favorite Icon
                                 Positioned(
-                                  top: 15,
-                                  right: 15,
+                                  top: 10,
+                                  right: 10,
                                   child: GestureDetector(
                                     onTap: toggleFavorite,
                                     child: CircleAvatar(
@@ -182,6 +201,24 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                         color: isFavorite
                                             ? Colors.red
                                             : Colors.black,
+                                        size: 30,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // Message Icon
+                                Positioned(
+                                  top: 10,
+                                  right: 60,
+                                  child: GestureDetector(
+                                    onTap: startPrivateChat,
+                                    child: CircleAvatar(
+                                      backgroundColor:
+                                          Colors.white.withOpacity(0.8),
+                                      radius: 25,
+                                      child: const Icon(
+                                        Icons.message,
+                                        color: Colors.green,
                                         size: 30,
                                       ),
                                     ),

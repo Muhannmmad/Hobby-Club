@@ -16,7 +16,7 @@ class StartScreenState extends State<StartScreen> {
   @override
   void initState() {
     super.initState();
-    controller = VideoPlayerController.asset('assets/videos/video.mp4')
+    controller = VideoPlayerController.asset('assets/video.mp4')
       ..initialize().then((_) {
         controller.setLooping(true);
         controller.setVolume(0.0);
@@ -64,8 +64,8 @@ class StartScreenState extends State<StartScreen> {
                   Padding(
                     padding: EdgeInsets.all(16.0 * scaleFactor),
                     child: SizedBox(
-                      height: 100 * scaleFactor,
-                      width: 100 * scaleFactor,
+                      height: 60 * scaleFactor,
+                      width: 60 * scaleFactor,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.asset(
@@ -80,7 +80,7 @@ class StartScreenState extends State<StartScreen> {
                   Text(
                     'Hobby Club',
                     style: GoogleFonts.spicyRice(
-                      fontSize: 48 * scaleFactor,
+                      fontSize: 30 * scaleFactor,
                       fontWeight: FontWeight.w700,
                       fontStyle: FontStyle.italic,
                       color: const Color.fromARGB(205, 67, 7, 82),
@@ -98,7 +98,7 @@ class StartScreenState extends State<StartScreen> {
                           "Meet new people around you",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 20 * scaleFactor,
+                            fontSize: 18 * scaleFactor,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,
@@ -123,8 +123,8 @@ class StartScreenState extends State<StartScreen> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 30 * scaleFactor,
-                        vertical: 10 * scaleFactor,
+                        horizontal: 20 * scaleFactor,
+                        vertical: 8 * scaleFactor,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),

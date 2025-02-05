@@ -60,7 +60,7 @@ class MyProfileScreenState extends State<MyProfileScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return PopScope(
-      canPop: false,
+      canPop: true,
       child: Scaffold(
         body: SafeArea(
           child: isLoading
