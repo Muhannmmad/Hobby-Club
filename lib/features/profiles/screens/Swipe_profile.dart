@@ -165,6 +165,16 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                         fit: BoxFit.cover,
                         color: Colors.black.withOpacity(0.2),
                         colorBlendMode: BlendMode.darken,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/profiles/profile.jpg',
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height * 0.63,
+                            fit: BoxFit.cover,
+                            color: Colors.black.withOpacity(0.2),
+                            colorBlendMode: BlendMode.darken,
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -182,6 +192,14 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                             width: double.infinity,
                             height: double.infinity,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/profiles/profile.jpg',
+                                width: double.infinity,
+                                height: double.infinity,
+                                fit: BoxFit.cover,
+                              );
+                            },
                           ),
                         ),
                         Positioned(

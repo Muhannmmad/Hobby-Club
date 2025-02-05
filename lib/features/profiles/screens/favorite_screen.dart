@@ -152,6 +152,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               : Image.asset(
                                   'assets/profiles/profile.jpg',
                                   fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
                                 ),
                         ),
                         Positioned(
