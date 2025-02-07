@@ -1,9 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/shared/widgets/private_chat%20.dart';
+import 'package:hoppy_club/shared/widgets/private_chat_screen.dart';
 
 class DetailedProfilePage extends StatefulWidget {
   final String userId;
@@ -11,10 +9,10 @@ class DetailedProfilePage extends StatefulWidget {
   const DetailedProfilePage({super.key, required this.userId});
 
   @override
-  _DetailedProfilePageState createState() => _DetailedProfilePageState();
+  DetailedProfilePageState createState() => DetailedProfilePageState();
 }
 
-class _DetailedProfilePageState extends State<DetailedProfilePage> {
+class DetailedProfilePageState extends State<DetailedProfilePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
 
@@ -113,6 +111,7 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
         builder: (context) => PrivateChatScreen(
           receiverId: widget.userId,
           receiverName: userData?['firstName'] ?? 'Unknown',
+          receiverProfileUrl: userData?['profileImage'] ?? '',
         ),
       ),
     );
@@ -208,8 +207,8 @@ class _DetailedProfilePageState extends State<DetailedProfilePage> {
                                 ),
                                 // Message Icon
                                 Positioned(
-                                  top: 10,
-                                  right: 60,
+                                  top: 65,
+                                  right: 10,
                                   child: GestureDetector(
                                     onTap: startPrivateChat,
                                     child: CircleAvatar(

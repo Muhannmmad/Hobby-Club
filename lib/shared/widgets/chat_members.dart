@@ -100,6 +100,7 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                                 receiverId: receiverId,
                                 receiverName: receiverName,
                                 receiverProfileUrl: receiverProfileUrl,
+                                chatId: chat.id, // Pass chatId correctly
                               ),
                             ),
                           );
