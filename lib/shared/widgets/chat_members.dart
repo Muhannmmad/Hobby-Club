@@ -18,7 +18,15 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Messenger")),
+      appBar: AppBar(
+        title: Text(
+          "Messenger",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.blue[900],
+          ),
+        ),
+      ),
       body: StreamBuilder(
         stream: _firestore
             .collection('private_chats')
@@ -38,16 +46,12 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
               var chat = snapshot.data!.docs[index];
               List<dynamic> participants = chat['participants'];
 
-              // Ensure there are at least two participants
-              if (participants.length < 2) return const SizedBox.shrink();
-
               // Find the other participant (excluding the current user)
               String receiverId = participants.firstWhere(
                 (id) => id != widget.user.uid,
                 orElse: () => "",
               );
 
-              // Skip if no valid receiver is found
               if (receiverId.isEmpty) return const SizedBox.shrink();
 
               return FutureBuilder<DocumentSnapshot>(
@@ -59,9 +63,13 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
 
                   var receiverData =
                       userSnapshot.data!.data() as Map<String, dynamic>? ?? {};
-                  //FIXME Fix the user name fetching
-                  String receiverName = receiverData['name'] ?? "Unknown User";
-                  String receiverProfileUrl = receiverData['profileUrl'] ?? "";
+                  String firstName = receiverData['firstName'] ?? "Unknown";
+                  String lastName = receiverData['lastName'] ?? "";
+                  String receiverName = "$firstName $lastName";
+
+                  // ✅ Corrected Profile Image Field Name
+                  String receiverProfileUrl =
+                      receiverData['profileImage']?.toString() ?? "";
 
                   return StreamBuilder(
                     stream: _firestore
@@ -82,19 +90,23 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
 
                       return ListTile(
                         leading: CircleAvatar(
+                          radius: 30, // Bigger Profile Image
+                          backgroundColor: Colors.grey[300],
                           backgroundImage: receiverProfileUrl.isNotEmpty
                               ? NetworkImage(receiverProfileUrl)
                               : null,
                           child: receiverProfileUrl.isEmpty
-                              ? Icon(Icons.person)
+                              ? const Icon(Icons.person, size: 30)
                               : null,
                         ),
-                        title: Text(receiverName),
-                        subtitle: Text("Last Message: $lastMessage"),
+                        title: Text(receiverName,
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        subtitle: Text(lastMessage,
+                            maxLines: 1, overflow: TextOverflow.ellipsis),
                         onTap: () {
                           Navigator.push(
                             context,
-                            //FIXME Handover chat massages
                             MaterialPageRoute(
                               builder: (context) => PrivateChatScreen(
                                 receiverId: receiverId,

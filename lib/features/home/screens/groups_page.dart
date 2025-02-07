@@ -185,7 +185,7 @@ class GroupPageState extends State<GroupPage> {
 
                             // Fetch profile data
                             String profileImage = userData['profileImage'] ??
-                                'https://via.placeholder.com/100'; // Fallback image
+                                'assets/profiles/profile.jpg';
                             String firstName =
                                 userData['firstName'] ?? 'Unknown';
                             String age = userData['age']?.toString() ?? '-';

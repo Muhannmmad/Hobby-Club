@@ -58,7 +58,7 @@ class HobbiesCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withValues(alpha: 0.5),
                       borderRadius: const BorderRadius.vertical(
                           bottom: Radius.circular(10)),
                     ),

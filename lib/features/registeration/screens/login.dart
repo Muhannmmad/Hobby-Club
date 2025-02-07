@@ -2,9 +2,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
-import 'package:hoppy_club/features/home/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,6 +14,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
@@ -27,6 +28,21 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     loadSavedCredentials();
+  }
+
+  Future<void> saveUserToken() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    String? token = await FirebaseMessaging.instance.getToken();
+    if (token != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({
+        'fcmToken': token,
+      });
+    }
   }
 
   @override
@@ -52,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
 
   void getToken() async {
     String? token = await FirebaseMessaging.instance.getToken();
-    print("FCM Token: $token");
+    ("FCM Token: $token");
   }
 
   /// Updates Firestore online status
@@ -114,9 +130,11 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
 
         await Future.delayed(const Duration(seconds: 1));
         Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  EditProfileScreen(userId: _auth.currentUser!.uid),
+            ));
       }
     } catch (e) {
       setState(

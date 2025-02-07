@@ -9,14 +9,14 @@ class PrivateChatScreen extends StatefulWidget {
   final String receiverId;
   final String receiverName;
   final String receiverProfileUrl;
-  final String? chatId;
+  final String chatId;
 
   const PrivateChatScreen({
     super.key,
     required this.receiverId,
     required this.receiverName,
     required this.receiverProfileUrl,
-    this.chatId,
+    required this.chatId,
   });
 
   @override
@@ -60,7 +60,7 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
     String firstName = userDoc['firstName'] ?? 'Unknown';
     String lastName = userDoc['lastName'] ?? '';
 
-    final String? chatId = widget.chatId;
+    final String chatId = widget.chatId;
 
     await _firestore
         .collection('private_chats')
@@ -152,7 +152,7 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String? chatId = widget.chatId;
+    final String chatId = widget.chatId;
 
     return Scaffold(
       appBar: AppBar(
@@ -289,7 +289,7 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
                                                 color: Colors.red),
                                             onPressed: () => _deleteMessage(
                                                 snapshot.data!.docs[index].id,
-                                                chatId!,
+                                                chatId,
                                                 data['senderId']),
                                           ),
                                       ],

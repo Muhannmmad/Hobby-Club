@@ -14,7 +14,7 @@ void main() {
   testWidgets('MyApp widget test', (WidgetTester tester) async {
     // Mock the MyApp startup with StartScreen
     await tester.pumpWidget(
-      MaterialApp(home: MyApp(startScreen: const StartScreen())),
+      const MaterialApp(home: MyApp(startScreen: StartScreen())),
     );
     // Verify that "Hobby Club" appears on the StartScreen
     expect(find.text('Hobby Club'), findsOneWidget);

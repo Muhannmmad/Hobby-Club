@@ -15,10 +15,16 @@ class DetailedProfilePage extends StatefulWidget {
 class DetailedProfilePageState extends State<DetailedProfilePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   Map<String, dynamic>? userData;
   bool isLoading = true;
   bool isFavorite = false;
+
+  String createChatId(String senderId, String receiverId) {
+    return senderId.hashCode <= receiverId.hashCode
+        ? '${senderId}_$receiverId'
+        : '${receiverId}_$senderId';
+  }
 
   @override
   void initState() {
@@ -112,6 +118,7 @@ class DetailedProfilePageState extends State<DetailedProfilePage> {
           receiverId: widget.userId,
           receiverName: userData?['firstName'] ?? 'Unknown',
           receiverProfileUrl: userData?['profileImage'] ?? '',
+          chatId: createChatId(_auth.currentUser!.uid, widget.userId),
         ),
       ),
     );

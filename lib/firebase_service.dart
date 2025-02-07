@@ -17,7 +17,7 @@ class FirebaseService {
           .update({
         'fcmToken': senderToken,
       });
-      print("Sender FCM Token stored for user ${user.uid}: $senderToken");
+      ("Sender FCM Token stored for user ${user.uid}: $senderToken");
     }
 
     // Now, store the receiver's FCM token (if available)
@@ -33,8 +33,7 @@ class FirebaseService {
             .update({
           'fcmToken': newReceiverToken,
         });
-        print(
-            "Receiver FCM Token stored for user $receiverUserId: $newReceiverToken");
+        ("Receiver FCM Token stored for user $receiverUserId: $newReceiverToken");
       }
     }
   }

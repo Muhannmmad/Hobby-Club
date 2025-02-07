@@ -1,1 +1,57 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"hobby-club-78807","appId":"1:666549893394:android:7d9a7bba480c96cb041bcb","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"hobby-club-78807","appId":"1:666549893394:ios:2bae9f828088ca28041bcb","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"hobby-club-78807","appId":"1:666549893394:ios:2bae9f828088ca28041bcb","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"hobby-club-78807","configurations":{"android":"1:666549893394:android:7d9a7bba480c96cb041bcb","ios":"1:666549893394:ios:2bae9f828088ca28041bcb","macos":"1:666549893394:ios:2bae9f828088ca28041bcb","web":"1:666549893394:web:b41ff6856aa94c79041bcb","windows":"1:666549893394:web:ced6f91fcb665b97041bcb"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "hobby-club-78807",
+          "appId": "1:666549893394:android:7d9a7bba480c96cb041bcb",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "hobby-club-78807",
+          "appId": "1:666549893394:ios:2bae9f828088ca28041bcb",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "hobby-club-78807",
+          "appId": "1:666549893394:ios:2bae9f828088ca28041bcb",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "hobby-club-78807",
+          "configurations": {
+            "android": "1:666549893394:android:7d9a7bba480c96cb041bcb",
+            "ios": "1:666549893394:ios:2bae9f828088ca28041bcb",
+            "macos": "1:666549893394:ios:2bae9f828088ca28041bcb",
+            "web": "1:666549893394:web:b41ff6856aa94c79041bcb",
+            "windows": "1:666549893394:web:ced6f91fcb665b97041bcb"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

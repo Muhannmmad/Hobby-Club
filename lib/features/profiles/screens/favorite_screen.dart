@@ -5,18 +5,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
-import 'package:hoppy_club/shared/widgets/private_chat%20.dart';
+import 'package:hoppy_club/shared/widgets/private_chat_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
-  const FavoritesScreen({super.key});
+  FavoritesScreen({super.key});
 
   @override
   State<FavoritesScreen> createState() => _FavoritesScreenState();
 }
 
+final FirebaseAuth _auth = FirebaseAuth.instance;
+
 class _FavoritesScreenState extends State<FavoritesScreen> {
   late Future<List<Map<String, dynamic>>> _favoritesFuture;
   List<Map<String, dynamic>> favoriteProfiles = [];
+
+  String createChatId(String senderId, String receiverId) {
+    return senderId.hashCode <= receiverId.hashCode
+        ? '${senderId}_$receiverId'
+        : '${receiverId}_$senderId';
+  }
 
   @override
   void initState() {
@@ -74,13 +82,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     return favorites;
   }
 
-  void startPrivateChat(String userId, String userName) {
+  void startPrivateChat(String userId, String userName, String profileImage) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PrivateChatScreen(
           receiverId: userId,
           receiverName: userName,
+          receiverProfileUrl: profileImage,
+          chatId: createChatId(_auth.currentUser!.uid, userId),
         ),
       ),
     );
@@ -157,14 +167,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                 ),
                         ),
                         Positioned(
-                          top: 12.0,
-                          right: 40.0,
+                          top: 40.0,
+                          right: 12,
                           child: GestureDetector(
-                            onTap: () => startPrivateChat(userId, name),
+                            onTap: () =>
+                                startPrivateChat(userId, name, profileImage),
                             child: const Icon(
                               Icons.message,
                               color: Colors.green,
-                              size: 25,
+                              size: 30,
                             ),
                           ),
                         ),
@@ -178,7 +189,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             icon: Icon(
                               Icons.favorite,
                               color: Colors.red,
-                              size: 22 * scaleFactor,
+                              size: 30 * scaleFactor,
                             ),
                           ),
                         ),

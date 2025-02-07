@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
+import 'package:hoppy_club/features/registeration/screens/login.dart';
 import 'package:hoppy_club/features/registeration/widgets/log_in_button.dart';
-import 'package:hoppy_club/features/registeration/widgets/signup_login.dart';
+
 import 'package:hoppy_club/features/registeration/repository/user_service.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -14,7 +13,6 @@ class SignUpScreen extends StatefulWidget {
 
 class SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -26,6 +24,14 @@ class SignUpScreenState extends State<SignUpScreen> {
 
   void _signUp() async {
     if (_formKey.currentState!.validate()) {
+      // Show loading success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Creating account..."),
+          backgroundColor: Colors.green,
+        ),
+      );
+
       final response = await userService.registerUser(
         _emailController.text,
         _passwordController.text,
@@ -33,19 +39,29 @@ class SignUpScreenState extends State<SignUpScreen> {
         username: _usernameController.text,
       );
 
+      ScaffoldMessenger.of(context)
+          .hideCurrentSnackBar(); // Hide the loading message
+
       if (response.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Account created successfully!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => EditProfileScreen(
-              userId:
-                  _auth.currentUser!.uid, // Pass the current user ID correctly
-            ),
+            builder: (context) => const LoginScreen(),
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.errorMessage ?? "Sign up failed")),
+          SnackBar(
+            content: Text(response.errorMessage ?? "Sign up failed"),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -133,10 +149,6 @@ class SignUpScreenState extends State<SignUpScreen> {
                     ),
                     child: const Text('Sign Up'),
                   ),
-                  SizedBox(height: 20 * scaleFactor),
-                  _buildDivider(scaleFactor),
-                  SizedBox(height: 10 * scaleFactor),
-                  IconScroller(),
                   SizedBox(height: 15 * scaleFactor),
                   _buildLoginRow(scaleFactor),
                 ],
@@ -196,35 +208,6 @@ class SignUpScreenState extends State<SignUpScreen> {
         }
         return null;
       },
-    );
-  }
-
-  Widget _buildDivider(double scaleFactor) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Divider(
-            color: Colors.black,
-            thickness: (1 * scaleFactor).clamp(0.5, 2),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10 * scaleFactor),
-          child: Text(
-            "Or With",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: (14 * scaleFactor).clamp(12, 18),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Divider(
-            color: Colors.black,
-            thickness: (1 * scaleFactor).clamp(0.5, 2),
-          ),
-        ),
-      ],
     );
   }
 

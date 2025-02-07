@@ -136,7 +136,7 @@ class EventScreenState extends State<EventScreen> {
                               Text(
                                 data['name'] ?? 'Unknown Event',
                                 style: const TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.purple,
                                 ),
@@ -151,7 +151,7 @@ class EventScreenState extends State<EventScreen> {
                                       text: 'Place: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 16),
+                                          fontSize: 14),
                                     ),
                                     TextSpan(
                                         text:
@@ -160,7 +160,7 @@ class EventScreenState extends State<EventScreen> {
                                       text: 'Date: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 16),
+                                          fontSize: 14),
                                     ),
                                     TextSpan(
                                       text:
@@ -170,7 +170,7 @@ class EventScreenState extends State<EventScreen> {
                                       text: 'Description: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 16),
+                                          fontSize: 14),
                                     ),
                                     TextSpan(
                                         text:
@@ -286,7 +286,7 @@ class EventScreenState extends State<EventScreen> {
 
                         // Moved the Join/Joined Button to the Top Right
                         Positioned(
-                          top: 8,
+                          top: 30,
                           right: 8,
                           child: currentUserId == creatorUid
                               ? PopupMenuButton<String>(
