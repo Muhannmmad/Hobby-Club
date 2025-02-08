@@ -151,7 +151,7 @@ class EventScreenState extends State<EventScreen> {
                                       text: 'Place: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 14),
+                                          fontSize: 16),
                                     ),
                                     TextSpan(
                                         text:
@@ -160,7 +160,7 @@ class EventScreenState extends State<EventScreen> {
                                       text: 'Date: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 14),
+                                          fontSize: 16),
                                     ),
                                     TextSpan(
                                       text:
@@ -170,7 +170,7 @@ class EventScreenState extends State<EventScreen> {
                                       text: 'Description: ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 14),
+                                          fontSize: 16),
                                     ),
                                     TextSpan(
                                         text:
@@ -188,6 +188,7 @@ class EventScreenState extends State<EventScreen> {
                                     'Created by: ',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      color: Color.fromARGB(255, 189, 36, 223),
                                       fontSize: 14,
                                     ),
                                   ),
@@ -207,7 +208,7 @@ class EventScreenState extends State<EventScreen> {
                                       style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.blue,
+                                        color: Color.fromARGB(255, 129, 4, 246),
                                       ),
                                     ),
                                   ),
@@ -222,7 +223,7 @@ class EventScreenState extends State<EventScreen> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
-                                  color: Colors.green,
+                                  color: Color.fromARGB(255, 189, 36, 223),
                                 ),
                               ),
                               Container(
@@ -235,7 +236,7 @@ class EventScreenState extends State<EventScreen> {
                                 ),
                                 constraints: const BoxConstraints(
                                   maxHeight:
-                                      150, // Scrollable when too many users
+                                      200, // Scrollable when too many users
                                   minWidth: double.infinity,
                                 ),
                                 child: SingleChildScrollView(
@@ -314,7 +315,7 @@ class EventScreenState extends State<EventScreen> {
                                   child: Text(
                                     isJoined ? 'Joined' : 'Join',
                                     style: const TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ),
