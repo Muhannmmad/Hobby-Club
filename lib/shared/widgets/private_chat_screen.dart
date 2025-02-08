@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
 
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class PrivateChatScreen extends StatefulWidget {
   final String receiverId;
