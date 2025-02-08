@@ -22,6 +22,45 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
   final ScrollController _scrollController = ScrollController();
 
   Map<String, bool> messageStatus = {};
+  bool _isSending = false; // Add this at the top of your ChatRoomScreenState
+
+  void _sendMessage() async {
+    if (_isSending) return; // Prevent duplicate sends
+    if (_messageController.text.trim().isEmpty) return;
+
+    User? user = _auth.currentUser;
+    if (user == null) return;
+
+    setState(() {
+      _isSending = true; // Disable sending while processing
+    });
+
+    try {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(user.uid).get();
+      String firstName = userDoc['firstName'] ?? 'Unknown';
+
+      DocumentReference newMessageRef = _firestore.collection('chatroom').doc();
+
+      await newMessageRef.set({
+        'text': _messageController.text.trim(),
+        'senderId': user.uid,
+        'senderName': '$firstName ',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      _messageController.clear();
+      _scrollToBottom();
+    } catch (e) {
+      debugPrint('Error sending message: $e');
+    } finally {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        setState(() {
+          _isSending = false; // Re-enable after delay
+        });
+      });
+    }
+  }
 
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -98,30 +137,6 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
     setState(() {
       messageStatus[senderId] = !(messageStatus[senderId] ?? false);
     });
-  }
-
-  void _sendMessage() async {
-    if (_messageController.text.trim().isEmpty) return;
-    User? user = _auth.currentUser;
-    if (user == null) return;
-
-    DocumentSnapshot userDoc =
-        await _firestore.collection('users').doc(user.uid).get();
-    String firstName = userDoc['firstName'] ?? 'Unknown';
-
-    DocumentReference newMessageRef = _firestore.collection('chatroom').doc();
-
-    await newMessageRef.set({
-      'text': _messageController.text,
-      'senderId': user.uid,
-      'senderName': '$firstName ',
-      'timestamp': FieldValue.serverTimestamp(),
-    });
-
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    _messageController.clear();
-    _scrollToBottom();
   }
 
   void _deleteMessage(String messageId, String senderId) async {
@@ -460,9 +475,12 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                     IconButton(
                       icon: Transform.rotate(
                         angle: -90 * (3.141592653589793 / 180),
-                        child: const Icon(Icons.send, color: Colors.blue),
+                        child: Icon(Icons.send,
+                            color: _isSending ? Colors.grey : Colors.blue),
                       ),
-                      onPressed: _sendMessage,
+                      onPressed: _isSending
+                          ? null
+                          : _sendMessage, // Disable when sending
                     ),
                   ],
                 ),

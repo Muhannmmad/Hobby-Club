@@ -30,6 +30,7 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ScrollController _scrollController = ScrollController();
+  bool _isSending = false;
 
   @override
   void initState() {
@@ -52,91 +53,50 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
   }
 
   void _sendMessage() async {
-    if (_messageController.text.trim().isEmpty) return;
+    if (_messageController.text.trim().isEmpty || _isSending) return;
 
-    User? user = _auth.currentUser;
-    if (user == null) return;
-
-    DocumentSnapshot userDoc =
-        await _firestore.collection('users').doc(user.uid).get();
-    String firstName = userDoc['firstName'] ?? 'Unknown';
-    String lastName = userDoc['lastName'] ?? '';
-
-    final String chatId = widget.chatId;
-
-    await _firestore
-        .collection('private_chats')
-        .doc(chatId)
-        .collection('messages')
-        .add({
-      'text': _messageController.text,
-      'senderId': user.uid,
-      'senderName': '$firstName ',
-      'timestamp': FieldValue.serverTimestamp(),
+    setState(() {
+      _isSending = true; // Disable button
     });
 
-    await _firestore.collection('private_chats').doc(chatId).set({
-      'participants': [
-        user.uid,
-        widget.receiverId
-      ], // Fix spelling & use correct IDs
-      'lastMessage': _messageController.text,
-      'timestamp': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true)); // Ensures data is not overwritten
-
-    _messageController.clear();
-    _scrollToBottom();
-
-    // Fetch receiver FCM token
-    DocumentSnapshot receiverDoc =
-        await _firestore.collection('users').doc(widget.receiverId).get();
-    String? receiverToken = receiverDoc['fcmToken'];
-
-    if (receiverToken != null) {
-      String messageText =
-          _messageController.text; // Store message before clearing
-      _messageController.clear();
-      _scrollToBottom();
-      await sendPushNotification(
-          receiverToken, '$firstName $lastName', messageText);
-    }
-  }
-
-  Future<void> sendPushNotification(
-      String token, String senderName, String message) async {
-    const String serverKey =
-        'YOUR_SERVER_KEY_HERE'; // Replace with your actual Firebase server key
-    const String fcmUrl = 'https://fcm.googleapis.com/fcm/send';
-
     try {
-      final response = await http.post(
-        Uri.parse(fcmUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'key=$serverKey',
-        },
-        body: jsonEncode({
-          'to': token,
-          'notification': {
-            'title': senderName,
-            'body': message,
-            'sound': 'default',
-          },
-          'data': {
-            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-            'senderId': FirebaseAuth.instance.currentUser!.uid,
-          },
-        }),
-      );
-
-      print("FCM Response Code: ${response.statusCode}");
-      print("FCM Response Body: ${response.body}");
-
-      if (response.statusCode != 200) {
-        print("FCM Error: ${response.body}");
+      User? user = _auth.currentUser;
+      if (user == null) {
+        throw Exception("User not found"); // Stop execution
       }
-    } catch (e) {
-      print("Error sending push notification: $e");
+
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(user.uid).get();
+      String firstName = userDoc['firstName'] ?? 'Unknown';
+      String lastName = userDoc['lastName'] ?? '';
+
+      final String chatId = widget.chatId;
+      String messageText = _messageController.text;
+
+      _messageController.clear(); // Clear input field immediately
+
+      await _firestore
+          .collection('private_chats')
+          .doc(chatId)
+          .collection('messages')
+          .add({
+        'text': messageText,
+        'senderId': user.uid,
+        'senderName': '$firstName $lastName',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      await _firestore.collection('private_chats').doc(chatId).set({
+        'participants': [user.uid, widget.receiverId],
+        'lastMessage': messageText,
+        'timestamp': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      _scrollToBottom();
+    } finally {
+      setState(() {
+        _isSending = false;
+      });
     }
   }
 
@@ -384,9 +344,12 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
                   IconButton(
                     icon: Transform.rotate(
                       angle: -90 * (3.141592653589793 / 180),
-                      child: const Icon(Icons.send, color: Colors.blue),
+                      child: Icon(Icons.send,
+                          color: _isSending ? Colors.grey : Colors.blue),
                     ),
-                    onPressed: _sendMessage,
+                    onPressed: _isSending
+                        ? null
+                        : _sendMessage, // Disable when sending
                   ),
                 ],
               ),
