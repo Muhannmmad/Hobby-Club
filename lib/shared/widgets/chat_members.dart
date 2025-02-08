@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'private_chat_screen.dart';
 
 class ChatMembersScreen extends StatefulWidget {
@@ -101,6 +102,24 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
 
                         lastMessageId = lastMsgData.id;
                       }
+                      DateTime? seenTimestamp;
+                      if (messageSnapshot.hasData &&
+                          messageSnapshot.data!.docs.isNotEmpty) {
+                        var lastMsgData = messageSnapshot.data!.docs.first;
+
+                        if (lastMsgData.data() != null &&
+                            (lastMsgData.data() as Map<String, dynamic>)
+                                .containsKey('isRead') &&
+                            lastMsgData['isRead'] as bool) {
+                          // Check if there's a timestamp available
+                          if ((lastMsgData.data() as Map<String, dynamic>)
+                              .containsKey('timestamp')) {
+                            seenTimestamp =
+                                (lastMsgData['timestamp'] as Timestamp)
+                                    .toDate();
+                          }
+                        }
+                      }
 
                       return ListTile(
                         leading: CircleAvatar(
@@ -146,10 +165,12 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                                 );
                               },
                             ),
-                            if (senderId == widget.user.uid && isRead)
-                              const Text(
-                                "Seen",
-                                style: TextStyle(
+                            if (senderId == widget.user.uid &&
+                                isRead &&
+                                seenTimestamp != null)
+                              Text(
+                                "Seen at ${DateFormat('MMM d, hh:mm a').format(seenTimestamp!)}",
+                                style: const TextStyle(
                                   fontSize: 12,
                                   color: Colors.blue,
                                   fontWeight: FontWeight.bold,
