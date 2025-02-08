@@ -41,13 +41,34 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
             return const Center(child: Text("No chats available."));
           }
 
+          // ✅ Convert documents to a list
+          List<QueryDocumentSnapshot> chatDocs = snapshot.data!.docs;
+
+          // ✅ Ensure sorting works properly
+          chatDocs.sort((a, b) {
+            var aData = a.data() as Map<String, dynamic>;
+            var bData = b.data() as Map<String, dynamic>;
+
+            Timestamp? aTimestamp = aData['lastMessageTimestamp'];
+            Timestamp? bTimestamp = bData['lastMessageTimestamp'];
+
+            if (aTimestamp != null && bTimestamp != null) {
+              return bTimestamp.compareTo(aTimestamp); // Newest first
+            } else if (aTimestamp != null) {
+              return -1; // Chats with timestamps first
+            } else if (bTimestamp != null) {
+              return 1; // Chats without timestamps go last
+            } else {
+              return 0; // Keep order if both are missing timestamps
+            }
+          });
+
           return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
+            itemCount: chatDocs.length,
             itemBuilder: (context, index) {
-              var chat = snapshot.data!.docs[index];
+              var chat = chatDocs[index];
               List<dynamic> participants = chat['participants'];
 
-              // Find the other participant (excluding the current user)
               String receiverId = participants.firstWhere(
                 (id) => id != widget.user.uid,
                 orElse: () => "",
@@ -59,7 +80,7 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                 future: _firestore.collection('users').doc(receiverId).get(),
                 builder: (context, userSnapshot) {
                   if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-                    return const SizedBox.shrink(); // Hide invalid users
+                    return const SizedBox.shrink();
                   }
 
                   var receiverData =
@@ -84,34 +105,33 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                       bool isRead = false;
                       String lastMessageId = "";
                       String senderId = "";
+                      DateTime? lastMessageTime;
+                      DateTime? seenTimestamp;
 
                       if (messageSnapshot.hasData &&
                           messageSnapshot.data!.docs.isNotEmpty) {
                         var lastMsgData = messageSnapshot.data!.docs.first;
                         lastMessage = lastMsgData['text'] ?? "No messages yet";
                         senderId = lastMsgData['senderId'] ?? "";
+                        lastMessageId = lastMsgData.id;
 
-                        // ✅ Check if message has been read
                         if (lastMsgData.data() != null &&
                             (lastMsgData.data() as Map<String, dynamic>)
                                 .containsKey('isRead')) {
                           isRead = lastMsgData['isRead'] as bool;
-                        } else {
-                          isRead = false;
                         }
 
-                        lastMessageId = lastMsgData.id;
-                      }
-                      DateTime? seenTimestamp;
-                      if (messageSnapshot.hasData &&
-                          messageSnapshot.data!.docs.isNotEmpty) {
-                        var lastMsgData = messageSnapshot.data!.docs.first;
+                        if (lastMsgData.data() != null &&
+                            (lastMsgData.data() as Map<String, dynamic>)
+                                .containsKey('timestamp')) {
+                          lastMessageTime =
+                              (lastMsgData['timestamp'] as Timestamp).toDate();
+                        }
 
                         if (lastMsgData.data() != null &&
                             (lastMsgData.data() as Map<String, dynamic>)
                                 .containsKey('isRead') &&
                             lastMsgData['isRead'] as bool) {
-                          // Check if there's a timestamp available
                           if ((lastMsgData.data() as Map<String, dynamic>)
                               .containsKey('timestamp')) {
                             seenTimestamp =
@@ -135,36 +155,34 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                         title: Text(
                           receiverName,
                           style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold),
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                // Dynamically adjust the font size based on screen width
-                                double fontSize =
-                                    constraints.maxWidth < 300 ? 14 : 16;
-
-                                return Text(
-                                  lastMessage,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: (!isRead &&
-                                            senderId != widget.user.uid)
-                                        ? Colors.red
-                                        : Colors
-                                            .black, // Red for unread messages
-                                    fontWeight:
-                                        (!isRead && senderId != widget.user.uid)
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                    fontSize: fontSize, // Adjusted font size
-                                  ),
-                                );
-                              },
+                            Text(
+                              lastMessage,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: (!isRead && senderId != widget.user.uid)
+                                    ? Colors.red
+                                    : Colors.black,
+                                fontWeight:
+                                    (!isRead && senderId != widget.user.uid)
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                fontSize: 16,
+                              ),
                             ),
+                            if (lastMessageTime != null)
+                              Text(
+                                " ${DateFormat('MMM d, hh:mm a').format(lastMessageTime!)}",
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
                             if (senderId == widget.user.uid &&
                                 isRead &&
                                 seenTimestamp != null)
@@ -179,7 +197,6 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                           ],
                         ),
                         onTap: () {
-                          // Mark message as read if it's the receiver and not read yet
                           if (!isRead &&
                               lastMessageId.isNotEmpty &&
                               senderId != widget.user.uid) {
@@ -251,7 +268,7 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
     try {
       await _firestore.collection('private_chats').doc(chatId).delete();
     } catch (e) {
-      print("Error deleting chat: $e");
+      ("Error deleting chat: $e");
     }
   }
 }
