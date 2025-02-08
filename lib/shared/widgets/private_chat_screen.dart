@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
+
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -138,16 +140,42 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
     }
   }
 
-  void _deleteMessage(String messageId, String chatId, String senderId) async {
+  void _deleteMessage(
+      BuildContext context, String messageId, String chatId, String senderId) {
     User? user = _auth.currentUser;
     if (user == null || user.uid != senderId) return;
 
-    await _firestore
-        .collection('private_chats')
-        .doc(chatId)
-        .collection('messages')
-        .doc(messageId)
-        .delete();
+    // Show confirmation dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Delete Message"),
+          content: const Text("Are you sure you want to delete this message?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext); // Close the dialog
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(
+                    dialogContext); // Close the dialog before deleting
+                await _firestore
+                    .collection('private_chats')
+                    .doc(chatId)
+                    .collection('messages')
+                    .doc(messageId)
+                    .delete();
+              },
+              child: const Text("Delete", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -156,34 +184,47 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 25,
-              backgroundColor: const Color.fromARGB(255, 181, 237, 186),
-              backgroundImage: widget.receiverProfileUrl.isNotEmpty
-                  ? (Uri.tryParse(widget.receiverProfileUrl)?.hasAbsolutePath ==
-                          true
-                      ? NetworkImage(widget.receiverProfileUrl)
-                      : null)
-                  : null,
-              child: widget.receiverProfileUrl.isEmpty ||
-                      Uri.tryParse(widget.receiverProfileUrl)
-                              ?.hasAbsolutePath !=
-                          true
-                  ? const Icon(Icons.person, size: 25, color: Colors.grey)
-                  : null,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              widget.receiverName,
-              style: const TextStyle(
-                fontSize: 16, // Smaller size
-                fontWeight: FontWeight.bold,
-                color: Colors.blue, // Blue color
+        title: InkWell(
+          onTap: () {
+            // Navigate to DetailedProfileScreen when the AppBar is tapped
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    DetailedProfilePage(userId: widget.receiverId),
               ),
-            ),
-          ],
+            );
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 25,
+                backgroundColor: const Color.fromARGB(255, 181, 237, 186),
+                backgroundImage: widget.receiverProfileUrl.isNotEmpty
+                    ? (Uri.tryParse(widget.receiverProfileUrl)
+                                ?.hasAbsolutePath ==
+                            true
+                        ? NetworkImage(widget.receiverProfileUrl)
+                        : null)
+                    : null,
+                child: widget.receiverProfileUrl.isEmpty ||
+                        Uri.tryParse(widget.receiverProfileUrl)
+                                ?.hasAbsolutePath !=
+                            true
+                    ? const Icon(Icons.person, size: 25, color: Colors.grey)
+                    : null,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                widget.receiverName,
+                style: const TextStyle(
+                  fontSize: 16, // Smaller size
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue, // Blue color
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       body: SafeArea(
@@ -288,9 +329,11 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
                                             icon: const Icon(Icons.delete,
                                                 color: Colors.red),
                                             onPressed: () => _deleteMessage(
-                                                snapshot.data!.docs[index].id,
-                                                chatId,
-                                                data['senderId']),
+                                              context, // Pass context for the confirmation dialog
+                                              snapshot.data!.docs[index].id,
+                                              chatId,
+                                              data['senderId'],
+                                            ),
                                           ),
                                       ],
                                     ),
