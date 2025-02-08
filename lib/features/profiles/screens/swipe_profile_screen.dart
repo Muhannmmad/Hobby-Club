@@ -99,6 +99,128 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
     }
   }
 
+  void applySearchFilter(
+      String name, int? minAge, int? maxAge, String country, String city) {
+    setState(() {
+      userProfiles = userProfiles.where((profile) {
+        bool matchesName = name.isEmpty ||
+            profile['firstName']
+                .toString()
+                .toLowerCase()
+                .contains(name.toLowerCase());
+        bool matchesAge = true;
+
+        if (minAge != null || maxAge != null) {
+          int age = int.tryParse(profile['age']?.toString() ?? '0') ?? 0;
+          int min = minAge ?? 10;
+          int max = maxAge ?? 100;
+          matchesAge = age >= min && age <= max;
+        }
+
+        bool matchesCountry = country.isEmpty ||
+            profile['country']
+                .toString()
+                .toLowerCase()
+                .contains(country.toLowerCase());
+        bool matchesCity = city.isEmpty ||
+            profile['city']
+                .toString()
+                .toLowerCase()
+                .contains(city.toLowerCase());
+
+        return matchesName && matchesAge && matchesCountry && matchesCity;
+      }).toList();
+    });
+  }
+
+  void showSearchDialog() {
+    TextEditingController nameController = TextEditingController();
+    TextEditingController countryController = TextEditingController();
+    TextEditingController cityController = TextEditingController();
+    int? selectedMinAge;
+    int? selectedMaxAge;
+
+    List<int> ageOptions = List.generate(
+        91, (index) => index + 10); // Generates ages from 10 to 100
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Search Profiles'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                DropdownButtonFormField<int>(
+                  value: selectedMinAge,
+                  decoration: const InputDecoration(labelText: 'Min Age'),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedMinAge = value;
+                    });
+                  },
+                  items: ageOptions.map((age) {
+                    return DropdownMenuItem(
+                      value: age,
+                      child: Text('$age'),
+                    );
+                  }).toList(),
+                ),
+                DropdownButtonFormField<int>(
+                  value: selectedMaxAge,
+                  decoration: const InputDecoration(labelText: 'Max Age'),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedMaxAge = value;
+                    });
+                  },
+                  items: ageOptions.map((age) {
+                    return DropdownMenuItem(
+                      value: age,
+                      child: Text('$age'),
+                    );
+                  }).toList(),
+                ),
+                TextField(
+                  controller: countryController,
+                  decoration: const InputDecoration(labelText: 'Country'),
+                ),
+                TextField(
+                  controller: cityController,
+                  decoration: const InputDecoration(labelText: 'City'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                applySearchFilter(
+                  nameController.text.trim(),
+                  selectedMinAge,
+                  selectedMaxAge,
+                  countryController.text.trim(),
+                  cityController.text.trim(),
+                );
+                Navigator.pop(context);
+              },
+              child: const Text('Search'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -115,6 +237,13 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                       return buildProfileCard(userData, index);
                     },
                   ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showSearchDialog();
+          },
+          backgroundColor: Colors.blueAccent,
+          child: const Icon(Icons.search, size: 32, color: Colors.white),
+        ),
         bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
       ),
     );
@@ -140,7 +269,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
       body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height * 0.95,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -159,7 +288,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
               if (index + 1 < userProfiles.length)
                 Positioned(
                   top: 1,
-                  left: 4,
+                  left: 2,
                   right: -2,
                   child: Transform.translate(
                     offset: const Offset(15, 25),
@@ -168,7 +297,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                       child: Image.network(
                         userProfiles[index + 1]['profileImage'] ?? '',
                         width: double.infinity,
-                        height: MediaQuery.of(context).size.height * 0.63,
+                        height: MediaQuery.of(context).size.height * 0.65,
                         fit: BoxFit.cover,
                         color: Colors.black.withValues(alpha: 0.2),
                         colorBlendMode: BlendMode.darken,
@@ -176,7 +305,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                           return Image.asset(
                             'assets/profiles/profile.jpg',
                             width: double.infinity,
-                            height: MediaQuery.of(context).size.height * 0.63,
+                            height: MediaQuery.of(context).size.height * 0.65,
                             fit: BoxFit.cover,
                             color: Colors.black.withValues(alpha: 0.2),
                             colorBlendMode: BlendMode.darken,
@@ -196,14 +325,16 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                           borderRadius: BorderRadius.circular(15),
                           child: Image.network(
                             profileImage,
-                            width: double.infinity,
-                            height: double.infinity,
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            height: MediaQuery.of(context).size.height * 0.65,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return Image.asset(
                                 'assets/profiles/profile.jpg',
-                                width: double.infinity,
-                                height: double.infinity,
+                                width: MediaQuery.of(context).size.width *
+                                    0.95, // 90% of screen width
+                                height: MediaQuery.of(context).size.height *
+                                    0.65, // 50% of screen height
                                 fit: BoxFit.cover,
                               );
                             },
@@ -217,13 +348,13 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                             child: CircleAvatar(
                               backgroundColor:
                                   Colors.white.withValues(alpha: 0.8),
-                              radius: 30,
+                              radius: 25,
                               child: Icon(
                                 isFavorite
                                     ? Icons.favorite
                                     : Icons.favorite_border,
                                 color: isFavorite ? Colors.red : Colors.black,
-                                size: 45,
+                                size: 35,
                               ),
                             ),
                           ),
@@ -251,11 +382,11 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                             child: CircleAvatar(
                               backgroundColor:
                                   Colors.white.withValues(alpha: 0.8),
-                              radius: 30,
+                              radius: 25,
                               child: const Icon(
                                 Icons.message,
                                 color: Colors.green,
-                                size: 45,
+                                size: 35,
                               ),
                             ),
                           ),
@@ -263,17 +394,17 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(8),
                     width: double.infinity,
-                    height: 150,
+                    height: 200,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.1),
+                          color: const Color.fromARGB(255, 148, 82, 82)
+                              .withValues(alpha: 0.5),
                           blurRadius: 10,
                           spreadRadius: 5,
                         ),
