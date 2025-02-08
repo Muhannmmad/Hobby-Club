@@ -70,16 +70,20 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.8,
-              width: MediaQuery.of(context).size.width * 0.9,
+              width: MediaQuery.of(context).size.width * 0.8,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 219, 155, 213),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius:
+                    BorderRadius.circular(20), // Applies rounded corners
               ),
-              child: PrivateChatScreen(
-                receiverId: receiverId,
-                receiverName: firstName, // Pass only first name
-                receiverProfileUrl: profileImageUrl,
-                chatId: createChatId(_auth.currentUser!.uid, receiverId),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: PrivateChatScreen(
+                  receiverId: receiverId,
+                  receiverName: firstName,
+                  receiverProfileUrl: profileImageUrl,
+                  chatId: createChatId(_auth.currentUser!.uid, receiverId),
+                ),
               ),
             ),
           );
