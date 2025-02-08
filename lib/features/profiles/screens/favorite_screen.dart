@@ -167,8 +167,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                 ),
                         ),
                         Positioned(
-                          top: 40.0,
-                          right: 12,
+                          top: 10.0,
+                          right: 10,
                           child: GestureDetector(
                             onTap: () =>
                                 startPrivateChat(userId, name, profileImage),
@@ -181,7 +181,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         ),
                         Positioned(
                           top: 0.0,
-                          right: 0.0,
+                          left: 0.0,
                           child: IconButton(
                             onPressed: () async {
                               await removeFromFavorites(userId, index);
