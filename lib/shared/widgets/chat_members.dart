@@ -66,7 +66,6 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                   String firstName = receiverData['firstName'] ?? "Unknown";
                   String lastName = receiverData['lastName'] ?? "";
                   String receiverName = "$firstName $lastName";
-
                   String receiverProfileUrl =
                       receiverData['profileImage']?.toString() ?? "";
 
@@ -81,22 +80,23 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                     builder: (context,
                         AsyncSnapshot<QuerySnapshot> messageSnapshot) {
                       String lastMessage = "No messages yet";
-                      bool isRead = false; // Default to false (unread)
+                      bool isRead = false;
                       String lastMessageId = "";
+                      String senderId = "";
 
                       if (messageSnapshot.hasData &&
                           messageSnapshot.data!.docs.isNotEmpty) {
                         var lastMsgData = messageSnapshot.data!.docs.first;
                         lastMessage = lastMsgData['text'] ?? "No messages yet";
+                        senderId = lastMsgData['senderId'] ?? "";
 
-                        // ✅ Safely check if "isRead" exists before accessing
+                        // ✅ Check if message has been read
                         if (lastMsgData.data() != null &&
                             (lastMsgData.data() as Map<String, dynamic>)
                                 .containsKey('isRead')) {
                           isRead = lastMsgData['isRead'] as bool;
                         } else {
-                          isRead =
-                              false; // Default to false if field is missing
+                          isRead = false;
                         }
 
                         lastMessageId = lastMsgData.id;
@@ -104,7 +104,7 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
 
                       return ListTile(
                         leading: CircleAvatar(
-                          radius: 30, // Bigger Profile Image
+                          radius: 30,
                           backgroundColor: Colors.grey[300],
                           backgroundImage: receiverProfileUrl.isNotEmpty
                               ? NetworkImage(receiverProfileUrl)
@@ -116,21 +116,52 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                         title: Text(
                           receiverName,
                           style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                              fontSize: 14, fontWeight: FontWeight.bold),
                         ),
-                        subtitle: Text(
-                          lastMessage,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: isRead ? Colors.black : Colors.red,
-                            fontWeight:
-                                isRead ? FontWeight.normal : FontWeight.bold,
-                          ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                // Dynamically adjust the font size based on screen width
+                                double fontSize =
+                                    constraints.maxWidth < 300 ? 14 : 16;
+
+                                return Text(
+                                  lastMessage,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: (!isRead &&
+                                            senderId != widget.user.uid)
+                                        ? Colors.red
+                                        : Colors
+                                            .black, // Red for unread messages
+                                    fontWeight:
+                                        (!isRead && senderId != widget.user.uid)
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                    fontSize: fontSize, // Adjusted font size
+                                  ),
+                                );
+                              },
+                            ),
+                            if (senderId == widget.user.uid && isRead)
+                              const Text(
+                                "Seen",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                          ],
                         ),
                         onTap: () {
-                          // ✅ **Mark message as read when chat is opened**
-                          if (!isRead && lastMessageId.isNotEmpty) {
+                          // Mark message as read if it's the receiver and not read yet
+                          if (!isRead &&
+                              lastMessageId.isNotEmpty &&
+                              senderId != widget.user.uid) {
                             _firestore
                                 .collection('private_chats')
                                 .doc(chat.id)
@@ -146,10 +177,13 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                                 receiverId: receiverId,
                                 receiverName: receiverName,
                                 receiverProfileUrl: receiverProfileUrl,
-                                chatId: chat.id, // Pass chatId correctly
+                                chatId: chat.id,
                               ),
                             ),
                           );
+                        },
+                        onLongPress: () {
+                          _showDeleteConfirmation(context, chat.id);
                         },
                       );
                     },
@@ -161,5 +195,42 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
         },
       ),
     );
+  }
+
+  // ✅ Show confirmation dialog before deleting chat
+  void _showDeleteConfirmation(BuildContext context, String chatId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Delete Chat"),
+          content: const Text("Are you sure you want to delete this chat?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext); // Close dialog
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _deleteChat(chatId);
+                Navigator.pop(dialogContext); // Close dialog after deleting
+              },
+              child: const Text("Delete", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // ✅ Delete chat from Firestore
+  Future<void> _deleteChat(String chatId) async {
+    try {
+      await _firestore.collection('private_chats').doc(chatId).delete();
+    } catch (e) {
+      print("Error deleting chat: $e");
+    }
   }
 }
