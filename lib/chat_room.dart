@@ -525,7 +525,8 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                       ),
                                       Text(
                                         data['text'],
-                                        style: const TextStyle(fontSize: 14),
+                                        style: const TextStyle(
+                                            fontSize: 18, color: Colors.white),
                                       ),
                                       Row(
                                         mainAxisAlignment:
@@ -534,9 +535,10 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                           Expanded(
                                             child: Text(
                                               time,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontSize: 12,
-                                                  color: Colors.grey[600]),
+                                                  color: Color.fromARGB(
+                                                      146, 255, 255, 255)),
                                             ),
                                           ),
                                           if (isMine)

@@ -169,7 +169,7 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                                 " ${DateFormat('MMM d, hh:mm a').format(chat["lastMessageTime"]!)}",
                                 style: const TextStyle(
                                     fontSize: 12,
-                                    color: Color.fromARGB(255, 237, 237, 237)),
+                                    color: Color.fromARGB(146, 255, 255, 255)),
                               ),
                             if (chat["senderId"] == widget.user.uid &&
                                 chat["isRead"] &&

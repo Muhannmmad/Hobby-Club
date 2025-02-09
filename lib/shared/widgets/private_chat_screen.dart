@@ -259,7 +259,7 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
-                                  color: Colors.white),
+                                  color: Color.fromARGB(146, 255, 255, 255)),
                             ),
                           ),
                         );
@@ -306,7 +306,8 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
                                           time,
                                           style: const TextStyle(
                                               fontSize: 12,
-                                              color: Colors.white),
+                                              color: Color.fromARGB(
+                                                  146, 255, 255, 255)),
                                         ),
                                         if (isMine)
                                           IconButton(
