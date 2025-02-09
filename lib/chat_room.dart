@@ -123,7 +123,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                               .bottomCenter, // Aligns the name at the bottom
                           children: [
                             CircleAvatar(
-                              radius: 45,
+                              radius: 55,
                               backgroundColor: Colors.transparent,
                               backgroundImage: profileImage.isNotEmpty
                                   ? NetworkImage(profileImage)
@@ -156,8 +156,8 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                               bottom: 5,
                               right: 5,
                               child: Container(
-                                width: 10,
-                                height: 10,
+                                width: 15,
+                                height: 15,
                                 decoration: BoxDecoration(
                                   color: Colors.green,
                                   shape: BoxShape.circle,
@@ -295,10 +295,14 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
     return PopScope(
       canPop: true,
       child: Scaffold(
+        backgroundColor: const Color.fromARGB(252, 0, 3, 0),
         appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: const Color.fromARGB(252, 0, 3, 0),
           title: const Text(
             'Chat Room',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           actions: [
             Padding(
@@ -324,15 +328,14 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                     Icon(
                       Icons.message,
                       size: 40,
-                      color: Color.fromARGB(255, 3, 21, 187),
+                      color: Colors.white,
                     ),
                     SizedBox(width: 4), // Add spacing between icon and text
                     Text(
                       'Messenger',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Color.fromARGB(
-                            255, 3, 21, 187), // Same color as the icon
+                        color: Colors.white, // Same color as the icon
                       ),
                     ),
                   ],
@@ -422,10 +425,8 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: isMine
-                                        ? const Color.fromARGB(
-                                            255, 210, 227, 239)
-                                        : const Color.fromARGB(
-                                            255, 250, 227, 245),
+                                        ? const Color.fromARGB(255, 2, 34, 8)
+                                        : const Color.fromARGB(230, 27, 26, 26),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Column(
@@ -501,7 +502,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                                   style: const TextStyle(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.bold,
-                                                    color: Colors.blue,
+                                                    color: Colors.white,
                                                   ),
                                                 ),
                                               ),
@@ -514,7 +515,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                                 ),
                                                 child: const Icon(
                                                   Icons.message,
-                                                  color: Colors.green,
+                                                  color: Colors.white,
                                                   size: 40,
                                                 ),
                                               ),
@@ -594,8 +595,10 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                     IconButton(
                       icon: Transform.rotate(
                         angle: -90 * (3.141592653589793 / 180),
-                        child: Icon(Icons.send,
-                            color: _isSending ? Colors.grey : Colors.blue),
+                        child: Icon(
+                          Icons.send,
+                          color: _isSending ? Colors.grey : Colors.white,
+                        ),
                       ),
                       onPressed: _isSending
                           ? null
