@@ -166,7 +166,10 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
     final String chatId = widget.chatId;
 
     return Scaffold(
+      backgroundColor: const Color.fromARGB(252, 0, 3, 0),
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: const Color.fromARGB(252, 0, 3, 0),
         title: InkWell(
           onTap: () {
             // Navigate to DetailedProfileScreen when the AppBar is tapped
@@ -201,10 +204,9 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
               Text(
                 widget.receiverName,
                 style: const TextStyle(
-                  fontSize: 16, // Smaller size
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue, // Blue color
-                ),
+                    fontSize: 16, // Smaller size
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
             ],
           ),
@@ -255,10 +257,9 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
                             child: Text(
                               date,
                               style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.white),
                             ),
                           ),
                         );
@@ -285,9 +286,8 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: isMine
-                                      ? const Color.fromARGB(255, 208, 220, 240)
-                                      : const Color.fromARGB(
-                                          255, 238, 215, 238),
+                                      ? const Color.fromARGB(255, 2, 34, 8)
+                                      : const Color.fromARGB(230, 27, 26, 26),
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Column(
@@ -295,7 +295,8 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
                                   children: [
                                     Text(
                                       data['text'],
-                                      style: const TextStyle(fontSize: 16),
+                                      style: const TextStyle(
+                                          fontSize: 18, color: Colors.white),
                                     ),
                                     Row(
                                       mainAxisAlignment:
@@ -303,9 +304,9 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
                                       children: [
                                         Text(
                                           time,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 12,
-                                              color: Colors.grey[600]),
+                                              color: Colors.white),
                                         ),
                                         if (isMine)
                                           IconButton(
@@ -368,7 +369,7 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
                     icon: Transform.rotate(
                       angle: -90 * (3.141592653589793 / 180),
                       child: Icon(Icons.send,
-                          color: _isSending ? Colors.grey : Colors.blue),
+                          color: _isSending ? Colors.grey : Colors.white),
                     ),
                     onPressed: _isSending
                         ? null
