@@ -24,9 +24,31 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color.fromARGB(252, 0, 3, 0),
-        title: const Text(
-          "Messenger",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        title: LayoutBuilder(
+          builder: (context, constraints) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  'assets/icons/messenger.png',
+                  height: constraints.maxWidth < 500
+                      ? 20
+                      : 30, // Adjust size based on screen width
+                  width: constraints.maxWidth < 360 ? 20 : 30,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  "Messenger",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize:
+                        18, // You can adjust this dynamically too if needed
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
       body: StreamBuilder(

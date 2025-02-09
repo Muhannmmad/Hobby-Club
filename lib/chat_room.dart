@@ -322,23 +322,11 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                     debugPrint("⚠️ No authenticated user found!");
                   }
                 },
-                // ignore: prefer_const_constructors
-                child: Row(
-                  children: const [
-                    Icon(
-                      Icons.message,
-                      size: 40,
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: 4), // Add spacing between icon and text
-                    Text(
-                      'Messenger',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white, // Same color as the icon
-                      ),
-                    ),
-                  ],
+                child: Image.asset(
+                  'assets/icons/messenger.gif',
+                  height: 80, // Adjust as needed
+                  width: 80, // Adjust as needed
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -435,120 +423,118 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          Row(
-                                            children: [
-                                              FutureBuilder<DocumentSnapshot>(
-                                                future: FirebaseFirestore
-                                                    .instance
-                                                    .collection('users')
-                                                    .doc(data['senderId'])
-                                                    .get(),
-                                                builder: (context, snapshot) {
-                                                  if (snapshot
-                                                          .connectionState ==
-                                                      ConnectionState.waiting) {
-                                                    return const CircleAvatar(
-                                                      radius: 12,
-                                                      backgroundColor:
-                                                          Colors.grey,
-                                                    );
-                                                  }
-                                                  if (!snapshot.hasData ||
-                                                      !snapshot.data!.exists) {
-                                                    return const CircleAvatar(
-                                                      radius: 12,
-                                                      backgroundColor:
-                                                          Colors.grey,
-                                                      child: Icon(Icons.person,
-                                                          size: 12,
-                                                          color: Colors.white),
-                                                    );
-                                                  }
-                                                  String profileUrl =
-                                                      snapshot.data!.get(
-                                                              'profileImage') ??
-                                                          '';
-                                                  return CircleAvatar(
+                                          GestureDetector(
+                                            onTap: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DetailedProfilePage(
+                                                  userId: data['senderId'],
+                                                ),
+                                              ),
+                                            ),
+                                            child:
+                                                FutureBuilder<DocumentSnapshot>(
+                                              future: FirebaseFirestore.instance
+                                                  .collection('users')
+                                                  .doc(data['senderId'])
+                                                  .get(),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return const CircleAvatar(
                                                     radius: 20,
-                                                    backgroundImage:
-                                                        profileUrl.isNotEmpty
-                                                            ? NetworkImage(
-                                                                profileUrl)
-                                                            : null,
                                                     backgroundColor:
-                                                        Colors.grey[300],
-                                                    child: profileUrl.isEmpty
-                                                        ? const Icon(
-                                                            Icons.person,
-                                                            size: 12,
-                                                            color: Colors.white)
-                                                        : null,
+                                                        Colors.grey,
                                                   );
-                                                },
-                                              ),
-                                              const SizedBox(width: 4),
-                                              GestureDetector(
-                                                onTap: () => Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DetailedProfilePage(
-                                                      userId: data['senderId'],
-                                                    ),
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  data['senderName'],
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 4),
-                                              GestureDetector(
-                                                onTap: () =>
-                                                    _showPrivateChatScreen(
-                                                  data['senderId'],
-                                                  data['senderName'],
-                                                ),
-                                                child: const Icon(
-                                                  Icons.message,
-                                                  color: Colors.white,
-                                                  size: 40,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      Text(
-                                        data['text'],
-                                        style: const TextStyle(
-                                            fontSize: 18, color: Colors.white),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              time,
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Color.fromARGB(
-                                                      146, 255, 255, 255)),
+                                                }
+                                                if (!snapshot.hasData ||
+                                                    !snapshot.data!.exists) {
+                                                  return const CircleAvatar(
+                                                    radius: 20,
+                                                    backgroundColor:
+                                                        Colors.grey,
+                                                    child: Icon(Icons.person,
+                                                        size: 20,
+                                                        color: Colors.white),
+                                                  );
+                                                }
+                                                String profileUrl = snapshot
+                                                        .data!
+                                                        .get('profileImage') ??
+                                                    '';
+                                                return CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundImage: profileUrl
+                                                          .isNotEmpty
+                                                      ? NetworkImage(profileUrl)
+                                                      : null,
+                                                  backgroundColor:
+                                                      Colors.grey[300],
+                                                  child: profileUrl.isEmpty
+                                                      ? const Icon(Icons.person,
+                                                          size: 20,
+                                                          color: Colors.white)
+                                                      : null,
+                                                );
+                                              },
                                             ),
                                           ),
-                                          if (isMine)
+                                          const SizedBox(width: 8),
+
+                                          // Use Expanded to ensure the name doesn't get cut off
+                                          Expanded(
+                                            child: GestureDetector(
+                                              onTap: () =>
+                                                  _showPrivateChatScreen(
+                                                data['senderId'],
+                                                data['senderName'],
+                                              ),
+                                              child: Text(
+                                                data['senderName'],
+                                                style: TextStyle(
+                                                  fontSize: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width >
+                                                          600
+                                                      ? 16
+                                                      : 14, // Adjust size for big screens
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                                overflow: TextOverflow
+                                                    .ellipsis, // Prevent overflow issues
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Spacer to push delete button to the right
+                                          if (isMine) ...[
+                                            const Spacer(),
                                             IconButton(
                                               icon: const Icon(Icons.delete,
                                                   color: Colors.red),
                                               onPressed: () => _deleteMessage(
                                                   doc.id, data['senderId']),
                                             ),
+                                          ],
                                         ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        data['text'],
+                                        style: const TextStyle(
+                                            fontSize: 18, color: Colors.white),
+                                      ),
+                                      Text(
+                                        time,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Color.fromARGB(
+                                              146, 255, 255, 255),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -571,8 +557,21 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                         controller: _messageController,
                         decoration: InputDecoration(
                           hintText: 'Enter message...',
+                          hintStyle: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width < 400
+                                ? 12
+                                : 14, // Adjust for small screens
+                          ),
                           filled: true,
                           fillColor: Colors.grey[300],
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width < 400
+                                ? 10
+                                : 15,
+                            vertical: MediaQuery.of(context).size.width < 400
+                                ? 10
+                                : 15,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(25)),
@@ -594,7 +593,12 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(
+                        width: 8), // Space between text field and button
                     IconButton(
+                      iconSize: MediaQuery.of(context).size.width < 400
+                          ? 20
+                          : 24, // Adjust icon size
                       icon: Transform.rotate(
                         angle: -90 * (3.141592653589793 / 180),
                         child: Icon(
@@ -602,9 +606,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                           color: _isSending ? Colors.grey : Colors.white,
                         ),
                       ),
-                      onPressed: _isSending
-                          ? null
-                          : _sendMessage, // Disable when sending
+                      onPressed: _isSending ? null : _sendMessage,
                     ),
                   ],
                 ),

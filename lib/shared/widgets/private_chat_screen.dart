@@ -168,6 +168,7 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(252, 0, 3, 0),
       appBar: AppBar(
+        toolbarHeight: 200.0,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color.fromARGB(252, 0, 3, 0),
         title: InkWell(
