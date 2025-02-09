@@ -201,6 +201,9 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                             ),
                           );
                         },
+                        onLongPress: () {
+                          _showDeleteConfirmation(context, chat["chatId"]);
+                        },
                       );
                     },
                   );
@@ -211,5 +214,57 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
         },
       ),
     );
+  } // ✅ Show confirmation dialog before deleting chat
+
+  void _showDeleteConfirmation(BuildContext context, String chatId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Delete Chat"),
+          content: const Text("Are you sure you want to delete this chat?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext); // Close dialog
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _deleteChat(chatId);
+                Navigator.pop(dialogContext); // Close dialog after deleting
+              },
+              child: const Text("Delete", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteChat(String chatId) async {
+    try {
+      // Reference to the chat messages subcollection
+      var messagesRef = _firestore
+          .collection('private_chats')
+          .doc(chatId)
+          .collection('messages');
+
+      // Get all messages in the chat
+      var messagesSnapshot = await messagesRef.get();
+
+      // Delete each message in the subcollection
+      for (var doc in messagesSnapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      // Now delete the main chat document
+      await _firestore.collection('private_chats').doc(chatId).delete();
+
+      ("Chat and messages deleted successfully.");
+    } catch (e) {
+      ("Error deleting chat: $e");
+    }
   }
 }
