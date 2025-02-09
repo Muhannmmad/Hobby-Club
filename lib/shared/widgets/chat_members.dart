@@ -20,11 +20,13 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(252, 0, 3, 0),
       appBar: AppBar(
-        title: Text(
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: const Color.fromARGB(252, 0, 3, 0),
+        title: const Text(
           "Messenger",
-          style:
-              TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[900]),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
       body: StreamBuilder(
@@ -129,7 +131,7 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
 
                       return ListTile(
                         leading: CircleAvatar(
-                          radius: 30,
+                          radius: 40,
                           backgroundColor: Colors.grey[300],
                           backgroundImage: receiverProfileUrl.isNotEmpty
                               ? NetworkImage(receiverProfileUrl)
@@ -140,7 +142,9 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                         ),
                         title: Text(receiverName,
                             style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -152,19 +156,20 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                                 color: (!chat["isRead"] &&
                                         chat["senderId"] != widget.user.uid)
                                     ? Colors.red
-                                    : Colors.black,
+                                    : Colors.white,
                                 fontWeight: (!chat["isRead"] &&
                                         chat["senderId"] != widget.user.uid)
                                     ? FontWeight.bold
                                     : FontWeight.normal,
-                                fontSize: 16,
+                                fontSize: 18,
                               ),
                             ),
                             if (chat["lastMessageTime"] != null)
                               Text(
                                 " ${DateFormat('MMM d, hh:mm a').format(chat["lastMessageTime"]!)}",
                                 style: const TextStyle(
-                                    fontSize: 12, color: Colors.grey),
+                                    fontSize: 12,
+                                    color: Color.fromARGB(255, 237, 237, 237)),
                               ),
                             if (chat["senderId"] == widget.user.uid &&
                                 chat["isRead"] &&
