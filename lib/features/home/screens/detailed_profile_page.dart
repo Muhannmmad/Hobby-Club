@@ -198,7 +198,7 @@ class DetailedProfilePageState extends State<DetailedProfilePage> {
                                     onTap: toggleFavorite,
                                     child: CircleAvatar(
                                       backgroundColor:
-                                          Colors.white.withOpacity(0.8),
+                                          Colors.white.withValues(alpha: 0.8),
                                       radius: 25,
                                       child: Icon(
                                         isFavorite
@@ -220,7 +220,7 @@ class DetailedProfilePageState extends State<DetailedProfilePage> {
                                     onTap: startPrivateChat,
                                     child: CircleAvatar(
                                       backgroundColor:
-                                          Colors.white.withOpacity(0.8),
+                                          Colors.white.withValues(alpha: 0.8),
                                       radius: 25,
                                       child: const Icon(
                                         Icons.message,
