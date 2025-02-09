@@ -8,7 +8,7 @@ import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 import 'package:hoppy_club/shared/widgets/private_chat_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
-  FavoritesScreen({super.key});
+  const FavoritesScreen({super.key});
 
   @override
   State<FavoritesScreen> createState() => _FavoritesScreenState();

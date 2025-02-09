@@ -23,7 +23,7 @@ class BottomNavBar extends StatelessWidget {
         nextScreen = const HomeScreen();
         break;
       case 1:
-        nextScreen = FavoritesScreen();
+        nextScreen = const FavoritesScreen();
         break;
       case 2:
         nextScreen = const SwipeableProfilesScreen();

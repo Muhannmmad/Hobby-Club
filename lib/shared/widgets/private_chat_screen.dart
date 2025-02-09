@@ -51,10 +51,10 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
   }
 
   Future<void> sendMessage(String chatId, String senderId, String text) async {
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     // Create a new message
-    DocumentReference messageRef = _firestore
+    DocumentReference messageRef = firestore
         .collection('private_chats')
         .doc(chatId)
         .collection('messages')
@@ -70,7 +70,7 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
     });
 
     // ✅ Update lastMessageTimestamp in chat document
-    await _firestore.collection('private_chats').doc(chatId).update({
+    await firestore.collection('private_chats').doc(chatId).update({
       'lastMessageTimestamp': now,
     });
   }
