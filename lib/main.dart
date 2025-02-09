@@ -84,11 +84,11 @@ class MyApp extends StatelessWidget {
 
 void setupFirebaseMessaging() {
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print("New message: ${message.notification?.title}");
+    ("New message: ${message.notification?.title}");
   });
 
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    print("User tapped notification: ${message.data}");
+    ("User tapped notification: ${message.data}");
   });
 }
 
@@ -101,9 +101,9 @@ void requestNotificationPermission() async {
   );
 
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print('User granted permission');
+    ('User granted permission');
   } else {
-    print('User denied permission');
+    ('User denied permission');
   }
 }
 
