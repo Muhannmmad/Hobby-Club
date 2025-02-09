@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:rxdart/rxdart.dart';
 import 'private_chat_screen.dart';
 
 class ChatMembersScreen extends StatefulWidget {
@@ -22,10 +23,8 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
       appBar: AppBar(
         title: Text(
           "Messenger",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.blue[900],
-          ),
+          style:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[900]),
         ),
       ),
       body: StreamBuilder(
@@ -33,121 +32,176 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
             .collection('private_chats')
             .where("participants", arrayContains: widget.user.uid)
             .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+        builder: (context, AsyncSnapshot<QuerySnapshot> chatSnapshot) {
+          if (chatSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          if (!chatSnapshot.hasData || chatSnapshot.data!.docs.isEmpty) {
             return const Center(child: Text("No chats available."));
           }
 
-          List<QueryDocumentSnapshot> chatDocs = snapshot.data!.docs;
+          List<QueryDocumentSnapshot> chatDocs = chatSnapshot.data!.docs;
+          List<Stream<QuerySnapshot>> messageStreams = chatDocs.map((chat) {
+            return _firestore
+                .collection('private_chats')
+                .doc(chat.id)
+                .collection('messages')
+                .orderBy('timestamp', descending: true)
+                .limit(1)
+                .snapshots();
+          }).toList();
 
-          return FutureBuilder(
-            future: _fetchSortedChats(chatDocs),
-            builder: (context,
-                AsyncSnapshot<List<Map<String, dynamic>>> sortedSnapshot) {
-              if (!sortedSnapshot.hasData || sortedSnapshot.data!.isEmpty) {
-                return const Center(child: Text("No chats available."));
+          return StreamBuilder(
+            stream: CombineLatestStream.list(messageStreams),
+            builder:
+                (context, AsyncSnapshot<List<QuerySnapshot>> messageSnapshots) {
+              if (!messageSnapshots.hasData) {
+                return const Center(child: CircularProgressIndicator());
               }
 
-              List<Map<String, dynamic>> sortedChats = sortedSnapshot.data!;
+              List<Map<String, dynamic>> chatList = [];
+
+              for (int i = 0; i < chatDocs.length; i++) {
+                var chatDoc = chatDocs[i];
+                String chatId = chatDoc.id;
+                var chatData = chatDoc.data() as Map<String, dynamic>;
+                List<dynamic> participants = chatData['participants'] ?? [];
+
+                String receiverId = participants.firstWhere(
+                  (id) => id != widget.user.uid,
+                  orElse: () => "",
+                );
+
+                if (receiverId.isEmpty) continue;
+
+                var messageSnapshot = messageSnapshots.data![i];
+                if (messageSnapshot.docs.isEmpty) continue;
+
+                var lastMessageDoc = messageSnapshot.docs.first;
+                var lastMessageData =
+                    lastMessageDoc.data() as Map<String, dynamic>;
+
+                DateTime? lastMessageTime =
+                    (lastMessageData['timestamp'] as Timestamp?)?.toDate();
+                bool isRead = lastMessageData['isRead'] ?? false;
+                String lastMessage =
+                    lastMessageData['text'] ?? "No messages yet";
+                String senderId = lastMessageData['senderId'] ?? "";
+                DateTime? seenTimestamp = isRead ? lastMessageTime : null;
+
+                chatList.add({
+                  "chatId": chatId,
+                  "receiverId": receiverId,
+                  "lastMessage": lastMessage,
+                  "lastMessageTime": lastMessageTime,
+                  "isRead": isRead,
+                  "seenTimestamp": seenTimestamp,
+                  "senderId": senderId,
+                  "lastMessageDoc": lastMessageDoc,
+                });
+              }
+
+              chatList.sort((a, b) => (b["lastMessageTime"] ?? DateTime(2000))
+                  .compareTo(a["lastMessageTime"] ?? DateTime(2000)));
 
               return ListView.builder(
-                itemCount: sortedChats.length,
+                itemCount: chatList.length,
                 itemBuilder: (context, index) {
-                  var chatData = sortedChats[index];
-                  String receiverId = chatData['receiverId'];
-                  String receiverName = chatData['receiverName'];
-                  String receiverProfileUrl = chatData['receiverProfileUrl'];
-                  String lastMessage = chatData['lastMessage'];
-                  DateTime? lastMessageTime = chatData['lastMessageTime'];
-                  bool isRead = chatData['isRead'];
-                  String lastMessageId = chatData['lastMessageId'];
-                  String senderId = chatData['senderId'];
-                  DateTime? seenTimestamp = chatData['seenTimestamp'];
-                  String chatId = chatData['chatId'];
+                  var chat = chatList[index];
 
-                  return ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.grey[300],
-                      backgroundImage: receiverProfileUrl.isNotEmpty
-                          ? NetworkImage(receiverProfileUrl)
-                          : null,
-                      child: receiverProfileUrl.isEmpty
-                          ? const Icon(Icons.person, size: 30)
-                          : null,
-                    ),
-                    title: Text(
-                      receiverName,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          lastMessage,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: (!isRead && senderId != widget.user.uid)
-                                ? Colors.red
-                                : Colors.black,
-                            fontWeight: (!isRead && senderId != widget.user.uid)
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            fontSize: 16,
-                          ),
-                        ),
-                        if (lastMessageTime != null)
-                          Text(
-                            " ${DateFormat('MMM d, hh:mm a').format(lastMessageTime!)}",
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        if (senderId == widget.user.uid &&
-                            isRead &&
-                            seenTimestamp != null)
-                          Text(
-                            "Seen at ${DateFormat('MMM d, hh:mm a').format(seenTimestamp!)}",
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                      ],
-                    ),
-                    onTap: () {
-                      if (!isRead &&
-                          lastMessageId.isNotEmpty &&
-                          senderId != widget.user.uid) {
-                        _firestore
-                            .collection('private_chats')
-                            .doc(chatId)
-                            .collection('messages')
-                            .doc(lastMessageId)
-                            .update({'isRead': true});
+                  return StreamBuilder(
+                    stream: _firestore
+                        .collection('users')
+                        .doc(chat["receiverId"])
+                        .snapshots(),
+                    builder: (context,
+                        AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                      if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+                        return const SizedBox();
                       }
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PrivateChatScreen(
-                            receiverId: receiverId,
-                            receiverName: receiverName,
-                            receiverProfileUrl: receiverProfileUrl,
-                            chatId: chatId,
-                          ),
+                      var receiverData =
+                          userSnapshot.data!.data() as Map<String, dynamic>;
+                      String receiverName =
+                          "${receiverData['firstName'] ?? 'Unknown'} ${receiverData['lastName'] ?? ''}";
+                      String receiverProfileUrl =
+                          receiverData['profileImage'] ?? "";
+
+                      return ListTile(
+                        leading: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.grey[300],
+                          backgroundImage: receiverProfileUrl.isNotEmpty
+                              ? NetworkImage(receiverProfileUrl)
+                              : null,
+                          child: receiverProfileUrl.isEmpty
+                              ? const Icon(Icons.person, size: 30)
+                              : null,
                         ),
+                        title: Text(receiverName,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              chat["lastMessage"],
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: (!chat["isRead"] &&
+                                        chat["senderId"] != widget.user.uid)
+                                    ? Colors.red
+                                    : Colors.black,
+                                fontWeight: (!chat["isRead"] &&
+                                        chat["senderId"] != widget.user.uid)
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                fontSize: 16,
+                              ),
+                            ),
+                            if (chat["lastMessageTime"] != null)
+                              Text(
+                                " ${DateFormat('MMM d, hh:mm a').format(chat["lastMessageTime"]!)}",
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.grey),
+                              ),
+                            if (chat["senderId"] == widget.user.uid &&
+                                chat["isRead"] &&
+                                chat["seenTimestamp"] != null)
+                              Text(
+                                "Seen at ${DateFormat('MMM d, hh:mm a').format(chat["seenTimestamp"]!)}",
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                          ],
+                        ),
+                        onTap: () async {
+                          if (!chat["isRead"] &&
+                              chat["senderId"] != widget.user.uid) {
+                            await _firestore
+                                .collection('private_chats')
+                                .doc(chat["chatId"])
+                                .collection('messages')
+                                .doc(chat["lastMessageDoc"].id)
+                                .update({'isRead': true});
+                          }
+                          setState(() {});
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PrivateChatScreen(
+                                receiverId: chat["receiverId"],
+                                receiverName: receiverName,
+                                receiverProfileUrl: receiverProfileUrl,
+                                chatId: chat["chatId"],
+                              ),
+                            ),
+                          );
+                        },
                       );
-                    },
-                    onLongPress: () {
-                      _showDeleteConfirmation(context, chatId);
                     },
                   );
                 },
@@ -157,121 +211,5 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
         },
       ),
     );
-  }
-
-  void _showDeleteConfirmation(BuildContext context, String chatId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text("Delete Chat"),
-          content: const Text("Are you sure you want to delete this chat?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-              },
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () async {
-                await _deleteChat(chatId);
-                Navigator.pop(dialogContext);
-              },
-              child: const Text("Delete", style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// Delete chat from Firestore
-  Future<void> _deleteChat(String chatId) async {
-    try {
-      await _firestore.collection('private_chats').doc(chatId).delete();
-    } catch (e) {
-      print("Error deleting chat: $e");
-    }
-  }
-
-  // ✅ Fetch chat data and sort by last message timestamp
-  Future<List<Map<String, dynamic>>> _fetchSortedChats(
-      List<QueryDocumentSnapshot> chatDocs) async {
-    List<Map<String, dynamic>> chatList = [];
-
-    for (var chat in chatDocs) {
-      List<dynamic> participants = chat['participants'];
-      String receiverId = participants.firstWhere(
-        (id) => id != widget.user.uid,
-        orElse: () => "",
-      );
-
-      if (receiverId.isEmpty) continue;
-
-      DocumentSnapshot receiverSnapshot =
-          await _firestore.collection('users').doc(receiverId).get();
-
-      if (!receiverSnapshot.exists) continue;
-
-      var receiverData = receiverSnapshot.data() as Map<String, dynamic>? ?? {};
-      String firstName = receiverData['firstName'] ?? "Unknown";
-      String lastName = receiverData['lastName'] ?? "";
-      String receiverName = "$firstName $lastName";
-      String receiverProfileUrl =
-          receiverData['profileImage']?.toString() ?? "";
-
-      QuerySnapshot messageSnapshot = await _firestore
-          .collection('private_chats')
-          .doc(chat.id)
-          .collection('messages')
-          .orderBy('timestamp', descending: true)
-          .limit(1)
-          .get();
-
-      String lastMessage = "No messages yet";
-      bool isRead = false;
-      String lastMessageId = "";
-      String senderId = "";
-      DateTime? lastMessageTime;
-      DateTime? seenTimestamp;
-
-      if (messageSnapshot.docs.isNotEmpty) {
-        var lastMsgData = messageSnapshot.docs.first;
-        var lastMsgDataMap = lastMsgData.data() as Map<String, dynamic>;
-
-        lastMessage = lastMsgDataMap['text'] ?? "No messages yet";
-        senderId = lastMsgDataMap['senderId'] ?? "";
-        lastMessageId = lastMsgData.id;
-        isRead = lastMsgDataMap['isRead'] ?? false;
-        lastMessageTime = (lastMsgDataMap['timestamp'] as Timestamp?)?.toDate();
-
-        if (isRead) {
-          seenTimestamp = (lastMsgDataMap['timestamp'] as Timestamp?)?.toDate();
-        }
-      }
-
-      chatList.add({
-        'chatId': chat.id,
-        'receiverId': receiverId,
-        'receiverName': receiverName,
-        'receiverProfileUrl': receiverProfileUrl,
-        'lastMessage': lastMessage,
-        'lastMessageTime': lastMessageTime,
-        'isRead': isRead,
-        'lastMessageId': lastMessageId,
-        'senderId': senderId,
-        'seenTimestamp': seenTimestamp,
-      });
-    }
-
-    // 🔥 Sort chats by last message timestamp (latest first)
-    chatList.sort((a, b) {
-      DateTime aTime = a['lastMessageTime'] ?? DateTime(2000);
-      DateTime bTime = b['lastMessageTime'] ?? DateTime(2000);
-      return bTime.compareTo(aTime);
-    });
-
-    return chatList;
   }
 }
