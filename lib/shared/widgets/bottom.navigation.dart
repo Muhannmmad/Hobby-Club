@@ -55,12 +55,13 @@ class BottomNavBar extends StatelessWidget {
     final double navBarHeight = (screenHeight * 0.08).clamp(50.0, 80.0);
 
     return BottomAppBar(
+      color: const Color.fromARGB(252, 0, 3, 0),
       shape: const CircularNotchedRectangle(),
       notchMargin: 8.0,
       child: Container(
-        height: navBarHeight, // Dynamic height
+        height: navBarHeight,
         decoration: BoxDecoration(
-          color: darkpurble,
+          color: const Color.fromARGB(245, 61, 4, 75),
           borderRadius: BorderRadius.circular(30),
           boxShadow: const [
             BoxShadow(
