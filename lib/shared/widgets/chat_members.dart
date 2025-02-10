@@ -22,6 +22,7 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(252, 0, 3, 0),
       appBar: AppBar(
+        toolbarHeight: 50.0,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color.fromARGB(252, 0, 3, 0),
         title: LayoutBuilder(
@@ -31,9 +32,7 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
               children: [
                 Image.asset(
                   'assets/icons/messenger.png',
-                  height: constraints.maxWidth < 500
-                      ? 20
-                      : 30, // Adjust size based on screen width
+                  height: constraints.maxWidth < 500 ? 20 : 30,
                   width: constraints.maxWidth < 360 ? 20 : 30,
                 ),
                 const SizedBox(width: 8),
@@ -42,8 +41,7 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    fontSize:
-                        18, // You can adjust this dynamically too if needed
+                    fontSize: 18,
                   ),
                 ),
               ],

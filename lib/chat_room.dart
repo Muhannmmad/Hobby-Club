@@ -297,6 +297,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
       child: Scaffold(
         backgroundColor: const Color.fromARGB(252, 0, 3, 0),
         appBar: AppBar(
+          toolbarHeight: 50.0,
           iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: const Color.fromARGB(252, 0, 3, 0),
           title: const Text(
@@ -323,9 +324,9 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                   }
                 },
                 child: Image.asset(
-                  'assets/icons/messenger.gif',
-                  height: 80, // Adjust as needed
-                  width: 80, // Adjust as needed
+                  'assets/icons/messenger.png',
+                  height: 50, // Adjust as needed
+                  width: 50, // Adjust as needed
                   fit: BoxFit.cover,
                 ),
               ),

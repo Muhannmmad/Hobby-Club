@@ -13,6 +13,12 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+
+/// Handles background FCM messages
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint("📩 Handling background message: ${message.messageId}");
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,27 +27,68 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Register background messaging handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   const bool useMockAuth = false;
   final AuthRepository authRepository =
-      // ignore: dead_code
       useMockAuth ? MockAuthRepository() : FirebaseAuthRepository();
 
   final DatabaseRepository databaseRepository = DatabaseRepository();
 
-  // Determine the initial screen based on authentication state
+  // Request notification permissions
+  await requestNotificationPermissions(); // ✅ Fixed async handling
+
+  // Fetch logged-in user
   UserModel? loggedInUser = await getLoggedInUser();
 
-  runApp(MultiProvider(
-    providers: [
-      Provider<AuthRepository>(create: (_) => authRepository),
-      Provider<DatabaseRepository>(create: (_) => databaseRepository),
-      ChangeNotifierProvider<UserProvider>(
-          create: (_) => UserProvider(user: loggedInUser)),
-    ],
-    child: MyApp(
-        startScreen:
-            loggedInUser != null ? const HomeScreen() : const StartScreen()),
+  runApp(MyApp(
+    startScreen:
+        loggedInUser != null ? const HomeScreen() : const StartScreen(),
+    authRepository: authRepository,
+    databaseRepository: databaseRepository,
+    loggedInUser: loggedInUser,
   ));
+}
+
+/// Requests notification permissions & retrieves FCM token
+Future<void> requestNotificationPermissions() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.denied) {
+    debugPrint("❌ Notifications Denied");
+    return;
+  } else {
+    debugPrint("✅ Notifications Allowed");
+  }
+
+  try {
+    // For iOS: Ensure APNs token is available
+    if (Platform.isIOS) {
+      String? apnsToken = await messaging.getAPNSToken();
+      if (apnsToken == null) {
+        debugPrint("⚠️ APNS token not available yet.");
+      } else {
+        debugPrint("✅ APNS Token: $apnsToken");
+      }
+    }
+
+    // Retrieve FCM token (for both iOS & Android)
+    String? fcmToken = await messaging.getToken();
+    if (fcmToken != null) {
+      debugPrint("🔑 FCM Token: $fcmToken");
+    } else {
+      debugPrint("⚠️ FCM Token is null");
+    }
+  } catch (e) {
+    debugPrint("❌ Error retrieving FCM Token: $e");
+  }
 }
 
 /// Fetches the logged-in user from Firebase Authentication & Firestore
@@ -61,7 +108,7 @@ Future<UserModel?> getLoggedInUser() async {
       return UserModel.fromFirestore(userDoc);
     }
   } catch (e) {
-    debugPrint("Error fetching user data: $e");
+    debugPrint("❌ Error fetching user data: $e");
   }
 
   return null;
@@ -70,44 +117,35 @@ Future<UserModel?> getLoggedInUser() async {
 /// App's root widget that decides the initial screen
 class MyApp extends StatelessWidget {
   final Widget startScreen;
+  final AuthRepository authRepository;
+  final DatabaseRepository databaseRepository;
+  final UserModel? loggedInUser;
 
-  const MyApp({super.key, required this.startScreen});
+  const MyApp({
+    super.key,
+    required this.startScreen,
+    required this.authRepository,
+    required this.databaseRepository,
+    this.loggedInUser,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: startScreen,
+    return MultiProvider(
+      providers: [
+        Provider<AuthRepository>(create: (_) => authRepository),
+        Provider<DatabaseRepository>(create: (_) => databaseRepository),
+        ChangeNotifierProvider<UserProvider>(
+            create: (_) => UserProvider(user: loggedInUser)),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: startScreen,
+      ),
     );
   }
 }
 
-void setupFirebaseMessaging() {
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    ("New message: ${message.notification?.title}");
-  });
-
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    ("User tapped notification: ${message.data}");
-  });
-}
-
-void requestNotificationPermission() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    ('User granted permission');
-  } else {
-    ('User denied permission');
-  }
-}
-
-/// UserProvider to manage logged-in user data
 class UserProvider extends ChangeNotifier {
   UserModel? _user;
 
