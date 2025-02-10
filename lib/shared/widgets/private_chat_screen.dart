@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
 
 import 'package:intl/intl.dart';
@@ -31,51 +30,13 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ScrollController _scrollController = ScrollController();
   bool _isSending = false;
-  String? fcmToken;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
     });
-
-    requestNotificationPermissions();
-    setupFirebaseMessaging(); // ✅ Now this method exists
-    initializeLocalNotifications(); // ✅ Now this method exists
-  }
-
-  void setupFirebaseMessaging() {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    messaging.getToken().then((token) {
-      print("FCM Token: $token");
-      // Store this token in Firestore under the user's document for push notifications
-    });
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("📩 New foreground message: ${message.notification?.title}");
-      showLocalNotification(message);
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print("📲 Notification tapped!");
-    });
-  }
-
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  Future<void> initializeLocalNotifications() async {
-    const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const DarwinInitializationSettings iosSettings =
-        DarwinInitializationSettings(); // ✅ Correct iOS settings
-
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: androidSettings, iOS: iosSettings);
-
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   void _scrollToBottom() {
@@ -90,81 +51,10 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
     });
   }
 
-  Future<void> initNotifications() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    // Request permission
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    if (settings.authorizationStatus == AuthorizationStatus.denied) {
-      print("❌ Notifications Denied");
-      return;
-    }
-
-    // Wait for APNS token
-    String? apnsToken = await messaging.getAPNSToken();
-    if (apnsToken == null) {
-      print("⚠️ APNS token not available yet. Retrying...");
-      await Future.delayed(Duration(seconds: 5));
-      apnsToken = await messaging.getAPNSToken();
-    }
-
-    if (apnsToken == null) {
-      print("❌ APNS token still not set. Notifications might not work on iOS.");
-    } else {
-      print("✅ APNS Token: $apnsToken");
-    }
-
-    // Get FCM Token
-    String? token = await messaging.getToken();
-    print("🔑 FCM Token: $token");
-
-    setState(() {
-      fcmToken = token;
-    });
-
-    // Listen for foreground messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("📩 Foreground Message: ${message.notification?.title}");
-      showLocalNotification(message);
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print("📲 Notification Clicked! Opened App.");
-    });
-  }
-
-  void showLocalNotification(RemoteMessage message) async {
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-      'channel_id',
-      'channel_name',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidDetails,
-    );
-
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      message.notification?.title ?? "New Message",
-      message.notification?.body ?? "You have a new message",
-      notificationDetails,
-    );
-  }
-
   Future<void> sendMessage(String chatId, String senderId, String text) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+    // Create a new message
     DocumentReference messageRef = firestore
         .collection('private_chats')
         .doc(chatId)
@@ -184,27 +74,6 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
     await firestore.collection('private_chats').doc(chatId).update({
       'lastMessageTimestamp': now,
     });
-
-    // 🔥 Send push notification to receiver
-    sendPushNotification(widget.receiverId, text);
-  }
-
-  Future<void> sendPushNotification(String receiverId, String message) async {
-    DocumentSnapshot userDoc =
-        await _firestore.collection('users').doc(receiverId).get();
-
-    if (!userDoc.exists || userDoc['fcmToken'] == null) return;
-
-    String fcmToken = userDoc['fcmToken'];
-
-    await FirebaseMessaging.instance.sendMessage(
-      to: fcmToken,
-      data: {
-        'title':
-            'New Message from ${_auth.currentUser?.displayName ?? "Someone"}',
-        'body': message,
-      },
-    );
   }
 
   void _sendMessage() async {

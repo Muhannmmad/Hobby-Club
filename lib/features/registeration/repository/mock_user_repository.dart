@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'server_user_response.dart';
 import 'user.dart';
 import 'user_repository.dart';
@@ -23,18 +20,6 @@ class MockUserRepository implements UserRepository {
       }
     } else {
       return ServerUserResponse(success: false, errorMessage: "User not found");
-    }
-  }
-
-  void saveFCMToken() async {
-    String? token = await FirebaseMessaging.instance.getToken();
-    if (token != null) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(auth.FirebaseAuth.instance.currentUser!.uid)
-          .update({
-        'fcmToken': token,
-      });
     }
   }
 
