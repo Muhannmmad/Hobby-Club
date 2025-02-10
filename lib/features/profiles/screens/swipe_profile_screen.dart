@@ -199,11 +199,8 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await fetchUserProfiles(); // Reload all profiles before filtering
                 applySearchFilter(
                   nameController.text.trim(),
                   selectedMinAge,
