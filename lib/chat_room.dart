@@ -100,6 +100,9 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                     String profileImage = user['profileImage'] ?? '';
                     String name = "${user['firstName'] ?? 'Unknown'}";
                     String userId = snapshot.data!.docs[index].id;
+                    final userData = snapshot.data!.docs[index].data()
+                        as Map<String, dynamic>;
+                    String receiverOnesignalId = userData["onesignalID"] ?? "";
 
                     return GestureDetector(
                       onTap: () {
@@ -109,6 +112,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                             builder: (context) => PrivateChatScreen(
                               receiverId: userId,
                               receiverName: name,
+                              receiverOnesignalId: receiverOnesignalId,
                               receiverProfileUrl: profileImage,
                               chatId:
                                   createChatId(_auth.currentUser!.uid, userId),
@@ -201,6 +205,8 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
       DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(receiverId).get();
 
+      String receiverOnesignalId = userDoc["onesignalID"] ?? "";
+
       String firstName = userDoc['firstName'] ?? 'Unknown'; // Get first name
       String profileImageUrl =
           userDoc['profileImage'] ?? ''; // Get profile image
@@ -238,6 +244,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                 child: PrivateChatScreen(
                   receiverId: receiverId,
                   receiverName: firstName,
+                  receiverOnesignalId: receiverOnesignalId,
                   receiverProfileUrl: profileImageUrl,
                   chatId: createChatId(_auth.currentUser!.uid, receiverId),
                 ),
@@ -294,326 +301,342 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: true,
-      child: Scaffold(
-        backgroundColor: const Color.fromARGB(252, 0, 3, 0),
-        appBar: AppBar(
-          toolbarHeight: 50.0,
-          iconTheme: const IconThemeData(color: Colors.white),
+      child: PopScope(
+        canPop: false,
+        child: Scaffold(
           backgroundColor: const Color.fromARGB(252, 0, 3, 0),
-          title: const Text(
-            'Chat Room',
-            style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: GestureDetector(
-                onTap: () {
-                  User? currentUser = FirebaseAuth.instance.currentUser;
-                  if (currentUser != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ChatMembersScreen(user: currentUser),
-                      ),
-                    );
-                  } else {
-                    debugPrint("⚠️ No authenticated user found!");
-                  }
-                },
-                child: Image.asset(
-                  'assets/icons/messenger.png',
-                  height: 50, // Adjust as needed
-                  width: 50, // Adjust as needed
-                  fit: BoxFit.cover,
-                ),
-              ),
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            toolbarHeight: 50.0,
+            iconTheme: const IconThemeData(color: Colors.white),
+            backgroundColor: const Color.fromARGB(252, 0, 3, 0),
+            title: const Text(
+              'Chat Room',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
-          ],
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              _buildOnlineMembersRow(_showPrivateChatScreen),
-              Expanded(
-                child: StreamBuilder(
-                  stream: _firestore
-                      .collection('chatroom')
-                      .where('timestamp',
-                          isNotEqualTo: null) // Ignore null timestamps
-                      .orderBy('timestamp', descending: false)
-                      .snapshots(),
-                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Center(child: Text('No messages yet'));
-                    }
-
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      _scrollToBottom();
-                    });
-
-                    String? lastDisplayedDate;
-
-                    return ListView.builder(
-                      controller: _scrollController,
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        DocumentSnapshot doc = snapshot.data!.docs[index];
-                        Map<String, dynamic> data =
-                            doc.data() as Map<String, dynamic>;
-                        bool isMine =
-                            data['senderId'] == _auth.currentUser?.uid;
-                        Timestamp? timestamp = data['timestamp'] as Timestamp?;
-                        DateTime dateTime = timestamp != null
-                            ? timestamp.toDate()
-                            : DateTime.now();
-
-                        String time = DateFormat('hh:mm a').format(dateTime);
-                        String messageDate =
-                            DateFormat('yyyy-MM-dd').format(dateTime);
-
-                        bool showDateHeader = lastDisplayedDate != messageDate;
-                        if (showDateHeader) {
-                          lastDisplayedDate = messageDate;
-                        }
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            if (showDateHeader)
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(
-                                  DateFormat('EEEE, MMM d, yyyy')
-                                      .format(dateTime),
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 2.0, horizontal: 8.0),
-                              child: Align(
-                                alignment: isMine
-                                    ? Alignment.centerRight
-                                    : Alignment.centerLeft,
-                                child: Container(
-                                  constraints: BoxConstraints(
-                                    maxWidth:
-                                        MediaQuery.of(context).size.width * 0.7,
-                                  ),
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: isMine
-                                        ? const Color.fromARGB(255, 2, 34, 8)
-                                        : const Color.fromARGB(230, 27, 26, 26),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DetailedProfilePage(
-                                                  userId: data['senderId'],
-                                                ),
-                                              ),
-                                            ),
-                                            child:
-                                                FutureBuilder<DocumentSnapshot>(
-                                              future: FirebaseFirestore.instance
-                                                  .collection('users')
-                                                  .doc(data['senderId'])
-                                                  .get(),
-                                              builder: (context, snapshot) {
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.waiting) {
-                                                  return const CircleAvatar(
-                                                    radius: 20,
-                                                    backgroundColor:
-                                                        Colors.grey,
-                                                  );
-                                                }
-                                                if (!snapshot.hasData ||
-                                                    !snapshot.data!.exists) {
-                                                  return const CircleAvatar(
-                                                    radius: 20,
-                                                    backgroundColor:
-                                                        Colors.grey,
-                                                    child: Icon(Icons.person,
-                                                        size: 20,
-                                                        color: Colors.white),
-                                                  );
-                                                }
-                                                String profileUrl = snapshot
-                                                        .data!
-                                                        .get('profileImage') ??
-                                                    '';
-                                                return CircleAvatar(
-                                                  radius: 20,
-                                                  backgroundImage: profileUrl
-                                                          .isNotEmpty
-                                                      ? NetworkImage(profileUrl)
-                                                      : null,
-                                                  backgroundColor:
-                                                      Colors.grey[300],
-                                                  child: profileUrl.isEmpty
-                                                      ? const Icon(Icons.person,
-                                                          size: 20,
-                                                          color: Colors.white)
-                                                      : null,
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-
-                                          // Use Expanded to ensure the name doesn't get cut off
-                                          Expanded(
-                                            child: GestureDetector(
-                                              onTap: () =>
-                                                  _showPrivateChatScreen(
-                                                data['senderId'],
-                                                data['senderName'],
-                                              ),
-                                              child: Text(
-                                                data['senderName'],
-                                                style: TextStyle(
-                                                  fontSize: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width >
-                                                          600
-                                                      ? 16
-                                                      : 14, // Adjust size for big screens
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                overflow: TextOverflow
-                                                    .ellipsis, // Prevent overflow issues
-                                                maxLines: 1,
-                                              ),
-                                            ),
-                                          ),
-
-                                          // Spacer to push delete button to the right
-                                          if (isMine) ...[
-                                            const Spacer(),
-                                            IconButton(
-                                              icon: const Icon(Icons.delete,
-                                                  color: Colors.red),
-                                              onPressed: () => _deleteMessage(
-                                                  doc.id, data['senderId']),
-                                            ),
-                                          ],
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        data['text'],
-                                        style: const TextStyle(
-                                            fontSize: 18, color: Colors.white),
-                                      ),
-                                      Text(
-                                        time,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Color.fromARGB(
-                                              146, 255, 255, 255),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
+            actions: [
               Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _messageController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter message...',
-                          hintStyle: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width < 400
-                                ? 12
-                                : 14, // Adjust for small screens
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey[300],
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: MediaQuery.of(context).size.width < 400
-                                ? 10
-                                : 15,
-                            vertical: MediaQuery.of(context).size.width < 400
-                                ? 10
-                                : 15,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(25)),
-                            borderSide:
-                                BorderSide(color: Colors.blue[900]!, width: 1),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(25)),
-                            borderSide:
-                                BorderSide(color: Colors.blue[900]!, width: 1),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(25)),
-                            borderSide:
-                                BorderSide(color: Colors.blue[900]!, width: 2),
-                          ),
+                padding: const EdgeInsets.only(right: 8.0),
+                child: GestureDetector(
+                  onTap: () {
+                    User? currentUser = FirebaseAuth.instance.currentUser;
+                    if (currentUser != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ChatMembersScreen(user: currentUser),
                         ),
-                      ),
-                    ),
-                    const SizedBox(
-                        width: 8), // Space between text field and button
-                    IconButton(
-                      iconSize: MediaQuery.of(context).size.width < 400
-                          ? 20
-                          : 24, // Adjust icon size
-                      icon: Transform.rotate(
-                        angle: -90 * (3.141592653589793 / 180),
-                        child: Icon(
-                          Icons.send,
-                          color: _isSending ? Colors.grey : Colors.white,
-                        ),
-                      ),
-                      onPressed: _isSending ? null : _sendMessage,
-                    ),
-                  ],
+                      );
+                    } else {
+                      debugPrint("⚠️ No authenticated user found!");
+                    }
+                  },
+                  child: Image.asset(
+                    'assets/icons/messenger.png',
+                    height: 50, // Adjust as needed
+                    width: 50, // Adjust as needed
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-              const BottomNavBar(selectedIndex: 3),
             ],
+          ),
+          body: SafeArea(
+            child: Column(
+              children: [
+                _buildOnlineMembersRow(_showPrivateChatScreen),
+                Expanded(
+                  child: StreamBuilder(
+                    stream: _firestore
+                        .collection('chatroom')
+                        .where('timestamp',
+                            isNotEqualTo: null) // Ignore null timestamps
+                        .orderBy('timestamp', descending: false)
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return const Center(child: Text('No messages yet'));
+                      }
+
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _scrollToBottom();
+                      });
+
+                      String? lastDisplayedDate;
+
+                      return ListView.builder(
+                        controller: _scrollController,
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot doc = snapshot.data!.docs[index];
+                          Map<String, dynamic> data =
+                              doc.data() as Map<String, dynamic>;
+                          bool isMine =
+                              data['senderId'] == _auth.currentUser?.uid;
+                          Timestamp? timestamp =
+                              data['timestamp'] as Timestamp?;
+                          DateTime dateTime = timestamp != null
+                              ? timestamp.toDate()
+                              : DateTime.now();
+
+                          String time = DateFormat('hh:mm a').format(dateTime);
+                          String messageDate =
+                              DateFormat('yyyy-MM-dd').format(dateTime);
+
+                          bool showDateHeader =
+                              lastDisplayedDate != messageDate;
+                          if (showDateHeader) {
+                            lastDisplayedDate = messageDate;
+                          }
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              if (showDateHeader)
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(
+                                    DateFormat('EEEE, MMM d, yyyy')
+                                        .format(dateTime),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2.0, horizontal: 8.0),
+                                child: Align(
+                                  alignment: isMine
+                                      ? Alignment.centerRight
+                                      : Alignment.centerLeft,
+                                  child: Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.7,
+                                    ),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: isMine
+                                          ? const Color.fromARGB(255, 2, 34, 8)
+                                          : const Color.fromARGB(
+                                              230, 27, 26, 26),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DetailedProfilePage(
+                                                    userId: data['senderId'],
+                                                  ),
+                                                ),
+                                              ),
+                                              child: FutureBuilder<
+                                                  DocumentSnapshot>(
+                                                future: FirebaseFirestore
+                                                    .instance
+                                                    .collection('users')
+                                                    .doc(data['senderId'])
+                                                    .get(),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return const CircleAvatar(
+                                                      radius: 20,
+                                                      backgroundColor:
+                                                          Colors.grey,
+                                                    );
+                                                  }
+                                                  if (!snapshot.hasData ||
+                                                      !snapshot.data!.exists) {
+                                                    return const CircleAvatar(
+                                                      radius: 20,
+                                                      backgroundColor:
+                                                          Colors.grey,
+                                                      child: Icon(Icons.person,
+                                                          size: 20,
+                                                          color: Colors.white),
+                                                    );
+                                                  }
+                                                  String profileUrl =
+                                                      snapshot.data!.get(
+                                                              'profileImage') ??
+                                                          '';
+                                                  return CircleAvatar(
+                                                    radius: 20,
+                                                    backgroundImage:
+                                                        profileUrl.isNotEmpty
+                                                            ? NetworkImage(
+                                                                profileUrl)
+                                                            : null,
+                                                    backgroundColor:
+                                                        Colors.grey[300],
+                                                    child: profileUrl.isEmpty
+                                                        ? const Icon(
+                                                            Icons.person,
+                                                            size: 20,
+                                                            color: Colors.white)
+                                                        : null,
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+
+                                            // Use Expanded to ensure the name doesn't get cut off
+                                            Expanded(
+                                              child: GestureDetector(
+                                                onTap: () =>
+                                                    _showPrivateChatScreen(
+                                                  data['senderId'],
+                                                  data['senderName'],
+                                                ),
+                                                child: Text(
+                                                  data['senderName'],
+                                                  style: TextStyle(
+                                                    fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width >
+                                                            600
+                                                        ? 16
+                                                        : 14, // Adjust size for big screens
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                  overflow: TextOverflow
+                                                      .ellipsis, // Prevent overflow issues
+                                                  maxLines: 1,
+                                                ),
+                                              ),
+                                            ),
+
+                                            // Spacer to push delete button to the right
+                                            if (isMine) ...[
+                                              const Spacer(),
+                                              IconButton(
+                                                icon: const Icon(Icons.delete,
+                                                    color: Colors.red),
+                                                onPressed: () => _deleteMessage(
+                                                    doc.id, data['senderId']),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          data['text'],
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.white),
+                                        ),
+                                        Text(
+                                          time,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Color.fromARGB(
+                                                146, 255, 255, 255),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _messageController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter message...',
+                            hintStyle: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width < 400
+                                  ? 12
+                                  : 14, // Adjust for small screens
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[300],
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width < 400
+                                      ? 10
+                                      : 15,
+                              vertical: MediaQuery.of(context).size.width < 400
+                                  ? 10
+                                  : 15,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(25)),
+                              borderSide: BorderSide(
+                                  color: Colors.blue[900]!, width: 1),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(25)),
+                              borderSide: BorderSide(
+                                  color: Colors.blue[900]!, width: 1),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(25)),
+                              borderSide: BorderSide(
+                                  color: Colors.blue[900]!, width: 2),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                          width: 8), // Space between text field and button
+                      IconButton(
+                        iconSize: MediaQuery.of(context).size.width < 400
+                            ? 20
+                            : 24, // Adjust icon size
+                        icon: Transform.rotate(
+                          angle: -90 * (3.141592653589793 / 180),
+                          child: Icon(
+                            Icons.send,
+                            color: _isSending ? Colors.grey : Colors.white,
+                          ),
+                        ),
+                        onPressed: _isSending ? null : _sendMessage,
+                      ),
+                    ],
+                  ),
+                ),
+                const BottomNavBar(selectedIndex: 3),
+              ],
+            ),
           ),
         ),
       ),

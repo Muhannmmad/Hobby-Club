@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hoppy_club/features/home/screens/favorite_icon.dart';
 import 'package:hoppy_club/shared/widgets/private_chat_screen.dart';
 
 class DetailedProfilePage extends StatefulWidget {
@@ -15,22 +16,15 @@ class DetailedProfilePage extends StatefulWidget {
 class DetailedProfilePageState extends State<DetailedProfilePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   Map<String, dynamic>? userData;
   bool isLoading = true;
-  bool isFavorite = false;
-
-  String createChatId(String senderId, String receiverId) {
-    return senderId.hashCode <= receiverId.hashCode
-        ? '${senderId}_$receiverId'
-        : '${receiverId}_$senderId';
-  }
+  List<String> favoriteIds = []; // Stores favorite user IDs
 
   @override
   void initState() {
     super.initState();
     fetchUserData();
-    checkIfFavorite();
+    fetchFavoriteIds();
   }
 
   Future<void> fetchUserData() async {
@@ -55,53 +49,53 @@ class DetailedProfilePageState extends State<DetailedProfilePage> {
     }
   }
 
-  Future<void> checkIfFavorite() async {
+  Future<void> fetchFavoriteIds() async {
     if (currentUserId.isEmpty) return;
 
-    final favoriteRef = _firestore
+    final querySnapshot = await _firestore
         .collection('favorites')
         .doc(currentUserId)
         .collection('userFavorites')
-        .doc(widget.userId);
+        .get();
 
-    final doc = await favoriteRef.get();
     setState(() {
-      isFavorite = doc.exists;
+      favoriteIds = querySnapshot.docs.map((doc) => doc.id).toList();
     });
   }
 
   Future<void> toggleFavorite() async {
     if (currentUserId.isEmpty || userData == null) return;
 
+    final String profileId = widget.userId;
     final favoriteRef = _firestore
         .collection('favorites')
         .doc(currentUserId)
         .collection('userFavorites')
-        .doc(widget.userId);
+        .doc(profileId);
+
+    final favoritedMeRef = _firestore.collection('favorites').doc(profileId);
 
     try {
-      if (isFavorite) {
+      if (favoriteIds.contains(profileId)) {
+        // Remove from favorites
         await favoriteRef.delete();
-        setState(() {
-          isFavorite = false;
+        await favoritedMeRef.update({
+          "favoritedMe": FieldValue.arrayRemove([currentUserId])
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                '${userData?['firstName'] ?? 'User'} removed from favorites!'),
-          ),
-        );
+
+        setState(() {
+          favoriteIds.remove(profileId);
+        });
       } else {
+        // Add to favorites
         await favoriteRef.set(userData!);
+        await favoritedMeRef.set({
+          "favoritedMe": FieldValue.arrayUnion([currentUserId])
+        }, SetOptions(merge: true));
+
         setState(() {
-          isFavorite = true;
+          favoriteIds.add(profileId);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content:
-                Text('${userData?['firstName'] ?? 'User'} added to favorites!'),
-          ),
-        );
       }
     } catch (e) {
       debugPrint('Failed to toggle favorite: $e');
@@ -116,9 +110,10 @@ class DetailedProfilePageState extends State<DetailedProfilePage> {
       MaterialPageRoute(
         builder: (context) => PrivateChatScreen(
           receiverId: widget.userId,
+          receiverOnesignalId: userData?["onesignalID"] ?? "",
           receiverName: userData?['firstName'] ?? 'Unknown',
           receiverProfileUrl: userData?['profileImage'] ?? '',
-          chatId: createChatId(_auth.currentUser!.uid, widget.userId),
+          chatId: '${currentUserId}_${widget.userId}',
         ),
       ),
     );
@@ -194,23 +189,7 @@ class DetailedProfilePageState extends State<DetailedProfilePage> {
                                 Positioned(
                                   top: 10,
                                   right: 10,
-                                  child: GestureDetector(
-                                    onTap: toggleFavorite,
-                                    child: CircleAvatar(
-                                      backgroundColor:
-                                          Colors.white.withValues(alpha: 0.8),
-                                      radius: 25,
-                                      child: Icon(
-                                        isFavorite
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: isFavorite
-                                            ? Colors.red
-                                            : Colors.black,
-                                        size: 30,
-                                      ),
-                                    ),
-                                  ),
+                                  child: FavoriteIcon(profileId: widget.userId),
                                 ),
                                 // Message Icon
                                 Positioned(

@@ -8,127 +8,149 @@ import 'package:hoppy_club/firebase_options.dart';
 import 'package:hoppy_club/features/registeration/repository/auth_repository.dart';
 import 'package:hoppy_club/features/registeration/repository/mock_auth_repository.dart';
 import 'package:hoppy_club/features/registeration/repository/firebase_auth_repository.dart';
+import 'package:hoppy_club/shared/widgets/private_chat_screen.dart';
 import 'package:hoppy_club/user_model.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
-void main() async {
+final navigatorKey = GlobalKey<NavigatorState>();
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  const bool useMockAuth = false;
-  final AuthRepository authRepository =
-      // ignore: dead_code
-      useMockAuth ? MockAuthRepository() : FirebaseAuthRepository();
-
-  final DatabaseRepository databaseRepository = DatabaseRepository();
-
-  // Determine the initial screen based on authentication state
-  UserModel? loggedInUser = await getLoggedInUser();
-
-  runApp(MultiProvider(
-    providers: [
-      Provider<AuthRepository>(create: (_) => authRepository),
-      Provider<DatabaseRepository>(create: (_) => databaseRepository),
-      ChangeNotifierProvider<UserProvider>(
-          create: (_) => UserProvider(user: loggedInUser)),
-    ],
-    child: MyApp(
-        startScreen:
-            loggedInUser != null ? const HomeScreen() : const StartScreen()),
-  ));
+  // 🔹 Show lightweight splash screen first
+  runApp(const MyApp());
 }
 
-/// Fetches the logged-in user from Firebase Authentication & Firestore
-Future<UserModel?> getLoggedInUser() async {
-  final auth = FirebaseAuth.instance;
-  final User? firebaseUser = auth.currentUser;
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
-  if (firebaseUser == null) return null; // No user is logged in
+  @override
+  _MyAppState createState() => _MyAppState();
+}
 
-  try {
-    DocumentSnapshot userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(firebaseUser.uid)
-        .get();
+class _MyAppState extends State<MyApp> {
+  UserModel? _loggedInUser;
+  bool _isInitialized = false;
 
-    if (userDoc.exists) {
-      return UserModel.fromFirestore(userDoc);
-    }
-  } catch (e) {
-    debugPrint("Error fetching user data: $e");
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
   }
 
-  return null;
-}
+  /// 🔹 **Deferred Initialization of Firebase & OneSignal**
+  Future<void> _initializeApp() async {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
+    await _initOneSignal();
+    _setupFirebaseMessaging();
+    await _loadUser();
 
-/// App's root widget that decides the initial screen
-class MyApp extends StatelessWidget {
-  final Widget startScreen;
-  const MyApp({super.key, required this.startScreen});
+    // 🔹 Update UI after async tasks complete
+    setState(() => _isInitialized = true);
+  }
+
+  /// 🔹 **Fetch the logged-in user from Firebase**
+  Future<void> _loadUser() async {
+    final auth = FirebaseAuth.instance;
+    final User? firebaseUser = auth.currentUser;
+
+    if (firebaseUser != null) {
+      try {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(firebaseUser.uid)
+            .get();
+        if (userDoc.exists) {
+          _loggedInUser = UserModel.fromFirestore(userDoc);
+        }
+      } catch (e) {
+        debugPrint("❌ Error fetching user data: $e");
+      }
+    }
+  }
+
+  /// 🔹 **Initialize OneSignal in Background**
+  Future<void> _initOneSignal() async {
+    try {
+      OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+      OneSignal.initialize("fd8faa8e-c8a0-4c91-8c93-62665f576d75");
+      await OneSignal.Notifications.requestPermission(true);
+      OneSignal.Notifications.addClickListener((event) async {
+        final dataOnesignal = event.notification.additionalData;
+        if (dataOnesignal != null && dataOnesignal['chatID'] != null) {
+          final chatID = dataOnesignal["chatID"];
+          // GET ALL DATA FOR CHAT AND NAVIGATE TO CHAT SCREEN
+          print("GOT CLICKED ON PUSH NOTIFICATIONS");
+          final chatData = await FirebaseFirestore.instance
+              .collection("private_chats")
+              .doc(chatID)
+              .get();
+          final data = chatData.data() as Map<String, dynamic>;
+
+          final String receiverID = (data["participants"] as List<dynamic>)
+              .firstWhere((id) => id != FirebaseAuth.instance.currentUser?.uid);
+
+          navigatorKey.currentState?.push(
+            MaterialPageRoute(
+              builder: (context) => PrivateChatScreen(
+                receiverId: '',
+                receiverName: '',
+                receiverOnesignalId: '',
+                receiverProfileUrl: '',
+                chatId: '',
+              ),
+            ),
+          );
+        }
+      });
+    } catch (e) {
+      debugPrint("❌ OneSignal Init Error: $e");
+    }
+  }
+
+  /// 🔹 **Setup Firebase Messaging**
+  void _setupFirebaseMessaging() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint("📩 New message: ${message.notification?.title}");
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      debugPrint("📨 User tapped notification: ${message.data}");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: startScreen,
+    return MultiProvider(
+      providers: [
+        Provider<AuthRepository>(
+            create: (_) =>
+                false ? MockAuthRepository() : FirebaseAuthRepository()),
+        Provider<DatabaseRepository>(create: (_) => DatabaseRepository()),
+      ],
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        debugShowCheckedModeBanner: false,
+        home: _isInitialized
+            ? (_loggedInUser != null ? const HomeScreen() : const StartScreen())
+            : const SplashScreen(), // 🔹 Show splash while loading
+      ),
     );
   }
 }
 
-void setupFirebaseMessaging() {
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    ("New message: ${message.notification?.title}");
-  });
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    ("User tapped notification: ${message.data}");
-  });
-}
+/// 🔹 **Simple Splash Screen**
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key});
 
-void requestNotificationPermission() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    ('User granted permission');
-  } else {
-    ('User denied permission');
-  }
-}
-
-/// UserProvider to manage logged-in user data
-class UserProvider extends ChangeNotifier {
-  UserModel? _user;
-
-  UserProvider({UserModel? user}) {
-    _user = user;
-  }
-
-  UserModel? get user => _user;
-
-  void setUser(UserModel? user) {
-    _user = user;
-    notifyListeners();
-  }
-
-  Future<void> logout(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); // Clear saved credentials
-
-    // Reset user data and navigate to StartScreen
-    setUser(null);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const StartScreen()),
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(), // 🔹 Lightweight loading UI
+      ),
     );
   }
 }

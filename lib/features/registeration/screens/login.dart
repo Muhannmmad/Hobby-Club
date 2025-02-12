@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hoppy_club/features/home/screens/home_screen.dart';
 import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
@@ -129,12 +130,8 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
         }
 
         await Future.delayed(const Duration(seconds: 1));
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  EditProfileScreen(userId: _auth.currentUser!.uid),
-            ));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()));
       }
     } catch (e) {
       setState(

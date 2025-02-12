@@ -149,6 +149,9 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                       String receiverProfileUrl =
                           receiverData['profileImage'] ?? "";
 
+                      String receiverOnesignalId =
+                          receiverData["onesignalID"] ?? "";
+
                       return ListTile(
                         leading: CircleAvatar(
                           radius: 40,
@@ -220,6 +223,7 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                               builder: (context) => PrivateChatScreen(
                                 receiverId: chat["receiverId"],
                                 receiverName: receiverName,
+                                receiverOnesignalId: receiverOnesignalId,
                                 receiverProfileUrl: receiverProfileUrl,
                                 chatId: chat["chatId"],
                               ),

@@ -3,12 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
+import 'package:hoppy_club/shared/onesignal_rest_api.dart';
 
 import 'package:intl/intl.dart';
 
 class PrivateChatScreen extends StatefulWidget {
   final String receiverId;
   final String receiverName;
+  final String receiverOnesignalId;
   final String receiverProfileUrl;
   final String chatId;
 
@@ -16,6 +18,7 @@ class PrivateChatScreen extends StatefulWidget {
     super.key,
     required this.receiverId,
     required this.receiverName,
+    required this.receiverOnesignalId,
     required this.receiverProfileUrl,
     required this.chatId,
   });
@@ -115,6 +118,13 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
         'lastMessage': messageText,
         'timestamp': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+
+      if (widget.receiverOnesignalId.isNotEmpty) {
+        OnesignalRestApi.sendPushNotification([widget.receiverOnesignalId],
+            "$firstName $lastName sent you a message", messageText, chatId);
+      }
+
+      print("Onesignal ID: ${widget.receiverOnesignalId}");
 
       _scrollToBottom();
     } finally {
@@ -245,7 +255,14 @@ class PrivateChatScreenState extends State<PrivateChatScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(child: Text('No messages yet'));
+                    return const Center(
+                        child: Text(
+                      'No messages yet',
+                      style: TextStyle(
+                          fontSize: 16, // Smaller size
+
+                          color: Colors.white),
+                    ));
                   }
 
                   WidgetsBinding.instance.addPostFrameCallback((_) {

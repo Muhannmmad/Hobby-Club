@@ -6,6 +6,7 @@ import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 import 'package:hoppy_club/features/home/repository/hobby.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +23,36 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     fetchUserName();
+    updateOnesignalID();
+  }
+
+  Future<void> updateOnesignalID() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    await OneSignal.User.pushSubscription.optIn();
+    final userData = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.uid)
+        .get();
+    String currentOnesignalID =
+        (userData.data() as Map<String, dynamic>)["onesignalID"] ?? "";
+    if (OneSignal.User.pushSubscription.id != null) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .update({"onesignalID": OneSignal.User.pushSubscription.id});
+      print("Updating OnesignalID: ${OneSignal.User.pushSubscription.id}");
+    }
+    OneSignal.User.pushSubscription.addObserver((state) async {
+      if (state.current.id != null) {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(user.uid)
+            .update({"onesignalID": state.current.id});
+      }
+      print("Updating OnesignalID: ${state.current.id}");
+    });
+    print("Tst");
   }
 
   Future<void> fetchUserName() async {

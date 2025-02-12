@@ -1,9 +1,8 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
+import 'package:hoppy_club/features/profiles/screens/me_favourite.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 import 'package:hoppy_club/shared/widgets/private_chat_screen.dart';
 
@@ -17,7 +16,7 @@ class FavoritesScreen extends StatefulWidget {
 class _FavoritesScreenState extends State<FavoritesScreen> {
   List<Map<String, dynamic>> favoriteProfiles = [];
   bool isLoading = true; // Track loading state
-
+  bool isFavoritedMe = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -26,12 +25,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     fetchFavorites(); // Fetch data after UI loads
   }
 
-  Future<void> fetchFavorites() async {
+  void fetchFavorites() async {
     final String userId = _auth.currentUser?.uid ?? '';
     if (userId.isEmpty) {
       setState(() => isLoading = false);
       return;
     }
+
+    print("📡 Fetching latest favorites...");
 
     final querySnapshot = await FirebaseFirestore.instance
         .collection('favorites')
@@ -39,15 +40,20 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         .collection('userFavorites')
         .get();
 
-    if (querySnapshot.docs.isEmpty) {
-      setState(() => isLoading = false);
-      return;
-    }
+    if (!mounted) return; // Prevent updating UI if widget was disposed
 
     List<String> favoriteUserIds =
         querySnapshot.docs.map((doc) => doc.id).toList();
 
-    // Fetch all user profiles in one query
+    if (favoriteUserIds.isEmpty) {
+      setState(() {
+        favoriteProfiles = [];
+        isLoading = false;
+      });
+      print("📡 No favorites found.");
+      return;
+    }
+
     final userSnapshots = await FirebaseFirestore.instance
         .collection('users')
         .where(FieldPath.documentId, whereIn: favoriteUserIds)
@@ -63,26 +69,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       favoriteProfiles = loadedProfiles;
       isLoading = false;
     });
+
+    print("✅ UI updated with ${loadedProfiles.length} profiles");
   }
 
-  Future<void> removeFromFavorites(String docId, int index) async {
-    final String userId = _auth.currentUser?.uid ?? '';
-    if (userId.isEmpty) return;
-
-    await FirebaseFirestore.instance
-        .collection('favorites')
-        .doc(userId)
-        .collection('userFavorites')
-        .doc(docId)
-        .delete();
-
-    setState(() {
-      favoriteProfiles.removeAt(index);
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Removed from favorites')),
-    );
+  void _toggleScreen(bool value) {
+    if (value) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const FavoritedMeScreen()),
+      );
+    }
   }
 
   String createChatId(String senderId, String receiverId) {
@@ -91,13 +88,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         : '${receiverId}_$senderId';
   }
 
-  void startPrivateChat(String userId, String userName, String profileImage) {
+  void startPrivateChat(String userId, String userName, String profileImage,
+      String receiverOnesignalId) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PrivateChatScreen(
           receiverId: userId,
           receiverName: userName,
+          receiverOnesignalId: receiverOnesignalId,
           receiverProfileUrl: profileImage,
           chatId: createChatId(_auth.currentUser!.uid, userId),
         ),
@@ -113,6 +112,40 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     return PopScope(
       canPop: false,
       child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 8, vertical: 2), // Padding inside the box
+            decoration: BoxDecoration(
+              color: Colors.white, // Background color
+              borderRadius: BorderRadius.circular(50), // Rounded edges
+              border:
+                  Border.all(color: Colors.purple, width: 2), // Purple border
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min, // Wraps around content
+              children: [
+                const Text(
+                  "I added",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Switch(
+                  value: isFavoritedMe,
+                  onChanged: (value) {
+                    setState(() => isFavoritedMe = value);
+                    _toggleScreen(value);
+                  },
+                ),
+                const Text(
+                  "Added me",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          centerTitle: true,
+        ),
         body: Padding(
           padding: EdgeInsets.all(8.0 * scaleFactor),
           child: GridView.builder(
@@ -161,6 +194,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     final country = userData['country'] ?? 'Unknown';
     final city = userData['city'] ?? 'Unknown';
     final userId = userData['docId'];
+    final receiverOnesignalId = userData["onesignalID"] ?? "";
     final bool isOnline = userData['isOnline'] ?? false;
 
     return GestureDetector(
@@ -194,25 +228,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             top: 10.0,
             right: 10,
             child: GestureDetector(
-              onTap: () => startPrivateChat(userId, name, profileImage),
+              onTap: () => startPrivateChat(
+                  userId, name, profileImage, receiverOnesignalId),
               child: const Icon(
                 Icons.message,
                 color: Colors.green,
                 size: 30,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0.0,
-            left: 0.0,
-            child: IconButton(
-              onPressed: () async {
-                await removeFromFavorites(userId, index);
-              },
-              icon: Icon(
-                Icons.favorite,
-                color: Colors.red,
-                size: 30 * scaleFactor,
               ),
             ),
           ),

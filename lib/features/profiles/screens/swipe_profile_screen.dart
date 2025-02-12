@@ -75,27 +75,43 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
   Future<void> toggleFavorite(Map<String, dynamic> userProfile) async {
     if (userId.isEmpty) return;
 
-    final String profileId = userProfile['id'];
+    final String profileId = userProfile['id']; // The user being favorited
     final favoriteRef = _firestore
         .collection('favorites')
         .doc(userId)
         .collection('userFavorites')
         .doc(profileId);
 
+    final favoritedMeRef = _firestore.collection('favorites').doc(profileId);
+
     try {
       if (favoriteIds.contains(profileId)) {
+        // ✅ Remove favorite
         await favoriteRef.delete();
+        await favoritedMeRef.update({
+          "favoritedMe": FieldValue.arrayRemove([userId])
+        });
+
         setState(() {
           favoriteIds.remove(profileId);
         });
+
+        print("❌ Removed from favorites");
       } else {
+        // ✅ Add favorite
         await favoriteRef.set(userProfile);
+        await favoritedMeRef.set({
+          "favoritedMe": FieldValue.arrayUnion([userId])
+        }, SetOptions(merge: true));
+
         setState(() {
           favoriteIds.add(profileId);
         });
+
+        print("✅ Added to favorites");
       }
     } catch (e) {
-      debugPrint('Failed to toggle favorite: $e');
+      debugPrint('🔥 Failed to toggle favorite: $e');
     }
   }
 
@@ -238,7 +254,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
           onPressed: () {
             showSearchDialog();
           },
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: const Color.fromARGB(255, 84, 6, 104),
           child: const Icon(Icons.search, size: 32, color: Colors.white),
         ),
         bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
@@ -370,6 +386,8 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                                         userData['firstName'] ?? 'Unknown',
                                     receiverProfileUrl:
                                         userData['profileImage'] ?? '',
+                                    receiverOnesignalId:
+                                        userData["onesignalID"] ?? "",
                                     chatId: createChatId(
                                         _auth.currentUser!.uid, userData['id']),
                                   ),
