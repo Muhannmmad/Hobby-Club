@@ -8,7 +8,7 @@ import 'package:hoppy_club/firebase_options.dart';
 import 'package:hoppy_club/features/registeration/repository/auth_repository.dart';
 import 'package:hoppy_club/features/registeration/repository/mock_auth_repository.dart';
 import 'package:hoppy_club/features/registeration/repository/firebase_auth_repository.dart';
-import 'package:hoppy_club/shared/widgets/private_chat_screen.dart';
+import 'package:hoppy_club/shared/widgets/chat_members.dart';
 import 'package:hoppy_club/user_model.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,6 +16,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -93,17 +94,18 @@ class _MyAppState extends State<MyApp> {
           final String receiverID = (data["participants"] as List<dynamic>)
               .firstWhere((id) => id != FirebaseAuth.instance.currentUser?.uid);
 
-          navigatorKey.currentState?.push(
-            MaterialPageRoute(
-              builder: (context) => PrivateChatScreen(
-                receiverId: '',
-                receiverName: '',
-                receiverOnesignalId: '',
-                receiverProfileUrl: '',
-                chatId: '',
+          final User? currentUser = FirebaseAuth.instance.currentUser;
+          if (currentUser != null) {
+            navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => ChatMembersScreen(
+                  user: currentUser,
+                ),
               ),
-            ),
-          );
+            );
+          } else {
+            debugPrint("❌ No user is currently logged in");
+          }
         }
       });
     } catch (e) {
