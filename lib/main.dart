@@ -91,7 +91,7 @@ class _MyAppState extends State<MyApp> {
               .get();
           final data = chatData.data() as Map<String, dynamic>;
 
-          final String receiverID = (data["participants"] as List<dynamic>)
+          (data["participants"] as List<dynamic>)
               .firstWhere((id) => id != FirebaseAuth.instance.currentUser?.uid);
 
           final User? currentUser = FirebaseAuth.instance.currentUser;
@@ -129,6 +129,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         Provider<AuthRepository>(
             create: (_) =>
+                // ignore: dead_code
                 false ? MockAuthRepository() : FirebaseAuthRepository()),
         Provider<DatabaseRepository>(create: (_) => DatabaseRepository()),
       ],
