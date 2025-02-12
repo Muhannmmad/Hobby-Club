@@ -45,7 +45,7 @@ class _FixFavoritesScreenState extends State<FixFavoritesScreen> {
 
       for (var doc in favoritesSnapshot.docs) {
         String userId = doc.id;
-        var favoriteData = doc.data();
+        doc.data();
 
         // 🟢 Check if userFavorites subcollection exists
         var userFavoritesSnapshot = await _firestore

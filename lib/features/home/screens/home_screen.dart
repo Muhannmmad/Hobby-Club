@@ -30,12 +30,6 @@ class HomeScreenState extends State<HomeScreen> {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
     await OneSignal.User.pushSubscription.optIn();
-    final userData = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user.uid)
-        .get();
-    String currentOnesignalID =
-        (userData.data() as Map<String, dynamic>)["onesignalID"] ?? "";
     if (OneSignal.User.pushSubscription.id != null) {
       await FirebaseFirestore.instance
           .collection("users")

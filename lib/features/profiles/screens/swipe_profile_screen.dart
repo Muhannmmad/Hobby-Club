@@ -310,7 +310,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                       child: Image.network(
                         userProfiles[index + 1]['profileImage'] ?? '',
                         width: double.infinity,
-                        height: MediaQuery.of(context).size.height * 0.65,
+                        height: MediaQuery.of(context).size.height * 0.55,
                         fit: BoxFit.cover,
                         color: Colors.black.withValues(alpha: 0.2),
                         colorBlendMode: BlendMode.darken,
@@ -318,7 +318,7 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                           return Image.asset(
                             'assets/profiles/profile.jpg',
                             width: double.infinity,
-                            height: MediaQuery.of(context).size.height * 0.65,
+                            height: MediaQuery.of(context).size.height * 0.55,
                             fit: BoxFit.cover,
                             color: Colors.black.withValues(alpha: 0.2),
                             colorBlendMode: BlendMode.darken,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
-import 'package:hoppy_club/features/profiles/screens/edit_profile_screen.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hoppy_club/features/registeration/widgets/signup_button.dart';
 
@@ -15,7 +15,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
