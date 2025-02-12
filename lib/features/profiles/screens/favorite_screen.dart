@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
+import 'package:hoppy_club/features/home/screens/favorite_icon.dart';
 import 'package:hoppy_club/features/profiles/screens/me_favourite.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 import 'package:hoppy_club/shared/widgets/private_chat_screen.dart';
@@ -224,6 +225,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     height: double.infinity,
                   ),
           ),
+          // Add the favorite icon in the top right corner
+          Positioned(
+            top: 10.0,
+            left: 10,
+            child: FavoriteIcon(profileId: userId),
+          ),
           Positioned(
             top: 10.0,
             right: 10,
@@ -233,7 +240,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               child: const Icon(
                 Icons.message,
                 color: Colors.green,
-                size: 30,
+                size: 50,
               ),
             ),
           ),
