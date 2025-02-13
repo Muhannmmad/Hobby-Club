@@ -15,43 +15,38 @@ class OnlineMembersRow extends StatefulWidget {
 
 class _OnlineMembersRowState extends State<OnlineMembersRow> {
   final ScrollController _scrollController = ScrollController();
-  Timer? _scrollTimer;
   bool _scrollForward = true;
 
   @override
   void initState() {
     super.initState();
-    _startAutoScroll();
+    // Delay starting the auto-scroll to ensure the ListView is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startAutoScroll();
+    });
   }
 
-  void _startAutoScroll() {
-    _scrollTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (!_scrollController.hasClients) return;
+  void _startAutoScroll() async {
+    while (mounted) {
+      await Future.delayed(const Duration(seconds: 3)); // Pause before moving
+
+      if (!_scrollController.hasClients) continue; // Ensure ListView exists
 
       double maxScroll = _scrollController.position.maxScrollExtent;
-      double currentScroll = _scrollController.offset;
+      double targetScroll = _scrollForward ? maxScroll : 0;
 
-      if (_scrollForward) {
-        _scrollController.animateTo(
-          maxScroll,
-          duration: const Duration(seconds: 5),
-          curve: Curves.linear,
-        );
-      } else {
-        _scrollController.animateTo(
-          0,
-          duration: const Duration(seconds: 5),
-          curve: Curves.linear,
-        );
-      }
+      await _scrollController.animateTo(
+        targetScroll,
+        duration: const Duration(seconds: 5),
+        curve: Curves.linear,
+      );
 
       _scrollForward = !_scrollForward; // Toggle direction
-    });
+    }
   }
 
   @override
   void dispose() {
-    _scrollTimer?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
