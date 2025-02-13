@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
+import 'package:hoppy_club/online_members.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
 import 'package:hoppy_club/shared/widgets/chat_members.dart';
 import 'package:hoppy_club/shared/widgets/private_chat_screen.dart';
@@ -60,128 +61,6 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
         });
       });
     }
-  }
-
-  Widget _buildOnlineMembersRow(
-      void Function(String receiverId, String receiverFullName)
-          showPrivateChatScreen) {
-    return Container(
-      color: Colors.black.withOpacity(0.10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 2.0),
-          ),
-          StreamBuilder(
-            stream: _firestore
-                .collection('users')
-                .where('isOnline', isEqualTo: true)
-                .snapshots(),
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox(
-                    height: 100,
-                    child: Center(child: CircularProgressIndicator()));
-              }
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return const SizedBox(
-                    height: 100,
-                    child: Center(child: Text("No online members")));
-              }
-              return SizedBox(
-                height: 70,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    var user = snapshot.data!.docs[index].data()
-                        as Map<String, dynamic>;
-                    String profileImage = user['profileImage'] ?? '';
-                    String name = "${user['firstName'] ?? 'Unknown'}";
-                    String userId = snapshot.data!.docs[index].id;
-                    final userData = snapshot.data!.docs[index].data()
-                        as Map<String, dynamic>;
-                    String receiverOnesignalId = userData["onesignalID"] ?? "";
-
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PrivateChatScreen(
-                              receiverId: userId,
-                              receiverName: name,
-                              receiverOnesignalId: receiverOnesignalId,
-                              receiverProfileUrl: profileImage,
-                              chatId:
-                                  createChatId(_auth.currentUser!.uid, userId),
-                            ),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                        child: Stack(
-                          alignment: Alignment
-                              .bottomCenter, // Aligns the name at the bottom
-                          children: [
-                            CircleAvatar(
-                              radius: 55,
-                              backgroundColor: Colors.transparent,
-                              backgroundImage: profileImage.isNotEmpty
-                                  ? NetworkImage(profileImage)
-                                  : null,
-                              child: profileImage.isEmpty
-                                  ? const Icon(Icons.person, size: 40)
-                                  : null,
-                            ),
-                            Container(
-                              width: 70, // Ensure name stays within the avatar
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 4, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(
-                                    0.6), // Dark overlay for readability
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                name,
-                                style: const TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 5,
-                              right: 5,
-                              child: Container(
-                                width: 15,
-                                height: 15,
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle,
-                                  border:
-                                      Border.all(color: Colors.white, width: 2),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
   }
 
   void _scrollToBottom() {
@@ -348,7 +227,25 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
           body: SafeArea(
             child: Column(
               children: [
-                _buildOnlineMembersRow(_showPrivateChatScreen),
+                OnlineMembersRow(
+                  showPrivateChatScreen: (String receiverId,
+                      String receiverFullName, String receiverProfileUrl) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PrivateChatScreen(
+                          receiverId: receiverId,
+                          receiverName: receiverFullName,
+                          receiverOnesignalId: "",
+                          receiverProfileUrl:
+                              receiverProfileUrl, // Pass the profile image
+                          chatId:
+                              createChatId(_auth.currentUser!.uid, receiverId),
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 Expanded(
                   child: StreamBuilder(
                     stream: _firestore

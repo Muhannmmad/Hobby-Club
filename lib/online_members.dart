@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OnlineMembersRow extends StatefulWidget {
-  final void Function(String receiverId, String receiverFullName)
+  final void Function(
+          String receiverId, String receiverFullName, String receiverProfileUrl)
       showPrivateChatScreen;
 
   const OnlineMembersRow({Key? key, required this.showPrivateChatScreen})
@@ -20,7 +21,6 @@ class _OnlineMembersRowState extends State<OnlineMembersRow> {
   @override
   void initState() {
     super.initState();
-    // Delay starting the auto-scroll to ensure the ListView is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startAutoScroll();
     });
@@ -91,7 +91,8 @@ class _OnlineMembersRowState extends State<OnlineMembersRow> {
 
                     return GestureDetector(
                       onTap: () {
-                        widget.showPrivateChatScreen(userId, name);
+                        widget.showPrivateChatScreen(
+                            userId, name, profileImage);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
