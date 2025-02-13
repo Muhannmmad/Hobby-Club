@@ -84,6 +84,8 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
       DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(receiverId).get();
 
+      print("ONE SINGLA ID: ${userDoc["onesignalID"]}");
+
       String receiverOnesignalId = userDoc["onesignalID"] ?? "";
 
       String firstName = userDoc['firstName'] ?? 'Unknown'; // Get first name
@@ -229,14 +231,16 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
               children: [
                 OnlineMembersRow(
                   showPrivateChatScreen: (String receiverId,
-                      String receiverFullName, String receiverProfileUrl) {
+                      String receiverFullName,
+                      String receiverProfileUrl,
+                      String receiverOnesignalId) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => PrivateChatScreen(
                           receiverId: receiverId,
                           receiverName: receiverFullName,
-                          receiverOnesignalId: "",
+                          receiverOnesignalId: receiverOnesignalId,
                           receiverProfileUrl:
                               receiverProfileUrl, // Pass the profile image
                           chatId:

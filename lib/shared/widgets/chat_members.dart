@@ -144,6 +144,8 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
 
                       var receiverData =
                           userSnapshot.data!.data() as Map<String, dynamic>;
+
+                      print("USER DATA: ${receiverData}");
                       String receiverName =
                           "${receiverData['firstName'] ?? 'Unknown'} ${receiverData['lastName'] ?? ''}";
                       String receiverProfileUrl =

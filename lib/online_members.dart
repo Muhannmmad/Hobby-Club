@@ -4,8 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OnlineMembersRow extends StatefulWidget {
   final void Function(
-          String receiverId, String receiverFullName, String receiverProfileUrl)
-      showPrivateChatScreen;
+      String receiverId,
+      String receiverFullName,
+      String receiverProfileUrl,
+      String receiverOnesignalId) showPrivateChatScreen;
 
   const OnlineMembersRow({Key? key, required this.showPrivateChatScreen})
       : super(key: key);
@@ -88,11 +90,12 @@ class _OnlineMembersRowState extends State<OnlineMembersRow> {
                     String profileImage = user['profileImage'] ?? '';
                     String name = "${user['firstName'] ?? 'Unknown'}";
                     String userId = snapshot.data!.docs[index].id;
+                    String onesignalId = user["onesignalID"] ?? "";
 
                     return GestureDetector(
                       onTap: () {
                         widget.showPrivateChatScreen(
-                            userId, name, profileImage);
+                            userId, name, profileImage, onesignalId);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
