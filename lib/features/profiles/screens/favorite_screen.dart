@@ -23,7 +23,48 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   @override
   void initState() {
     super.initState();
-    fetchFavorites(); // Fetch data after UI loads
+    listenToFavorites(); // Real-time listener instead of one-time fetch
+  }
+
+  void listenToFavorites() {
+    final String userId = _auth.currentUser?.uid ?? '';
+    if (userId.isEmpty) return;
+
+    FirebaseFirestore.instance
+        .collection('favorites')
+        .doc(userId)
+        .collection('userFavorites')
+        .snapshots()
+        .listen((querySnapshot) async {
+      if (!mounted) return; // Ensure widget is still active
+
+      List<String> favoriteUserIds =
+          querySnapshot.docs.map((doc) => doc.id).toList();
+
+      if (favoriteUserIds.isEmpty) {
+        setState(() {
+          favoriteProfiles = [];
+          isLoading = false;
+        });
+        return;
+      }
+
+      final userSnapshots = await FirebaseFirestore.instance
+          .collection('users')
+          .where(FieldPath.documentId, whereIn: favoriteUserIds)
+          .get();
+
+      List<Map<String, dynamic>> loadedProfiles = userSnapshots.docs.map((doc) {
+        final userData = doc.data();
+        userData['docId'] = doc.id;
+        return userData;
+      }).toList();
+
+      setState(() {
+        favoriteProfiles = loadedProfiles;
+        isLoading = false;
+      });
+    });
   }
 
   void fetchFavorites() async {
