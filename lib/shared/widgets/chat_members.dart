@@ -58,8 +58,19 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
           if (chatSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+
+          if (chatSnapshot.hasError) {
+            return const Center(
+                child: Text("An error occurred. Please try again."));
+          }
+
           if (!chatSnapshot.hasData || chatSnapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("No chats available."));
+            return const Center(
+              child: Text(
+                "No chats available.",
+                style: TextStyle(color: Colors.white),
+              ),
+            );
           }
 
           List<QueryDocumentSnapshot> chatDocs = chatSnapshot.data!.docs;
@@ -77,8 +88,24 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
             stream: CombineLatestStream.list(messageStreams),
             builder:
                 (context, AsyncSnapshot<List<QuerySnapshot>> messageSnapshots) {
-              if (!messageSnapshots.hasData) {
+              if (messageSnapshots.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
+              }
+
+              if (messageSnapshots.hasError) {
+                return const Center(
+                    child: Text(
+                  "Failed to load messages.",
+                  style: TextStyle(color: Colors.white),
+                ));
+              }
+
+              if (!messageSnapshots.hasData || messageSnapshots.data!.isEmpty) {
+                return const Center(
+                    child: Text(
+                  "No messages found.",
+                  style: TextStyle(color: Colors.white),
+                ));
               }
 
               List<Map<String, dynamic>> chatList = [];
@@ -138,8 +165,20 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                         .snapshots(),
                     builder: (context,
                         AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                      if (userSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const SizedBox(); // Or a loading indicator if preferred
+                      }
+
+                      if (userSnapshot.hasError) {
+                        return const Text(
+                          "Failed to load user data.",
+                          style: TextStyle(color: Colors.white),
+                        );
+                      }
+
                       if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-                        return const SizedBox();
+                        return const SizedBox(); // Handle no user data scenario
                       }
 
                       var receiverData =
