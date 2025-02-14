@@ -34,25 +34,23 @@ class GroupPageState extends State<GroupPage> {
         .collection('groups')
         .doc(widget.groupId)
         .snapshots()
-        .listen((doc) {
+        .listen((doc) async {
       if (doc.exists) {
         List<dynamic> members =
             (doc.data() as Map<String, dynamic>)['members'] ?? [];
 
-        // Filter out members that no longer exist in the users collection
-        memberIds.clear();
-        for (var memberId in members) {
-          _firestore.collection('users').doc(memberId).get().then((userDoc) {
-            if (userDoc.exists) {
-              setState(() {
-                memberIds.add(memberId); // Only add existing users
-              });
-            }
-          });
-        }
+        // Query Firestore for only valid users
+        QuerySnapshot usersSnapshot = await _firestore
+            .collection('users')
+            .where(FieldPath.documentId,
+                whereIn: members.isNotEmpty ? members : ['dummy_id'])
+            .get();
 
-        // Check if the current user is in the group
+        List<String> validMemberIds =
+            usersSnapshot.docs.map((doc) => doc.id).toList();
+
         setState(() {
+          memberIds = validMemberIds;
           isMember = memberIds.contains(_auth.currentUser?.uid);
         });
       }
