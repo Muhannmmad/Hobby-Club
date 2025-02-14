@@ -200,7 +200,7 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                             vertical: screenHeight * 0.01),
                                       ),
                                       child: Text(
-                                        'Edit Profile',
+                                        'Edit or delete Profile',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: screenWidth * 0.04,

@@ -38,8 +38,21 @@ class GroupPageState extends State<GroupPage> {
       if (doc.exists) {
         List<dynamic> members =
             (doc.data() as Map<String, dynamic>)['members'] ?? [];
+
+        // Filter out members that no longer exist in the users collection
+        memberIds.clear();
+        for (var memberId in members) {
+          _firestore.collection('users').doc(memberId).get().then((userDoc) {
+            if (userDoc.exists) {
+              setState(() {
+                memberIds.add(memberId); // Only add existing users
+              });
+            }
+          });
+        }
+
+        // Check if the current user is in the group
         setState(() {
-          memberIds = members.cast<String>();
           isMember = memberIds.contains(_auth.currentUser?.uid);
         });
       }

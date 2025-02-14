@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_state_city_pro/country_state_city_pro.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/profiles/screens/my_profile_screen.dart';
+import 'package:hoppy_club/features/start/screens/start_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -105,6 +107,66 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       } catch (e) {
         ('Error deleting image: $e');
       }
+    }
+  }
+
+  void _confirmDeleteAccount() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Delete Account"),
+          content: const Text(
+              "Are you sure you want to delete your account? This action cannot be undone."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+                _deleteAccount();
+              },
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteAccount() async {
+    final String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    if (currentUserId.isEmpty) return;
+
+    try {
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Delete user document from Firestore
+      await firestore.collection('users').doc(currentUserId).delete();
+
+      // Delete user's favorites (if applicable)
+      await firestore.collection('favorites').doc(currentUserId).delete();
+
+      // Delete user from Firebase Authentication
+      await FirebaseAuth.instance.currentUser?.delete();
+
+      // Navigate to Start Screen (Replace `StartScreen()` with your actual start screen)
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                StartScreen()), // Replace with actual Start Screen
+        (route) => false, // Remove all previous routes
+      );
+    } catch (e) {
+      debugPrint("Error deleting account: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("Failed to delete account. Please try again.")),
+      );
     }
   }
 
@@ -267,22 +329,38 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     ],
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: isLoading ? null : saveProfile,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        if (!isLoading) {
+                          saveProfile();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                      ),
+                      child: const Text(
+                        'Save Changes',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
                     ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
-                  child: isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Save changes',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
+                    ElevatedButton(
+                      onPressed: _confirmDeleteAccount,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                      ),
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
