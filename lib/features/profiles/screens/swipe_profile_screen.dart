@@ -96,6 +96,16 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
           favoriteIds.remove(profileId);
         });
 
+        // Show Snackbar for removal
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text('you removed ${userProfile['firstName']} from favorites.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
         print("❌ Removed from favorites");
       } else {
         // ✅ Add favorite
@@ -107,6 +117,16 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
         setState(() {
           favoriteIds.add(profileId);
         });
+
+        // Show Snackbar for addition
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text('you added ${userProfile['firstName']} to favorites.'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
 
         print("✅ Added to favorites");
       }

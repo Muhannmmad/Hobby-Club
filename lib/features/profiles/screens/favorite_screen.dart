@@ -42,13 +42,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           querySnapshot.docs.map((doc) => doc.id).toList();
 
       if (favoriteUserIds.isEmpty) {
+        // 🔹 Instead of clearing the list, just mark profiles as unfavorited
         setState(() {
-          favoriteProfiles = [];
+          for (var profile in favoriteProfiles) {
+            profile['isFavorite'] = false;
+          }
           isLoading = false;
         });
         return;
       }
 
+      // 🔹 Fetch all users in one query like `FavoritedMeScreen`
       final userSnapshots = await FirebaseFirestore.instance
           .collection('users')
           .where(FieldPath.documentId, whereIn: favoriteUserIds)
@@ -57,11 +61,23 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       List<Map<String, dynamic>> loadedProfiles = userSnapshots.docs.map((doc) {
         final userData = doc.data();
         userData['docId'] = doc.id;
+        userData['isFavorite'] = true; // Mark as favorite
         return userData;
       }).toList();
 
       setState(() {
-        favoriteProfiles = loadedProfiles;
+        // 🔹 Update existing profiles instead of replacing the list
+        for (var profile in favoriteProfiles) {
+          profile['isFavorite'] = favoriteUserIds.contains(profile['docId']);
+        }
+
+        // 🔹 Add new favorites to the list if they are not already there
+        for (var newProfile in loadedProfiles) {
+          if (!favoriteProfiles.any((p) => p['docId'] == newProfile['docId'])) {
+            favoriteProfiles.add(newProfile);
+          }
+        }
+
         isLoading = false;
       });
     });
