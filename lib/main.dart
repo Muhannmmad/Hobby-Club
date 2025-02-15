@@ -15,12 +15,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
-final navigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // 🔹 Show lightweight splash screen first
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -41,23 +40,17 @@ class _MyAppState extends State<MyApp> {
     _initializeApp();
   }
 
-  /// 🔹 **Deferred Initialization of Firebase & OneSignal**
+  /// 🔹 **Initialize Firebase & OneSignal**
   Future<void> _initializeApp() async {
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
     await _initOneSignal();
-    _setupFirebaseMessaging();
+    await _setupFirebaseMessaging();
     await _loadUser();
-
-    // 🔹 Update UI after async tasks complete
     setState(() => _isInitialized = true);
   }
 
-  /// 🔹 **Fetch the logged-in user from Firebase**
+  /// 🔹 **Fetch logged-in user from Firebase**
   Future<void> _loadUser() async {
-    final auth = FirebaseAuth.instance;
-    final User? firebaseUser = auth.currentUser;
-
+    final User? firebaseUser = FirebaseAuth.instance.currentUser;
     if (firebaseUser != null) {
       try {
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -73,39 +66,18 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  /// 🔹 **Initialize OneSignal in Background**
+  /// 🔹 **Initialize OneSignal**
   Future<void> _initOneSignal() async {
     try {
       OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
       OneSignal.initialize("fd8faa8e-c8a0-4c91-8c93-62665f576d75");
       await OneSignal.Notifications.requestPermission(true);
+
       OneSignal.Notifications.addClickListener((event) async {
         final dataOnesignal = event.notification.additionalData;
         if (dataOnesignal != null && dataOnesignal['chatID'] != null) {
-          final chatID = dataOnesignal["chatID"];
-          // GET ALL DATA FOR CHAT AND NAVIGATE TO CHAT SCREEN
-          print("GOT CLICKED ON PUSH NOTIFICATIONS");
-          final chatData = await FirebaseFirestore.instance
-              .collection("private_chats")
-              .doc(chatID)
-              .get();
-          final data = chatData.data() as Map<String, dynamic>;
-
-          (data["participants"] as List<dynamic>)
-              .firstWhere((id) => id != FirebaseAuth.instance.currentUser?.uid);
-
-          final User? currentUser = FirebaseAuth.instance.currentUser;
-          if (currentUser != null) {
-            navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => ChatMembersScreen(
-                  user: currentUser,
-                ),
-              ),
-            );
-          } else {
-            debugPrint("❌ No user is currently logged in");
-          }
+          final String chatID = dataOnesignal["chatID"];
+          _navigateToChatScreen(chatID);
         }
       });
     } catch (e) {
@@ -113,14 +85,54 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  /// 🔹 **Setup Firebase Messaging**
-  void _setupFirebaseMessaging() {
+  /// 🔹 **Setup Firebase Cloud Messaging**
+  Future<void> _setupFirebaseMessaging() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // Handle foreground notifications
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint("📩 New message: ${message.notification?.title}");
+      debugPrint("📩 New message received: ${message.notification?.title}");
     });
+
+    // Handle when the app is opened by a notification
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint("📨 User tapped notification: ${message.data}");
+      debugPrint("📨 Notification tapped: ${message.data}");
+      if (message.data.containsKey("chatID")) {
+        _navigateToChatScreen(message.data["chatID"]);
+      }
     });
+
+    // Handle notification when app is launched from a terminated state
+    RemoteMessage? initialMessage = await messaging.getInitialMessage();
+    if (initialMessage != null && initialMessage.data.containsKey("chatID")) {
+      _navigateToChatScreen(initialMessage.data["chatID"]);
+    }
+  }
+
+  /// 🔹 **Navigate to Chat Screen**
+  void _navigateToChatScreen(String chatID) async {
+    debugPrint("📬 Navigating to chat screen: $chatID");
+
+    final chatData = await FirebaseFirestore.instance
+        .collection("private_chats")
+        .doc(chatID)
+        .get();
+
+    if (chatData.exists) {
+      final data = chatData.data() as Map<String, dynamic>;
+
+      if (FirebaseAuth.instance.currentUser != null) {
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (context) => ChatMembersScreen(
+              user: FirebaseAuth.instance.currentUser!,
+            ),
+          ),
+        );
+      } else {
+        debugPrint("❌ No user is logged in.");
+      }
+    }
   }
 
   @override
@@ -129,7 +141,6 @@ class _MyAppState extends State<MyApp> {
       providers: [
         Provider<AuthRepository>(
             create: (_) =>
-                // ignore: dead_code
                 false ? MockAuthRepository() : FirebaseAuthRepository()),
         Provider<DatabaseRepository>(create: (_) => DatabaseRepository()),
       ],
@@ -138,7 +149,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         home: _isInitialized
             ? (_loggedInUser != null ? const HomeScreen() : const StartScreen())
-            : const SplashScreen(), // 🔹 Show splash while loading
+            : const SplashScreen(),
       ),
     );
   }
@@ -152,7 +163,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: CircularProgressIndicator(), // 🔹 Lightweight loading UI
+        child: CircularProgressIndicator(),
       ),
     );
   }
