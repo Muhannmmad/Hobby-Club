@@ -142,8 +142,6 @@ class _MyAppState extends State<MyApp> {
         .get();
 
     if (chatData.exists) {
-      final data = chatData.data() as Map<String, dynamic>;
-
       if (FirebaseAuth.instance.currentUser != null) {
         navigatorKey.currentState?.push(
           MaterialPageRoute(
