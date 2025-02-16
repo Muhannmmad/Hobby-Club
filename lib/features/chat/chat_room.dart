@@ -381,25 +381,60 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                                           color: Colors.white),
                                                     );
                                                   }
-                                                  String profileUrl =
-                                                      snapshot.data!.get(
-                                                              'profileImage') ??
-                                                          '';
-                                                  return CircleAvatar(
-                                                    radius: 20,
-                                                    backgroundImage:
-                                                        profileUrl.isNotEmpty
-                                                            ? NetworkImage(
-                                                                profileUrl)
+
+                                                  Map<String, dynamic>
+                                                      userData =
+                                                      snapshot.data!.data()
+                                                          as Map<String,
+                                                              dynamic>;
+
+                                                  String profileUrl = userData[
+                                                          'profileImage'] ??
+                                                      '';
+                                                  bool isOnline =
+                                                      userData['isOnline'] ??
+                                                          false;
+
+                                                  return Stack(
+                                                    children: [
+                                                      CircleAvatar(
+                                                        radius: 20,
+                                                        backgroundImage:
+                                                            profileUrl
+                                                                    .isNotEmpty
+                                                                ? NetworkImage(
+                                                                    profileUrl)
+                                                                : null,
+                                                        backgroundColor:
+                                                            Colors.grey[300],
+                                                        child: profileUrl
+                                                                .isEmpty
+                                                            ? const Icon(
+                                                                Icons.person,
+                                                                size: 20,
+                                                                color: Colors
+                                                                    .white)
                                                             : null,
-                                                    backgroundColor:
-                                                        Colors.grey[300],
-                                                    child: profileUrl.isEmpty
-                                                        ? const Icon(
-                                                            Icons.person,
-                                                            size: 20,
-                                                            color: Colors.white)
-                                                        : null,
+                                                      ),
+                                                      Positioned(
+                                                        bottom: 2,
+                                                        right: 2,
+                                                        child: CircleAvatar(
+                                                          radius: 6,
+                                                          backgroundColor: Colors
+                                                              .white, // Border
+                                                          child: CircleAvatar(
+                                                            radius: 5,
+                                                            backgroundColor:
+                                                                isOnline
+                                                                    ? Colors
+                                                                        .green
+                                                                    : Colors
+                                                                        .grey,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   );
                                                 },
                                               ),

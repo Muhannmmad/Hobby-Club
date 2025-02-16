@@ -194,15 +194,35 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                           receiverData["onesignalID"] ?? "";
 
                       return ListTile(
-                        leading: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.grey[300],
-                          backgroundImage: receiverProfileUrl.isNotEmpty
-                              ? NetworkImage(receiverProfileUrl)
-                              : null,
-                          child: receiverProfileUrl.isEmpty
-                              ? const Icon(Icons.person, size: 30)
-                              : null,
+                        leading: Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 30,
+                              backgroundColor: Colors.grey[300],
+                              backgroundImage: receiverProfileUrl.isNotEmpty
+                                  ? NetworkImage(receiverProfileUrl)
+                                  : null,
+                              child: receiverProfileUrl.isEmpty
+                                  ? const Icon(Icons.person,
+                                      size: 30, color: Colors.white)
+                                  : null,
+                            ),
+                            Positioned(
+                              bottom: 5,
+                              right: 5,
+                              child: CircleAvatar(
+                                radius: 7,
+                                backgroundColor: Colors.white, // Border
+                                child: CircleAvatar(
+                                  radius: 6,
+                                  backgroundColor:
+                                      (receiverData['isOnline'] ?? false)
+                                          ? Colors.green
+                                          : Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         title: Text(receiverName,
                             style: const TextStyle(
