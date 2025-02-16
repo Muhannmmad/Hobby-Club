@@ -164,6 +164,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         Provider<AuthRepository>(
             create: (_) =>
+                // ignore: dead_code
                 false ? MockAuthRepository() : FirebaseAuthRepository()),
         Provider<DatabaseRepository>(create: (_) => DatabaseRepository()),
       ],
