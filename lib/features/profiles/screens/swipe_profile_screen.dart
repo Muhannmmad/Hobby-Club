@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +19,14 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> userProfiles = [];
   bool isLoading = true;
+  bool _isUserInteracting = false;
+
   Set<String> favoriteIds = {};
   String userId = '';
+  PageController _pageController = PageController();
+  int _currentPage = 0;
+  Timer? _autoSwipeTimer;
+
   String createChatId(String senderId, String receiverId) {
     return senderId.hashCode <= receiverId.hashCode
         ? '${senderId}_$receiverId'
@@ -31,6 +39,43 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
     userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     fetchUserProfiles();
     loadFavorites();
+    startAutoSwipe();
+  }
+
+  @override
+  void dispose() {
+    _autoSwipeTimer?.cancel(); // Stop timer when widget is disposed
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void startAutoSwipe() {
+    _autoSwipeTimer?.cancel(); // Cancel any existing timer
+    _autoSwipeTimer = Timer.periodic(Duration(seconds: 2), (timer) {
+      if (!_isUserInteracting) {
+        // Only swipe if user is not interacting
+        if (_currentPage < userProfiles.length - 1) {
+          _currentPage++;
+        } else {
+          _currentPage = 0; // Loop back to the first profile
+        }
+
+        _pageController.animateToPage(
+          _currentPage,
+          duration: Duration(seconds: 2),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  void restartAutoSwipeAfterDelay() {
+    _autoSwipeTimer?.cancel(); // Cancel existing timer
+    Future.delayed(Duration(seconds: 5), () {
+      if (!_isUserInteracting) {
+        startAutoSwipe(); // Restart auto-swiping if no user interaction
+      }
+    });
   }
 
   Future<void> fetchUserProfiles() async {
@@ -263,12 +308,35 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
             ? const Center(child: CircularProgressIndicator())
             : userProfiles.isEmpty
                 ? const Center(child: Text('No profiles available.'))
-                : PageView.builder(
-                    itemCount: userProfiles.length,
-                    itemBuilder: (context, index) {
-                      final userData = userProfiles[index];
-                      return buildProfileCard(userData, index);
+                : GestureDetector(
+                    onPanDown: (_) {
+                      _isUserInteracting = false; // User starts interacting
+                      _autoSwipeTimer
+                          ?.cancel(); // Stop auto-swiping immediately
                     },
+                    onPanEnd: (_) {
+                      _isUserInteracting = false; // User stops interacting
+                      restartAutoSwipeAfterDelay(); // Restart auto-swipe after delay
+                    },
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: userProfiles.length,
+                      onPageChanged: (index) {
+                        _currentPage = index; // Track current page
+                        _isUserInteracting = true; // Mark user interaction
+                        _autoSwipeTimer?.cancel(); // Stop auto-swipe
+
+                        // Restart auto-swiping after a small delay
+                        Future.delayed(Duration(seconds: 2), () {
+                          _isUserInteracting = false;
+                          startAutoSwipe(); // Restart auto-swipe when user stops interacting
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        final userData = userProfiles[index];
+                        return buildProfileCard(userData, index);
+                      },
+                    ),
                   ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
