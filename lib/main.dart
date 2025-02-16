@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hoppy_club/features/registeration/repository/database_repository.dart';
 import 'package:hoppy_club/features/start/screens/start_screen.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
-import 'package:hoppy_club/firebase_options.dart';
+import 'package:hoppy_club/shared/firebase_options.dart';
 import 'package:hoppy_club/features/registeration/repository/auth_repository.dart';
 import 'package:hoppy_club/features/registeration/repository/mock_auth_repository.dart';
 import 'package:hoppy_club/features/registeration/repository/firebase_auth_repository.dart';
