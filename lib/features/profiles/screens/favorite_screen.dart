@@ -5,7 +5,7 @@ import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
 import 'package:hoppy_club/features/home/screens/favorite_icon.dart';
 import 'package:hoppy_club/features/profiles/screens/me_favourite.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
-import 'package:hoppy_club/shared/widgets/private_chat_screen.dart';
+import 'package:hoppy_club/features/chat/private_chat_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});

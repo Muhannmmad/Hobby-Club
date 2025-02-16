@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hoppy_club/chat_room.dart';
+import 'package:hoppy_club/features/chat/chat_room.dart';
 import 'package:hoppy_club/features/profiles/screens/swipe_profile_screen.dart';
 import 'package:hoppy_club/features/profiles/screens/my_profile_screen.dart';
 import 'package:hoppy_club/features/profiles/screens/favorite_screen.dart';

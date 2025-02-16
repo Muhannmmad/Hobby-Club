@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hoppy_club/features/home/screens/detailed_profile_page.dart';
-import 'package:hoppy_club/online_members.dart';
+import 'package:hoppy_club/features/chat/online_members.dart';
 import 'package:hoppy_club/shared/widgets/bottom.navigation.dart';
-import 'package:hoppy_club/shared/widgets/chat_members.dart';
-import 'package:hoppy_club/shared/widgets/private_chat_screen.dart';
+import 'package:hoppy_club/features/chat/chat_members.dart';
+import 'package:hoppy_club/features/chat/private_chat_screen.dart';
 
 import 'package:intl/intl.dart';
 
