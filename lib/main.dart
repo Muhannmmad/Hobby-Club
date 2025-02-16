@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hoppy_club/features/registeration/repository/database_repository.dart';
 import 'package:hoppy_club/features/start/screens/start_screen.dart';
 import 'package:hoppy_club/features/home/screens/home_screen.dart';
@@ -40,16 +42,30 @@ class _MyAppState extends State<MyApp> {
     _initializeApp();
   }
 
-  /// 🔹 **Initialize Firebase & OneSignal**
+  /// 🔹 **Initialize App & Restore User**
   Future<void> _initializeApp() async {
+    await _restoreUserFromCache();
+    if (_loggedInUser == null) {
+      await _loadUserFromFirebase();
+    }
     await _initOneSignal();
     await _setupFirebaseMessaging();
-    await _loadUser();
     setState(() => _isInitialized = true);
   }
 
-  /// 🔹 **Fetch logged-in user from Firebase**
-  Future<void> _loadUser() async {
+  /// 🔹 **Restore User from SharedPreferences (Faster Startup)**
+  Future<void> _restoreUserFromCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString("user_data");
+    if (userData != null) {
+      setState(() {
+        _loggedInUser = UserModel.fromJson(jsonDecode(userData));
+      });
+    }
+  }
+
+  /// 🔹 **Fetch User from Firebase (If No Cached Data)**
+  Future<void> _loadUserFromFirebase() async {
     final User? firebaseUser = FirebaseAuth.instance.currentUser;
     if (firebaseUser != null) {
       try {
@@ -58,7 +74,14 @@ class _MyAppState extends State<MyApp> {
             .doc(firebaseUser.uid)
             .get();
         if (userDoc.exists) {
-          _loggedInUser = UserModel.fromFirestore(userDoc);
+          setState(() {
+            _loggedInUser = UserModel.fromFirestore(userDoc);
+          });
+
+          /// 🔹 **Save to Cache for Faster Next Startup**
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(
+              "user_data", jsonEncode(_loggedInUser!.toJson()));
         }
       } catch (e) {
         debugPrint("❌ Error fetching user data: $e");
