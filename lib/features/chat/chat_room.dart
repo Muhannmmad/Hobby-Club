@@ -20,20 +20,18 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
   final TextEditingController _messageController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final ScrollController _scrollController = ScrollController();
+  ScrollController _scrollController = ScrollController();
 
   Map<String, bool> messageStatus = {};
-  bool _isSending = false; // Add this at the top of your ChatRoomScreenState
-
+  bool _isSending = false; // Add this at the top of your ChatRoomScreenStateƒ
   void _sendMessage() async {
-    if (_isSending) return; // Prevent duplicate sends
-    if (_messageController.text.trim().isEmpty) return;
+    if (_isSending || _messageController.text.trim().isEmpty) return;
 
     User? user = _auth.currentUser;
     if (user == null) return;
 
     setState(() {
-      _isSending = true; // Disable sending while processing
+      _isSending = true;
     });
 
     try {
@@ -41,32 +39,34 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
           await _firestore.collection('users').doc(user.uid).get();
       String firstName = userDoc['firstName'] ?? 'Unknown';
 
-      DocumentReference newMessageRef = _firestore.collection('chatroom').doc();
-
-      await newMessageRef.set({
+      await _firestore.collection('chatroom').add({
         'text': _messageController.text.trim(),
         'senderId': user.uid,
-        'senderName': '$firstName ',
+        'senderName': firstName,
         'timestamp': FieldValue.serverTimestamp(),
       });
 
       _messageController.clear();
-      _scrollToBottom();
+
+      // 🟢 Ensure scrolling happens after sending the message
+      Future.delayed(const Duration(milliseconds: 300), _scrollToBottom);
     } catch (e) {
       debugPrint('Error sending message: $e');
     } finally {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        setState(() {
-          _isSending = false; // Re-enable after delay
-        });
+      setState(() {
+        _isSending = false;
       });
     }
   }
 
   void _scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 300), () {
+    Future.delayed(const Duration(milliseconds: 200), () {
       if (_scrollController.hasClients) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       }
     });
   }
@@ -175,6 +175,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController(); // Initialize it here
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
   }
 
@@ -266,6 +267,7 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                         return const Center(child: Text('No messages yet'));
                       }
 
+                      // 🔥 Scroll to bottom when a new message arrives
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         _scrollToBottom();
                       });
@@ -403,8 +405,6 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                               ),
                                             ),
                                             const SizedBox(width: 8),
-
-                                            // Use Expanded to ensure the name doesn't get cut off
                                             Expanded(
                                               child: GestureDetector(
                                                 onTap: () =>
@@ -425,14 +425,12 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
                                                   ),
-                                                  overflow: TextOverflow
-                                                      .ellipsis, // Prevent overflow issues
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   maxLines: 1,
                                                 ),
                                               ),
                                             ),
-
-                                            // Spacer to push delete button to the right
                                             if (isMine) ...[
                                               const Spacer(),
                                               IconButton(

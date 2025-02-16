@@ -30,7 +30,8 @@ class _OnlineMembersRowState extends State<OnlineMembersRow> {
 
   void _startAutoScroll() async {
     while (mounted) {
-      await Future.delayed(const Duration(seconds: 3)); // Pause before moving
+      await Future.delayed(
+          const Duration(seconds: 5)); // Wait for 5 seconds before scrolling
 
       if (!_scrollController.hasClients) continue; // Ensure ListView exists
 
@@ -39,8 +40,8 @@ class _OnlineMembersRowState extends State<OnlineMembersRow> {
 
       await _scrollController.animateTo(
         targetScroll,
-        duration: const Duration(seconds: 5),
-        curve: Curves.linear,
+        duration: const Duration(seconds: 20),
+        curve: Curves.easeInOut, // Smooth acceleration and deceleration
       );
 
       _scrollForward = !_scrollForward; // Toggle direction
