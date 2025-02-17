@@ -180,8 +180,8 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
     }
   }
 
-  void applySearchFilter(
-      String name, int? minAge, int? maxAge, String country, String city) {
+  void applySearchFilter(String name, int? minAge, int? maxAge, String country,
+      String city, bool onlyOnline) {
     setState(() {
       userProfiles = userProfiles.where((profile) {
         bool matchesName = name.isEmpty ||
@@ -209,7 +209,13 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
                 .toLowerCase()
                 .contains(city.toLowerCase());
 
-        return matchesName && matchesAge && matchesCountry && matchesCity;
+        bool matchesOnline = !onlyOnline || (profile['isOnline'] == true);
+
+        return matchesName &&
+            matchesAge &&
+            matchesCountry &&
+            matchesCity &&
+            matchesOnline;
       }).toList();
     });
   }
@@ -220,80 +226,99 @@ class SwipeableProfilesScreenState extends State<SwipeableProfilesScreen> {
     TextEditingController cityController = TextEditingController();
     int? selectedMinAge;
     int? selectedMaxAge;
+    bool onlyOnline = false; // Track checkbox state
 
-    List<int> ageOptions = List.generate(
-        91, (index) => index + 10); // Generates ages from 10 to 100
+    List<int> ageOptions = List.generate(91, (index) => index + 10);
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Search Profiles'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            // Add StatefulBuilder
+            return AlertDialog(
+              title: const Text('Search Profiles'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(labelText: 'Name'),
+                    ),
+                    DropdownButtonFormField<int>(
+                      value: selectedMinAge,
+                      decoration: const InputDecoration(labelText: 'Min Age'),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedMinAge = value;
+                        });
+                      },
+                      items: ageOptions.map((age) {
+                        return DropdownMenuItem(
+                          value: age,
+                          child: Text('$age'),
+                        );
+                      }).toList(),
+                    ),
+                    DropdownButtonFormField<int>(
+                      value: selectedMaxAge,
+                      decoration: const InputDecoration(labelText: 'Max Age'),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedMaxAge = value;
+                        });
+                      },
+                      items: ageOptions.map((age) {
+                        return DropdownMenuItem(
+                          value: age,
+                          child: Text('$age'),
+                        );
+                      }).toList(),
+                    ),
+                    TextField(
+                      controller: countryController,
+                      decoration: const InputDecoration(labelText: 'Country'),
+                    ),
+                    TextField(
+                      controller: cityController,
+                      decoration: const InputDecoration(labelText: 'City'),
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: onlyOnline,
+                          onChanged: (value) {
+                            setState(() {
+                              onlyOnline = value ?? false;
+                            });
+                          },
+                        ),
+                        const Text('Only show online users'),
+                      ],
+                    ),
+                  ],
                 ),
-                DropdownButtonFormField<int>(
-                  value: selectedMinAge,
-                  decoration: const InputDecoration(labelText: 'Min Age'),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedMinAge = value;
-                    });
-                  },
-                  items: ageOptions.map((age) {
-                    return DropdownMenuItem(
-                      value: age,
-                      child: Text('$age'),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    await fetchUserProfiles(); // Reload all profiles before filtering
+                    applySearchFilter(
+                      nameController.text.trim(),
+                      selectedMinAge,
+                      selectedMaxAge,
+                      countryController.text.trim(),
+                      cityController.text.trim(),
+                      onlyOnline, // Pass the updated value
                     );
-                  }).toList(),
-                ),
-                DropdownButtonFormField<int>(
-                  value: selectedMaxAge,
-                  decoration: const InputDecoration(labelText: 'Max Age'),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedMaxAge = value;
-                    });
+                    Navigator.pop(context);
                   },
-                  items: ageOptions.map((age) {
-                    return DropdownMenuItem(
-                      value: age,
-                      child: Text('$age'),
-                    );
-                  }).toList(),
-                ),
-                TextField(
-                  controller: countryController,
-                  decoration: const InputDecoration(labelText: 'Country'),
-                ),
-                TextField(
-                  controller: cityController,
-                  decoration: const InputDecoration(labelText: 'City'),
+                  child: const Text('Search'),
                 ),
               ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                await fetchUserProfiles(); // Reload all profiles before filtering
-                applySearchFilter(
-                  nameController.text.trim(),
-                  selectedMinAge,
-                  selectedMaxAge,
-                  countryController.text.trim(),
-                  cityController.text.trim(),
-                );
-                Navigator.pop(context);
-              },
-              child: const Text('Search'),
-            ),
-          ],
+            );
+          },
         );
       },
     );
