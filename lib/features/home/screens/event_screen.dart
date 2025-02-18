@@ -178,13 +178,13 @@ class EventScreenState extends State<EventScreen> {
                                             text:
                                                 '${data['place'] ?? 'Unknown'}\n'),
                                         const TextSpan(
-                                          text: 'Start At: ',
+                                          text: 'Starts At: ',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 16),
                                         ),
                                         TextSpan(
-                                          text: data['startAt'] != null
+                                          text: data['startsAt'] != null
                                               ? DateFormat('dd-MM-yyyy HH:mm')
                                                   .format((data['startAt']
                                                           as Timestamp)
