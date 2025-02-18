@@ -105,12 +105,16 @@ class _OnlineMembersRowState extends State<OnlineMembersRow> {
                           children: [
                             CircleAvatar(
                               radius: 30,
-                              backgroundColor: Colors.transparent,
+                              backgroundColor: Colors.white,
                               backgroundImage: profileImage.isNotEmpty
                                   ? NetworkImage(profileImage)
                                   : null,
                               child: profileImage.isEmpty
-                                  ? const Icon(Icons.person, size: 40)
+                                  ? const Icon(
+                                      Icons.person,
+                                      size: 50,
+                                      color: Colors.purple,
+                                    )
                                   : null,
                             ),
                             Container(

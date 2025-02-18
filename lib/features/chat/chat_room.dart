@@ -377,8 +377,8 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                                       backgroundColor:
                                                           Colors.grey,
                                                       child: Icon(Icons.person,
-                                                          size: 20,
-                                                          color: Colors.white),
+                                                          size: 40,
+                                                          color: Colors.purple),
                                                     );
                                                   }
 
@@ -411,9 +411,9 @@ class ChatRoomScreenState extends State<ChatRoomScreen> {
                                                                 .isEmpty
                                                             ? const Icon(
                                                                 Icons.person,
-                                                                size: 20,
+                                                                size: 40,
                                                                 color: Colors
-                                                                    .white)
+                                                                    .purple)
                                                             : null,
                                                       ),
                                                       Positioned(

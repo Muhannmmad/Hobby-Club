@@ -198,13 +198,13 @@ class ChatMembersScreenState extends State<ChatMembersScreen> {
                           children: [
                             CircleAvatar(
                               radius: 30,
-                              backgroundColor: Colors.grey[300],
+                              backgroundColor: Colors.white,
                               backgroundImage: receiverProfileUrl.isNotEmpty
                                   ? NetworkImage(receiverProfileUrl)
                                   : null,
                               child: receiverProfileUrl.isEmpty
                                   ? const Icon(Icons.person,
-                                      size: 30, color: Colors.white)
+                                      size: 50, color: Colors.purple)
                                   : null,
                             ),
                             Positioned(

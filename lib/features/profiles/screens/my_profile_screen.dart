@@ -70,9 +70,8 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                   : SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(height: screenHeight * 0.02),
                           Container(
-                            width: screenWidth * 0.9,
+                            width: screenWidth * 0.90,
                             height: screenHeight * 0.4,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
@@ -98,7 +97,7 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                     ),
                             ),
                           ),
-                          SizedBox(height: screenHeight * 0.02),
+                          SizedBox(height: screenHeight * 0.00),
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: screenWidth * 0.05),
@@ -142,7 +141,7 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: screenHeight * 0.02),
+                                  SizedBox(height: screenHeight * 0.01),
                                   profileDetail(
                                       Icons.person,
                                       userData?['gender'] ??
@@ -158,7 +157,7 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                       userData?['hobbies'] ??
                                           'Hobbies not provided',
                                       screenWidth),
-                                  SizedBox(height: screenHeight * 0.02),
+                                  SizedBox(height: screenHeight * 0.01),
                                   Text(
                                     'About Me',
                                     style: TextStyle(
@@ -173,7 +172,7 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                                     style: TextStyle(
                                         fontSize: screenWidth * 0.040),
                                   ),
-                                  SizedBox(height: screenHeight * 0.02),
+                                  SizedBox(height: screenHeight * 0.01),
                                   Center(
                                     child: ElevatedButton(
                                       onPressed: () {
