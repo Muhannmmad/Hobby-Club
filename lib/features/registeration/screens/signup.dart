@@ -216,7 +216,7 @@ class SignUpScreenState extends State<SignUpScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Already a member? ",
+          "Already a member?   ",
           style: TextStyle(
             color: Colors.black,
             fontSize: (12 * scaleFactor).clamp(10, 18),

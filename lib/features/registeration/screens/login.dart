@@ -295,7 +295,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("No account? "),
+        const Text("No account?   "),
         Transform.scale(
             scale: scaleFactor.clamp(0.8, 1.2), child: const SignupButton()),
       ],
